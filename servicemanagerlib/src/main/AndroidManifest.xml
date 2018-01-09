@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="wang.imallen.blog.servicemanagerlib">
+
+    <application>
+        <service
+            android:name=".remote.RemoteGuardService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":guard">
+            <intent-filter>
+                <action android:name="wang.imallen.blog.guard" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".main.MainService"
+            android:enabled="true"
+            android:exported="true"></service>
+    </application>
+
+</manifest>

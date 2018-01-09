@@ -1,0 +1,1 @@
+include ':app', ':ServiceAnnotation', ':moduleexportlib', ':applemodule', ':cherrymodule', ':servicemanagerlib'
