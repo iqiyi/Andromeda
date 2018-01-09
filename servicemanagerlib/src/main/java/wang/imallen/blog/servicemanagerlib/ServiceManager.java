@@ -1,19 +1,9 @@
 package wang.imallen.blog.servicemanagerlib;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.util.Log;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import wang.imallen.blog.moduleexportlib.apple.DeliverAppleStub;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
 import wang.imallen.blog.servicemanagerlib.local.ILocalServiceManager;
 import wang.imallen.blog.servicemanagerlib.local.LocalServiceManager;
-import wang.imallen.blog.servicemanagerlib.dispatcher.RemoteGuardService;
 import wang.imallen.blog.servicemanagerlib.remote.RemoteServiceManager;
 
 /**
@@ -22,7 +12,7 @@ import wang.imallen.blog.servicemanagerlib.remote.RemoteServiceManager;
 
 //TODO 注意:这个ServiceManager可能会存在于很多进程中，不要以为只有主进程才有
 //public class ServiceManager extends Binder implements IServiceManager, IServiceRegister, IInterface
-public class ServiceManager implements IServiceManager{
+public class ServiceManager implements IServiceManager {
 
     private static final String TAG = "ServiceManager";
 
@@ -50,7 +40,7 @@ public class ServiceManager implements IServiceManager{
     }
 
     @Override
-    public Object getRemoteService(String module,Context context) {
-        return RemoteServiceManager.getInstance().getRemoteService(module,context);
+    public Object getRemoteService(String module, Context context) {
+        return RemoteServiceManager.getInstance().getRemoteService(module, context);
     }
 }
