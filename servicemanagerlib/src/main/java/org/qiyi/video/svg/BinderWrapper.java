@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib;
+package org.qiyi.video.svg;
 
 import android.os.IBinder;
 import android.os.Parcel;

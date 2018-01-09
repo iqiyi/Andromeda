@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.dispatcher;
+package org.qiyi.video.svg.dispatcher;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,9 +6,10 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import wang.imallen.blog.servicemanagerlib.BinderWrapper;
-import wang.imallen.blog.servicemanagerlib.IServiceRegister;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
+import org.qiyi.video.svg.BinderWrapper;
+import org.qiyi.video.svg.IServiceRegister;
+import org.qiyi.video.svg.config.Constants;
+
 
 //TODO 在主进程启动时是调用bindService()还是startService()来将RemoteServiceManager注册到主进程呢?
 public class RemoteGuardService extends Service {

@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.dispatcher;
+package org.qiyi.video.svg.dispatcher;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,15 +6,16 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import org.qiyi.video.svg.BinderWrapper;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import wang.imallen.blog.servicemanagerlib.BinderWrapper;
 
-import wang.imallen.blog.servicemanagerlib.IServiceDispatcher;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
-import wang.imallen.blog.servicemanagerlib.config.ServiceActionPolicy;
-import wang.imallen.blog.servicemanagerlib.config.ServiceActionPolicyImpl;
+import org.qiyi.video.svg.IServiceDispatcher;
+import org.qiyi.video.svg.config.Constants;
+import org.qiyi.video.svg.config.ServiceActionPolicy;
+import org.qiyi.video.svg.config.ServiceActionPolicyImpl;
 
 /**
  * Created by wangallen on 2018/1/8.
@@ -84,6 +85,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
                 ex.printStackTrace();
             }
         }
+        //TODO 要增加判空操作
         return binderMap.get(module);
     }
 

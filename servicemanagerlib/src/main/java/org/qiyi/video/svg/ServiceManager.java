@@ -1,17 +1,16 @@
-package wang.imallen.blog.servicemanagerlib;
+package org.qiyi.video.svg;
 
 import android.content.Context;
 
-import wang.imallen.blog.servicemanagerlib.local.ILocalServiceManager;
-import wang.imallen.blog.servicemanagerlib.local.LocalServiceManager;
-import wang.imallen.blog.servicemanagerlib.remote.RemoteServiceManager;
+import org.qiyi.video.svg.local.ILocalServiceManager;
+import org.qiyi.video.svg.local.LocalServiceManager;
+import org.qiyi.video.svg.remote.RemoteServiceManager;
 
 /**
  * Created by wangallen on 2018/1/8.
  */
 
-//TODO 注意:这个ServiceManager可能会存在于很多进程中，不要以为只有主进程才有
-//public class ServiceManager extends Binder implements IServiceManager, IServiceRegister, IInterface
+//注意:这个ServiceManager可能会存在于很多进程中，不要以为只有主进程才有
 public class ServiceManager implements IServiceManager {
 
     private static final String TAG = "ServiceManager";
@@ -32,6 +31,16 @@ public class ServiceManager implements IServiceManager {
     }
 
     private ServiceManager() {
+    }
+
+    @Override
+    public void registerLocalService(String module, Object serviceImpl) {
+        LocalServiceManager.getInstance().registerService(module, serviceImpl);
+    }
+
+    @Override
+    public void unregisterLocalService(String module, Object serviceImpl) {
+        LocalServiceManager.getInstance().unregisterService(module);
     }
 
     @Override

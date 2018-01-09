@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.local;
+package org.qiyi.video.svg.local;
 
 /**
  * Created by wangallen on 2018/1/8.

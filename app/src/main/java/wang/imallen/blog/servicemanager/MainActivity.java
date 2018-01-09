@@ -1,5 +1,6 @@
 package wang.imallen.blog.servicemanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,8 +8,8 @@ import android.view.View;
 
 import wang.imallen.blog.moduleexportlib.apple.IDeliverApple;
 import wang.imallen.blog.moduleexportlib.apple.IEatApple;
-import wang.imallen.blog.servicemanagerlib.ServiceManager;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
+import org.qiyi.video.svg.ServiceManager;
+import org.qiyi.video.svg.config.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +31,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 useRemoteService();
+            }
+        });
+
+        findViewById(R.id.gotoAppleActivityBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,AppleActivity.class));
             }
         });
 

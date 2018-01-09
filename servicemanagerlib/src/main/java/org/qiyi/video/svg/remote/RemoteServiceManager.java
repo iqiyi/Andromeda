@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.remote;
+package org.qiyi.video.svg.remote;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,15 +6,16 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import org.qiyi.video.svg.BinderWrapper;
+import org.qiyi.video.svg.IServiceDispatcher;
+import org.qiyi.video.svg.IServiceRegister;
+import org.qiyi.video.svg.config.Constants;
+import org.qiyi.video.svg.dispatcher.RemoteGuardService;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import wang.imallen.blog.moduleexportlib.apple.DeliverAppleStub;
-import wang.imallen.blog.servicemanagerlib.BinderWrapper;
-import wang.imallen.blog.servicemanagerlib.IServiceDispatcher;
-import wang.imallen.blog.servicemanagerlib.IServiceRegister;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
-import wang.imallen.blog.servicemanagerlib.dispatcher.RemoteGuardService;
 
 /**
  * Created by wangallen on 2018/1/9.
@@ -42,7 +43,8 @@ public class RemoteServiceManager extends IServiceRegister.Stub implements IRemo
     private final Object lock = new Object();
 
 
-    private RemoteServiceManager(){}
+    private RemoteServiceManager() {
+    }
 
     //TODO 是在这里传context好呢?还是在初始化时传context更好?
     @Override
@@ -51,7 +53,10 @@ public class RemoteServiceManager extends IServiceRegister.Stub implements IRemo
 
         //TODO 这里需要利用由AnnotationProcessor生成的代码的一个类,在那个类中可将IBinder转换为Interface
         IBinder binder = getIBinder(module, context);
-        //TODO 这部分代码后面要改成自动生成，或者是利用反射来调用asInterface
+        //TODO 这部分代码后面要改成自动生成，可以利用注解解释器或者gradle插件来生成
+
+        // GlobalInterface.asInterface();
+
         switch (module) {
             case Constants.APPLE_MODULE: {
                 return DeliverAppleStub.asInterface(binder);

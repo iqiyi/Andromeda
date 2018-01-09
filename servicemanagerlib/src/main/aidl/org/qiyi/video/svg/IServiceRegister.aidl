@@ -1,5 +1,5 @@
 // IServiceRegister.aidl
-package wang.imallen.blog.servicemanagerlib;
+package org.qiyi.video.svg;
 
 // Declare any non-default types here with import statements
 

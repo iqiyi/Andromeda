@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.local;
+package org.qiyi.video.svg.local;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
