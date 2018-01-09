@@ -4,7 +4,7 @@
 
     <application>
         <service
-            android:name=".remote.RemoteGuardService"
+            android:name=".dispatcher.RemoteGuardService"
             android:enabled="true"
             android:exported="true"
             android:process=":guard">

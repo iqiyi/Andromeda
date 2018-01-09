@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.remote;
+package wang.imallen.blog.servicemanagerlib.dispatcher;
 
 import android.app.Service;
 import android.content.Intent;
@@ -24,7 +24,7 @@ public class RemoteGuardService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return RemoteServiceManager.getInstance(this).asBinder();
+        return ServiceDispatcher.getInstance(this).asBinder();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class RemoteGuardService extends Service {
                 if (serviceRegister != null) {
                     try {
                         serviceRegister.registerRemoteService(REMOTE_GUARD_SERIVCE_MODULE,
-                                RemoteServiceManager.getInstance(this).asBinder());
+                                ServiceDispatcher.getInstance(this).asBinder());
                     } catch (RemoteException ex) {
                         ex.printStackTrace();
                     }

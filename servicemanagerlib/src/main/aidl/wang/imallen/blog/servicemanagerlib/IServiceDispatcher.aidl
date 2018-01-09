@@ -3,7 +3,7 @@ package wang.imallen.blog.servicemanagerlib;
 
 // Declare any non-default types here with import statements
 
-interface IRemoteServiceManager {
+interface IServiceDispatcher {
 
    IBinder getTargetBinder(String module);
    //这个uri其实就是Target Service的action
