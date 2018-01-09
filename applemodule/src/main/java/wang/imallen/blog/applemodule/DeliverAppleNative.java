@@ -9,6 +9,7 @@ import wang.imallen.blog.moduleexportlib.apple.IDeliverApple;
 
 public class DeliverAppleNative extends DeliverAppleStub {
 
+    //TODO 实在不行就连实现类的名称也收集，然后在调用时使用反射
     private IDeliverApple deliverApple = new DeliveryAppleImpl();
 
     @Override

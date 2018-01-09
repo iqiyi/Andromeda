@@ -5,23 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="wang.imallen.blog.servicemanager.MainActivity">
-
-    <Button
-        android:id="@+id/useLocalServiceBtn"
-        android:text="Use local service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    tools:context="wang.imallen.blog.servicemanager.AppleActivity">
 
     <Button
         android:id="@+id/useRemoteServiceBtn"
-        android:text="Use remote service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/gotoAppleActivityBtn"
-        android:text="Go to AppleActivity"
+        android:text="Use remote service in same process"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

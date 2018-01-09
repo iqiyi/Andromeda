@@ -5,8 +5,8 @@ import android.app.Application;
 import android.content.Context;
 
 import wang.imallen.blog.applemodule.EatAppleImpl;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
-import wang.imallen.blog.servicemanagerlib.local.LocalServiceManager;
+import org.qiyi.video.svg.ServiceManager;
+import org.qiyi.video.svg.config.Constants;
 
 /**
  * Created by wangallen on 2018/1/8.
@@ -19,7 +19,7 @@ public class CustomApp extends Application {
         super.onCreate();
 
         if (isMainProcess()) {
-            LocalServiceManager.getInstance().registerService(Constants.APPLE_MODULE, new EatAppleImpl());
+            ServiceManager.getInstance().registerLocalService(Constants.APPLE_MODULE, new EatAppleImpl());
             //TODO 让ServiceManager启动GuardService
         }
 

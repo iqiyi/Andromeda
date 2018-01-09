@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import wang.imallen.blog.servicemanagerlib.BinderWrapper;
-import wang.imallen.blog.servicemanagerlib.IServiceDispatcher;
-import wang.imallen.blog.servicemanagerlib.config.Constants;
-import wang.imallen.blog.servicemanagerlib.config.ServiceActionPolicyImpl;
+import org.qiyi.video.svg.BinderWrapper;
+import org.qiyi.video.svg.IServiceDispatcher;
+import org.qiyi.video.svg.config.Constants;
+import org.qiyi.video.svg.config.ServiceActionPolicyImpl;
 
 public class DeliverAppleService extends Service {
 
@@ -30,6 +30,10 @@ public class DeliverAppleService extends Service {
             BinderWrapper binderWrapper = intent.getParcelableExtra(Constants.KEY_BINDER_WRAPPER);
             IBinder binder = binderWrapper.getBinder();
             IServiceDispatcher proxy = IServiceDispatcher.Stub.asInterface(binder);
+
+            String moduleName=intent.getStringExtra("Module");
+            //TODO 根据moduleName找到对应的IBinder，这部分可能需要gradle插件来生成相应代码
+
             if (proxy != null) {
                 try {
                     proxy.registerRemoteService(APPLE_MODULE, deliverAppleNative.asBinder());

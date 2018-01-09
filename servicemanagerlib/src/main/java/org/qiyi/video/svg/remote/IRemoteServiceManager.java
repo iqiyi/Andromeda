@@ -1,4 +1,4 @@
-package wang.imallen.blog.servicemanagerlib.remote;
+package org.qiyi.video.svg.remote;
 
 import android.content.Context;
 

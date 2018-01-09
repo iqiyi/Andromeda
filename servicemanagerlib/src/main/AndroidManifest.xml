@@ -4,7 +4,7 @@
 
     <application>
         <service
-            android:name=".dispatcher.RemoteGuardService"
+            android:name="org.qiyi.video.svg.dispatcher.RemoteGuardService"
             android:enabled="true"
             android:exported="true"
             android:process=":guard">
