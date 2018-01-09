@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void useLocalService() {
-        IEatApple eatApple = (IEatApple) ServiceManager.getInstance(this).getLocalService(Constants.APPLE_MODULE);
+        IEatApple eatApple = (IEatApple) ServiceManager.getInstance().getLocalService(Constants.APPLE_MODULE);
         if (eatApple != null) {
             eatApple.eatApple(23);
         }else{
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void useRemoteService() {
-        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance(this).getRemoteService(Constants.APPLE_MODULE);
+        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(Constants.APPLE_MODULE,this);
         if (deliverApple != null) {
             int appleNum = deliverApple.getApple(10);
             Log.d(TAG, "getApple() result:" + appleNum);

@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import wang.imallen.blog.servicemanagerlib.BinderWrapper;
-import wang.imallen.blog.servicemanagerlib.IRemoteServiceManager;
+import wang.imallen.blog.servicemanagerlib.IServiceDispatcher;
 import wang.imallen.blog.servicemanagerlib.config.Constants;
 import wang.imallen.blog.servicemanagerlib.config.ServiceActionPolicyImpl;
 
@@ -29,7 +29,7 @@ public class DeliverAppleService extends Service {
         if (ServiceActionPolicyImpl.getInstance().getFetchServiceAction(APPLE_MODULE).equals(intent.getAction())) {
             BinderWrapper binderWrapper = intent.getParcelableExtra(Constants.KEY_BINDER_WRAPPER);
             IBinder binder = binderWrapper.getBinder();
-            IRemoteServiceManager proxy = IRemoteServiceManager.Stub.asInterface(binder);
+            IServiceDispatcher proxy = IServiceDispatcher.Stub.asInterface(binder);
             if (proxy != null) {
                 try {
                     proxy.registerRemoteService(APPLE_MODULE, deliverAppleNative.asBinder());

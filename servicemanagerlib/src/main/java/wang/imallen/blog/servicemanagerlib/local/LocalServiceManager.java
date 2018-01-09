@@ -24,6 +24,10 @@ public class LocalServiceManager implements ILocalServiceManager {
 
     private Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 
+    private LocalServiceManager() {
+    }
+
+
     @Override
     public Object getLocalService(String module) {
         return serviceMap.get(module);
