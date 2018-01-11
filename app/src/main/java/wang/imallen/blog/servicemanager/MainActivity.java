@@ -53,10 +53,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void useRemoteService() {
-        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(Constants.APPLE_MODULE,this);
+        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(IDeliverApple.class.getCanonicalName(),this);
         if (deliverApple != null) {
             int appleNum = deliverApple.getApple(10);
             Log.d(TAG, "getApple() result:" + appleNum);
+        }else{
+            Log.d(TAG,"proxy is null!");
         }
     }
 

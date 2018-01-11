@@ -5,11 +5,11 @@ package org.qiyi.video.svg;
 
 interface IServiceDispatcher {
 
-   IBinder getTargetBinder(String module);
+   IBinder getTargetBinder(String serviceName);
    //这个uri其实就是Target Service的action
    IBinder fetchTargetBinder(String uri);
 
-   void registerRemoteService(String module,IBinder binder);
+   void registerRemoteService(String serviceName,IBinder binder);
 
    void unregisterRemoteService(String module);
 

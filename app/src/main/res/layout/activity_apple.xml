@@ -8,6 +8,12 @@
     tools:context="wang.imallen.blog.servicemanager.AppleActivity">
 
     <Button
+        android:id="@+id/registerStubServiceBtn"
+        android:text="Register stub service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
         android:id="@+id/useRemoteServiceBtn"
         android:text="Use remote service in same process"
         android:layout_width="match_parent"

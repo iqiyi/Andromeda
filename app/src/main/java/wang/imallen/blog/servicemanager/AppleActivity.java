@@ -8,6 +8,7 @@ import android.view.View;
 import org.qiyi.video.svg.ServiceManager;
 import org.qiyi.video.svg.config.Constants;
 
+import wang.imallen.blog.applemodule.DeliverAppleNative;
 import wang.imallen.blog.moduleexportlib.apple.IDeliverApple;
 
 public class AppleActivity extends AppCompatActivity {
@@ -19,6 +20,13 @@ public class AppleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apple);
 
+        findViewById(R.id.registerStubServiceBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServiceManager.getInstance().registerStubService(IDeliverApple.class,new DeliverAppleNative());
+            }
+        });
+
         findViewById(R.id.useRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -27,8 +35,10 @@ public class AppleActivity extends AppCompatActivity {
         });
     }
 
+
     private void useRemoteService() {
-        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(Constants.APPLE_MODULE, this);
+        //IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(Constants.APPLE_MODULE, this);
+        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(IDeliverApple.class.getCanonicalName(), this);
         if (deliverApple != null) {
             int appleNum = deliverApple.getApple(10);
             Log.d(TAG, "getApple() result:" + appleNum);
