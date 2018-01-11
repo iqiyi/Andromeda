@@ -7,15 +7,14 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import org.qiyi.video.svg.BinderWrapper;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-
 import org.qiyi.video.svg.IServiceDispatcher;
 import org.qiyi.video.svg.config.Constants;
 import org.qiyi.video.svg.config.ServiceActionPolicy;
 import org.qiyi.video.svg.config.ServiceActionPolicyImpl;
+import org.qiyi.video.svg.helper.MatchPolicy;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by wangallen on 2018/1/8.
@@ -39,29 +38,29 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
         return sInstance;
     }
 
-    private ServiceActionPolicy serviceActionPolicy;
     private Context context;
 
     private ServiceDispatcher(Context context) {
         this.context = context;
-        serviceActionPolicy = ServiceActionPolicyImpl.getInstance();
+        //serviceActionPolicy = ServiceActionPolicyImpl.getInstance();
     }
 
-    private Map<String, IBinder> binderMap = new ConcurrentHashMap<>();
+    private Map<String, IBinder> remoteBinderCache = new ConcurrentHashMap<>();
+
 
     private String waitingModule;
 
     private final Object lock = new Object();
 
     @Override
-    public IBinder getTargetBinder(String module) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->getTargetBinder,pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        IBinder binder = binderMap.get(module);
+    public IBinder getTargetBinder(String serviceName) throws RemoteException {
+        Log.d(TAG, "ServiceDispatcher-->getTargetBinder,serivceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+        IBinder binder = remoteBinderCache.get(serviceName);
         if (binder != null) {
             return binder;
         }
         //TODO 如果还没有的话，就需要同步去取
-        //TODO 取的方法就是利用startService(),并且我们根据协议，只利用module即可获得action(如规则为qiyi://module//action),然后便可发送命令给相应Module的Service
+        //TODO 取的方法就是利用startService(),并且我们根据协议，只利用module即可获得action(如规则为qiyi://serviceName//action),然后便可发送命令给相应Module的Service
         //TODO 之后，对应Module的Service接受到命令之后，就把自己的IBinder放在里面再寄回来，然后唤醒进程，从而实现阻塞调用。
         //TODO 需要讨论的是这里用bindService更好还是startService更好，因为都是要利用线程等待
         //TODO 为了保险起见，这里还要加上一个超时机制，比如设置为5s钟，如果还没返回的话，就直接notify了
@@ -71,11 +70,16 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
         //ComponentName componentName=new ComponentName(context,)
         //intent.setComponent(componentName);
         intent.setPackage(context.getPackageName());
-        intent.setAction(serviceActionPolicy.getFetchServiceAction(module));
+
+        intent.setAction(MatchPolicy.getServiceAction(serviceName));
+        //intent.setAction(serviceActionPolicy.getFetchServiceAction(serviceName));
+        intent.putExtra(Constants.KEY_SERVICE_NAME, serviceName);
         BinderWrapper wrapper = new BinderWrapper(this);
         intent.putExtra(Constants.KEY_BINDER_WRAPPER, wrapper);
+
+        //TODO Service的Context又去启动Service,会不会不行？
         context.startService(intent);
-        this.waitingModule = module;
+        this.waitingModule = serviceName;
 
         //TODO 可能还要增加一个timeout机制
         synchronized (lock) {
@@ -86,7 +90,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
             }
         }
         //TODO 要增加判空操作
-        return binderMap.get(module);
+        return remoteBinderCache.get(serviceName);
     }
 
     @Override
@@ -95,11 +99,18 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
         return null;
     }
 
+    //TODO 还要把binder与serviceName绑定在一起，才能找到对应的类调用asInterface()方法
     @Override
-    public void registerRemoteService(String module, IBinder binder) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->registerRemoteService,pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        binderMap.put(module, binder);
-        if (module.equals(waitingModule)) {
+    public void registerRemoteService(String serviceName, IBinder binder) throws RemoteException {
+        Log.d(TAG, "ServiceDispatcher-->registerRemoteService,serviceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+        if (binder != null) {
+            remoteBinderCache.put(serviceName, binder);
+            Log.d(TAG, "binder is not null");
+        } else {
+            Log.d(TAG, "binder is null");
+        }
+
+        if (serviceName.equals(waitingModule)) {
             synchronized (lock) {
                 lock.notify();
             }
@@ -108,6 +119,6 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
 
     @Override
     public void unregisterRemoteService(String module) throws RemoteException {
-        binderMap.remove(module);
+        remoteBinderCache.remove(module);
     }
 }

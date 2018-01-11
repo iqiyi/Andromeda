@@ -30,7 +30,7 @@ public class RemoteGuardService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommant,action:" + intent.getAction() + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+        Log.d(TAG, "onStartCommand,action:" + intent.getAction() + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         if (BIND_U_SELF.equals(intent.getAction())) {
             BinderWrapper binderWrapper = intent.getParcelableExtra(Constants.KEY_BINDER_WRAPPER);
             if (binderWrapper != null) {

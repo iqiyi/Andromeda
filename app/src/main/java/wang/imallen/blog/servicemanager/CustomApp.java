@@ -22,9 +22,6 @@ public class CustomApp extends Application {
             ServiceManager.getInstance().registerLocalService(Constants.APPLE_MODULE, new EatAppleImpl());
             //TODO 让ServiceManager启动GuardService
         }
-
-
-
     }
 
     private boolean isMainProcess() {

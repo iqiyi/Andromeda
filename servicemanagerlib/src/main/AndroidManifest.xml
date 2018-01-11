@@ -12,10 +12,44 @@
                 <action android:name="wang.imallen.blog.guard" />
             </intent-filter>
         </service>
+
         <service
-            android:name=".main.MainService"
+            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService0"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            android:process=":apple"
+            >
+            <intent-filter>
+                <action android:name="qiyi://apple/process/stub"/>
+            </intent-filter>
+
+        </service>
+
+        <service
+            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService1"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":plugin1"
+            >
+            <intent-filter>
+                <action android:name="qiyi://apple/process/stub"/>
+            </intent-filter>
+
+        </service>
+
+        <service
+            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService2"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":plugin1"
+            >
+            <intent-filter>
+                <action android:name="qiyi://plugin1/process/stub"/>
+            </intent-filter>
+
+        </service>
+
+
     </application>
 
 </manifest>

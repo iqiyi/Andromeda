@@ -1,8 +1,8 @@
 package org.qiyi.video.svg;
 
 import android.content.Context;
+import android.os.IInterface;
 
-import org.qiyi.video.svg.local.ILocalServiceManager;
 import org.qiyi.video.svg.local.LocalServiceManager;
 import org.qiyi.video.svg.remote.RemoteServiceManager;
 
@@ -16,8 +16,6 @@ public class ServiceManager implements IServiceManager {
     private static final String TAG = "ServiceManager";
 
     private static ServiceManager sInstance;
-
-    private ILocalServiceManager localServiceManager = LocalServiceManager.getInstance();
 
     public static ServiceManager getInstance() {
         if (null == sInstance) {
@@ -34,22 +32,60 @@ public class ServiceManager implements IServiceManager {
     }
 
     @Override
+    public void registerLocalService(Class serviceClass, Object serviceImpl) {
+        LocalServiceManager.getInstance().registerService(serviceClass.getCanonicalName(), serviceImpl);
+    }
+
+    @Override
     public void registerLocalService(String module, Object serviceImpl) {
         LocalServiceManager.getInstance().registerService(module, serviceImpl);
     }
 
+
     @Override
-    public void unregisterLocalService(String module, Object serviceImpl) {
-        LocalServiceManager.getInstance().unregisterService(module);
+    public void unregisterLocalService(Class serviceClass) {
+        LocalServiceManager.getInstance().unregisterService(serviceClass.getCanonicalName());
     }
 
     @Override
-    public Object getLocalService(String module) {
-        return LocalServiceManager.getInstance().getLocalService(module);
+    public void unregisterLocalService(String serivceCanonicalName) {
+        LocalServiceManager.getInstance().unregisterService(serivceCanonicalName);
     }
 
     @Override
-    public Object getRemoteService(String module, Context context) {
-        return RemoteServiceManager.getInstance().getRemoteService(module, context);
+    public void registerStubService(Class serviceClass, IInterface stubImpl) {
+        RemoteServiceManager.getInstance().registerStubService(serviceClass.getCanonicalName(), stubImpl);
+    }
+
+    /*
+    @Override
+    public void registerRemoteService(String serviceCanonicalName, Binder stubImpl) {
+        RemoteServiceManager.getInstance().registerStubService(serviceCanonicalName, stubImpl);
+    }
+    */
+
+    @Override
+    public Object getLocalService(Class serviceClass) {
+        return LocalServiceManager.getInstance().getLocalService(serviceClass.getCanonicalName());
+    }
+
+    @Override
+    public Object getRemoteService(Class serviceClass, Context context) {
+        return RemoteServiceManager.getInstance().getRemoteService(serviceClass.getCanonicalName(), context);
+    }
+
+    @Override
+    public IInterface getStubService(String serviceCanonicalName) {
+        return RemoteServiceManager.getInstance().getStubService(serviceCanonicalName);
+    }
+
+    @Override
+    public Object getLocalService(String serviceCanonicalName) {
+        return LocalServiceManager.getInstance().getLocalService(serviceCanonicalName);
+    }
+
+    @Override
+    public Object getRemoteService(String serviceCanonicalName, Context context) {
+        return RemoteServiceManager.getInstance().getRemoteService(serviceCanonicalName, context);
     }
 }

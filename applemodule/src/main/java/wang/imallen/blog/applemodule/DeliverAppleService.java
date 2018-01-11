@@ -26,6 +26,8 @@ public class DeliverAppleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        /*
         if (ServiceActionPolicyImpl.getInstance().getFetchServiceAction(APPLE_MODULE).equals(intent.getAction())) {
             BinderWrapper binderWrapper = intent.getParcelableExtra(Constants.KEY_BINDER_WRAPPER);
             IBinder binder = binderWrapper.getBinder();
@@ -42,6 +44,7 @@ public class DeliverAppleService extends Service {
                 }
             }
         }
+        */
         return super.onStartCommand(intent, flags, startId);
     }
 }
