@@ -3,12 +3,12 @@ package wang.imallen.blog.applemodule;
 import android.util.Log;
 
 import wang.imallen.blog.moduleexportlib.apple.IDeliverApple;
-import wang.imallen.blog.serviceannotation.Remote;
+//import wang.imallen.blog.serviceannotation.Remote;
 
 /**
  * Created by wangallen on 2018/1/8.
  */
-@Remote
+//@Remote
 public class DeliveryAppleImpl implements IDeliverApple {
 
     private static final String TAG = "ServiceManager";

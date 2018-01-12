@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+def lib_version="0.0.5"
 
 android {
     compileSdkVersion 26
@@ -7,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "$lib_version"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -21,15 +24,51 @@ android {
         }
     }
 
+    ext{
+        JAR_NAME='export'
+        JAR_VERSION="$lib_version"
+        JAR_DEST_DIR='build/outputs'
+        ORIGINAL_JAR_PATH='build/intermediates/bundles/release/classes.jar'
+    }
+
+    project.afterEvaluate {
+        Task cleanSdk=tasks.getByPath('clean')
+        Task bundleSdk=tasks.getByPath('bundleRelease')
+
+        bundleSdk.mustRunAfter cleanSdk
+        makeJar.dependsOn cleanSdk,bundleSdk
+
+    }
+
+    task makeJar(type:Jar){
+        from zipTree(file(ORIGINAL_JAR_PATH))
+        //添加assets文件夹，如果不需要则移除
+        //from fileTree(dir:'src/main', includes:['assets/**'])
+        baseName "${JAR_NAME}-${JAR_VERSION}"
+        destinationDir file(JAR_DEST_DIR)
+    }
+
 
 }
+
+
+
+uploadArchives{
+    repositories.mavenDeployer{
+        repository(url:LOCAL_REPO_URL)
+        pom.groupId=GROUP_ID
+        pom.artifactId=ARTIFACTID
+        pom.version="$lib_version"
+    }
+}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile project(":ServiceAnnotation")
+    //compile project(":ServiceAnnotation")
 
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    compileOnly 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

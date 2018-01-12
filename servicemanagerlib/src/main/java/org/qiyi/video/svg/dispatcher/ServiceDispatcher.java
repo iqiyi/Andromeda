@@ -9,8 +9,6 @@ import android.util.Log;
 import org.qiyi.video.svg.BinderWrapper;
 import org.qiyi.video.svg.IServiceDispatcher;
 import org.qiyi.video.svg.config.Constants;
-import org.qiyi.video.svg.config.ServiceActionPolicy;
-import org.qiyi.video.svg.config.ServiceActionPolicyImpl;
 import org.qiyi.video.svg.helper.MatchPolicy;
 
 import java.util.Map;
@@ -48,7 +46,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
     private Map<String, IBinder> remoteBinderCache = new ConcurrentHashMap<>();
 
 
-    private String waitingModule;
+    private String waitingServiceName;
 
     private final Object lock = new Object();
 
@@ -79,7 +77,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
 
         //TODO Service的Context又去启动Service,会不会不行？
         context.startService(intent);
-        this.waitingModule = serviceName;
+        this.waitingServiceName = serviceName;
 
         //TODO 可能还要增加一个timeout机制
         synchronized (lock) {
@@ -110,7 +108,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
             Log.d(TAG, "binder is null");
         }
 
-        if (serviceName.equals(waitingModule)) {
+        if (serviceName.equals(waitingServiceName)) {
             synchronized (lock) {
                 lock.notify();
             }
