@@ -26,6 +26,7 @@ public interface IServiceManager {
 
     //只能用于同进程通信,所以支持的返回值和参数类型都不受限制
     Object getLocalService(String serivceCanonicalName);
+    //<T> T getLocalService(String serivceCanonicalName);
 
     Object getRemoteService(Class serviceClass, Context context);
 

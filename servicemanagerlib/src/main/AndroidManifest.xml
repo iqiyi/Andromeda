@@ -20,7 +20,7 @@
             android:process=":apple"
             >
             <intent-filter>
-                <action android:name="qiyi://apple/process/stub"/>
+                <action android:name="qiyi.apple.process.stub"/>
             </intent-filter>
 
         </service>
@@ -32,7 +32,7 @@
             android:process=":plugin1"
             >
             <intent-filter>
-                <action android:name="qiyi://apple/process/stub"/>
+                <action android:name="qiyi.apple.process.stub"/>
             </intent-filter>
 
         </service>
@@ -44,7 +44,7 @@
             android:process=":plugin1"
             >
             <intent-filter>
-                <action android:name="qiyi://plugin1/process/stub"/>
+                <action android:name="qiyi.plugin1.process.stub"/>
             </intent-filter>
 
         </service>

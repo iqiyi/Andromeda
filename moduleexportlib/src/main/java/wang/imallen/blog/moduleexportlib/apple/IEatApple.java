@@ -1,11 +1,11 @@
 package wang.imallen.blog.moduleexportlib.apple;
 
-import wang.imallen.blog.serviceannotation.Local;
+//import wang.imallen.blog.serviceannotation.Local;
 
 /**
  * Created by wangallen on 2018/1/8.
  */
-@Local
+//@Local
 public interface IEatApple {
 
     void eatApple(int userId);
