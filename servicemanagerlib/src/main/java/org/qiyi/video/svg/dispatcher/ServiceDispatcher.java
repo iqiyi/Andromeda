@@ -75,18 +75,20 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
         BinderWrapper wrapper = new BinderWrapper(this);
         intent.putExtra(Constants.KEY_BINDER_WRAPPER, wrapper);
 
+        this.waitingServiceName = serviceName;
         //TODO Service的Context又去启动Service,会不会不行？
         context.startService(intent);
-        this.waitingServiceName = serviceName;
 
         //TODO 可能还要增加一个timeout机制
         synchronized (lock) {
             try {
-                lock.wait();
+                lock.wait(5000);
+                //lock.wait();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
+        Log.d(TAG, "now return to RemoteServiceManager in request process");
         //TODO 要增加判空操作
         return remoteBinderCache.get(serviceName);
     }
@@ -108,11 +110,25 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
             Log.d(TAG, "binder is null");
         }
 
+        Log.d(TAG, "serviceName:" + serviceName + ",waitingServiceName:" + waitingServiceName);
+
+        Log.d(TAG, "now try to notifyAll");
+
+        //TODO 为何lock.notify()没起作用?
+        synchronized (lock) {
+            lock.notifyAll();
+        }
+
+        //TODO 这样做是危险的，因为waitingServiceName可能改变，更好的情况是不是要有一个serviceName和lock的Map呢?
+        /*
         if (serviceName.equals(waitingServiceName)) {
             synchronized (lock) {
                 lock.notify();
             }
+        } else {
+            Log.d(TAG, "serviceName not equals waitingServiceName");
         }
+        */
     }
 
     @Override
