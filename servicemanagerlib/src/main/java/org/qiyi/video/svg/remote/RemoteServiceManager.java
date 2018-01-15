@@ -2,7 +2,6 @@ package org.qiyi.video.svg.remote;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
@@ -94,6 +93,7 @@ public class RemoteServiceManager extends IServiceRegister.Stub implements IRemo
             //TODO 这里是要改成获取更多的信息，比如类名，还是改成调用AsInterfaceHelper呢?
             //TODO 好像对于插件只能是通过反射来做，所以还是要获取实现类的完整名称,所以需要两者结合的方式! 而且注意这个是不能缓存的，因为你不确定当前这个调用是否一定跟服务端在不同的进程!
             IBinder binder = serviceDispatcherProxy.getTargetBinder(serviceName);
+            Log.d(TAG, "get IBinder from ServiceDispatcher");
             remoteBinderCache.put(serviceName, binder);
             return binder;
         } catch (RemoteException ex) {

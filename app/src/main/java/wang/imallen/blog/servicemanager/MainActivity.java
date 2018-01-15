@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void useLocalService() {
-        IEatApple eatApple =  ServiceManager.getInstance().getLocalService(Constants.APPLE_MODULE);
+        IEatApple eatApple =  (IEatApple)ServiceManager.getInstance().getLocalService(Constants.APPLE_MODULE);
         if (eatApple != null) {
             eatApple.eatApple(23);
         }else{

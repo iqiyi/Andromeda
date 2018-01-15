@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-def lib_version="0.0.7"
+def lib_version="0.1.0"
 
 android {
     compileSdkVersion 26
@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 2
+        versionCode 10
         versionName "$lib_version"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
