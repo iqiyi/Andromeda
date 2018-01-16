@@ -22,8 +22,21 @@ public class Constants {
 
     //public static final String PLUGIN1_PROCESS_SERVICE_ACTION="qiyi://plugin1/process/stub";
 
-    public static final String APPLE_PROCESS_SEVICE_ACTION ="qiyi.apple.process.stub";
+    public static final String APPLE_PROCESS_SEVICE_ACTION = "qiyi.apple.process.stub";
 
-    public static final String PLUGIN1_PROCESS_SERVICE_ACTION="qiyi.plugin1.process.stub";
+    public static final String PLUGIN1_PROCESS_SERVICE_ACTION = "qiyi.plugin1.process.stub";
+
+    ////////////////////////////
+    public static final String DISPATCH_ACTION = "org.qiyi.video.svg.dispatcher";
+
+    public static final String KEY_DISPATHCER_REGISTER_WRAPPER = "KeyDispatcherRegisterWrapper";
+
+    public static final String KEY_BUSINESS_BINDER_WRAPPER = "KeyBusinessBinder";
+    //public static final String KEY_MESSENGER_BINDER_WRAPPER = "KeyMessengerBinder";
+
+    public static final String KEY_POSTMAN_BINDER_WRAPPER = "KeyPostmanBinder";
+
+    //public static final String KEY_PID = "KeyPid";
+
 
 }

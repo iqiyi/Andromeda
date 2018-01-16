@@ -1,15 +1,12 @@
 package org.qiyi.video.svg.dispatcher;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import org.qiyi.video.svg.BinderWrapper;
 import org.qiyi.video.svg.IServiceDispatcher;
-import org.qiyi.video.svg.config.Constants;
-import org.qiyi.video.svg.helper.MatchPolicy;
+import org.qiyi.video.svg.log.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,7 +42,6 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
 
     private Map<String, IBinder> remoteBinderCache = new ConcurrentHashMap<>();
 
-
     private String waitingServiceName;
 
     private final Object lock = new Object();
@@ -54,6 +50,8 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
     public IBinder getTargetBinder(String serviceName) throws RemoteException {
         Log.d(TAG, "ServiceDispatcher-->getTargetBinder,serivceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         IBinder binder = remoteBinderCache.get(serviceName);
+        return binder;
+        /*
         if (binder != null) {
             return binder;
         }
@@ -91,6 +89,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
         Log.d(TAG, "now return to RemoteServiceManager in request process");
         //TODO 要增加判空操作
         return remoteBinderCache.get(serviceName);
+        */
     }
 
     @Override
@@ -101,34 +100,21 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
 
     //TODO 还要把binder与serviceName绑定在一起，才能找到对应的类调用asInterface()方法
     @Override
-    public void registerRemoteService(String serviceName, IBinder binder) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->registerRemoteService,serviceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+    public void registerRemoteService(final String serviceName, IBinder binder) throws RemoteException {
+        Log.d(TAG, "ServiceDispatcher-->registerStubService,serviceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         if (binder != null) {
+            binder.linkToDeath(new DeathRecipient() {
+                @Override
+                public void binderDied() {
+                    Logger.d("ServiceDispatcher-->binderDied,serviceName:" + serviceName);
+                    remoteBinderCache.remove(serviceName);
+                }
+            }, 0);
             remoteBinderCache.put(serviceName, binder);
             Log.d(TAG, "binder is not null");
         } else {
             Log.d(TAG, "binder is null");
         }
-
-        Log.d(TAG, "serviceName:" + serviceName + ",waitingServiceName:" + waitingServiceName);
-
-        Log.d(TAG, "now try to notifyAll");
-
-        //TODO 为何lock.notify()没起作用?
-        synchronized (lock) {
-            lock.notifyAll();
-        }
-
-        //TODO 这样做是危险的，因为waitingServiceName可能改变，更好的情况是不是要有一个serviceName和lock的Map呢?
-        /*
-        if (serviceName.equals(waitingServiceName)) {
-            synchronized (lock) {
-                lock.notify();
-            }
-        } else {
-            Log.d(TAG, "serviceName not equals waitingServiceName");
-        }
-        */
     }
 
     @Override

@@ -1,14 +1,15 @@
 package wang.imallen.blog.servicemanager;
 
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import org.qiyi.video.svg.ServiceManager;
-import org.qiyi.video.svg.config.Constants;
 
 import wang.imallen.blog.applemodule.DeliverAppleNative;
+import wang.imallen.blog.moduleexportlib.apple.DeliverAppleStub;
 import wang.imallen.blog.moduleexportlib.apple.IDeliverApple;
 
 public class AppleActivity extends AppCompatActivity {
@@ -23,7 +24,7 @@ public class AppleActivity extends AppCompatActivity {
         findViewById(R.id.registerStubServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServiceManager.getInstance().registerStubService(IDeliverApple.class,new DeliverAppleNative());
+                ServiceManager.getInstance().registerRemoteService(IDeliverApple.class, new DeliverAppleNative());
             }
         });
 
@@ -38,7 +39,8 @@ public class AppleActivity extends AppCompatActivity {
 
     private void useRemoteService() {
         //IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(Constants.APPLE_MODULE, this);
-        IDeliverApple deliverApple = (IDeliverApple) ServiceManager.getInstance().getRemoteService(IDeliverApple.class.getCanonicalName(), this);
+        IBinder deliverAppleBinder = ServiceManager.getInstance().getRemoteService(IDeliverApple.class.getCanonicalName());
+        IDeliverApple deliverApple = DeliverAppleStub.asInterface(deliverAppleBinder);
         if (deliverApple != null) {
             int appleNum = deliverApple.getApple(10);
             Log.d(TAG, "getApple() result:" + appleNum);

@@ -2,17 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="wang.imallen.blog.applemodule">
 
-    <application>
-        <service
-            android:name=".DeliverAppleService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":apple">
-            <intent-filter>
-                <action android:name="qiyi://apple/fetch" />
-            </intent-filter>
-
-        </service>
-    </application>
+    <application></application>
 
 </manifest>
