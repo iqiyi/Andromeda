@@ -1,6 +1,7 @@
 package org.qiyi.video.svg;
 
 import android.content.Context;
+import android.os.IBinder;
 import android.os.IInterface;
 
 import org.qiyi.video.svg.local.LocalServiceManager;
@@ -16,6 +17,10 @@ public class ServiceManager implements IServiceManager {
     private static final String TAG = "ServiceManager";
 
     private static ServiceManager sInstance;
+
+    public static void init(Context context) {
+        RemoteServiceManager.init(context);
+    }
 
     public static ServiceManager getInstance() {
         if (null == sInstance) {
@@ -53,16 +58,9 @@ public class ServiceManager implements IServiceManager {
     }
 
     @Override
-    public void registerStubService(Class serviceClass, IInterface stubImpl) {
-        RemoteServiceManager.getInstance().registerStubService(serviceClass.getCanonicalName(), stubImpl);
+    public void registerRemoteService(Class serviceClass, IBinder stubBinder) {
+        RemoteServiceManager.getInstance().registerStubService(serviceClass.getCanonicalName(), stubBinder);
     }
-
-    /*
-    @Override
-    public void registerRemoteService(String serviceCanonicalName, Binder stubImpl) {
-        RemoteServiceManager.getInstance().registerStubService(serviceCanonicalName, stubImpl);
-    }
-    */
 
     @Override
     public Object getLocalService(Class serviceClass) {
@@ -70,14 +68,15 @@ public class ServiceManager implements IServiceManager {
     }
 
     @Override
-    public Object getRemoteService(Class serviceClass, Context context) {
-        return RemoteServiceManager.getInstance().getRemoteService(serviceClass.getCanonicalName(), context);
+    public IBinder getRemoteService(Class serviceClass) {
+        return RemoteServiceManager.getInstance().getRemoteService(serviceClass.getCanonicalName());
     }
-
+    /*
     @Override
     public IInterface getStubService(String serviceCanonicalName) {
         return RemoteServiceManager.getInstance().getStubService(serviceCanonicalName);
     }
+    */
 
     @Override
     public Object getLocalService(String serviceCanonicalName) {
@@ -85,7 +84,7 @@ public class ServiceManager implements IServiceManager {
     }
 
     @Override
-    public Object getRemoteService(String serviceCanonicalName, Context context) {
-        return RemoteServiceManager.getInstance().getRemoteService(serviceCanonicalName, context);
+    public IBinder getRemoteService(String serviceCanonicalName) {
+        return RemoteServiceManager.getInstance().getRemoteService(serviceCanonicalName);
     }
 }

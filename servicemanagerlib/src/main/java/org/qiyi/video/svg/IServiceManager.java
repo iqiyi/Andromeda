@@ -1,6 +1,6 @@
 package org.qiyi.video.svg;
 
-import android.content.Context;
+import android.os.IBinder;
 import android.os.IInterface;
 
 /**
@@ -17,10 +17,10 @@ public interface IServiceManager {
 
     void unregisterLocalService(String serviceName);
 
-    void registerStubService(Class serviceClass, IInterface stubImpl);
+    void registerRemoteService(Class serviceClass, IBinder stubBinder);
 
     //TODO 不仅要支持懒加载，也要支持业务方主动注册!
-    //void registerRemoteService(String serivceCanonicalName, Binder stubImpl);
+    //void registerStubService(String serivceCanonicalName, Binder stubImpl);
 
     Object getLocalService(Class serviceClass);
 
@@ -28,12 +28,12 @@ public interface IServiceManager {
     Object getLocalService(String serivceCanonicalName);
     //<T> T getLocalService(String serivceCanonicalName);
 
-    Object getRemoteService(Class serviceClass, Context context);
+    IBinder getRemoteService(Class serviceClass);
 
-    IInterface getStubService(String serviceCanonicalName);
+    //IInterface getStubService(String serviceCanonicalName);
 
     //TODO 是不是改成apiCanonicalName更不容易引起误解呢?
     //既可用于IPC,也可用于同一个进程通信,所以返回值和参数类型受AIDL的限制
-    Object getRemoteService(String serviceCanonicalName, Context context);
+    IBinder getRemoteService(String serviceCanonicalName);
 
 }

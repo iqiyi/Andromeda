@@ -29,6 +29,7 @@ public class CommuStubService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand,pid:" + android.os.Process.myPid() + ",action:" + intent.getAction() + ",serviceName:" + intent.getStringExtra(Constants.KEY_SERVICE_NAME));
+        /*
         //if (Constants.APPLE_PROCESS_SEVICE_ACTION.equals(intent.getAction())) {
             BinderWrapper binderWrapper = intent.getParcelableExtra(Constants.KEY_BINDER_WRAPPER);
             IBinder binder = binderWrapper.getBinder();
@@ -54,6 +55,7 @@ public class CommuStubService extends Service {
                 }
             }
         //}
+        */
 
         return super.onStartCommand(intent, flags, startId);
     }

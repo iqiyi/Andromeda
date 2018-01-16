@@ -1,7 +1,6 @@
 package org.qiyi.video.svg.remote;
 
-import android.content.Context;
-import android.os.Binder;
+import android.os.IBinder;
 import android.os.IInterface;
 
 /**
@@ -10,12 +9,10 @@ import android.os.IInterface;
 
 public interface IRemoteServiceManager {
 
-    Object getRemoteService(String serviceCanonicalName, Context context);
+    IBinder getRemoteService(String serviceCanonicalName);
 
     //TODO 这个可能要等事件通知机制做好之后才能实现，因为需要通知所有用到的Client
-    void registerStubService(String serviceCanonicalName, IInterface stubImpl);
-
-    IInterface getStubService(String serviceCanonicalName);
-    //void unregisterService(String module);
+    //其实是registerStubService
+    void registerStubService(String serviceCanonicalName, IBinder stubBinder);
 
 }

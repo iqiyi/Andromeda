@@ -15,7 +15,7 @@ public abstract class DeliverAppleStub extends Binder implements IDeliverApple, 
     public static final int TRANSACTION_getApple = 1;
     public static final int TRANSACTION_sendApple = 2;
 
-    public static final String DESCRIPTOR = DeliverAppleStub.class.getCanonicalName();
+    public static final String DESCRIPTOR = IDeliverApple.class.getCanonicalName();
 
     public static IDeliverApple asInterface(IBinder obj) {
         if (obj == null) {
@@ -26,6 +26,11 @@ public abstract class DeliverAppleStub extends Binder implements IDeliverApple, 
             return (IDeliverApple) iin;
         }
         return new DeliverAppleProxy(obj);
+    }
+
+    public DeliverAppleStub(){
+        //这个调用非常重要，不然会出现空指针错误!
+        this.attachInterface(this,DESCRIPTOR);
     }
 
     @Override
