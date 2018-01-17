@@ -12,6 +12,11 @@
         android:text="Register stub service"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/registerBuyAppleServiceBtn"
+        android:text="Register buy apple service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/useRemoteServiceBtn"

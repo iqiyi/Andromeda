@@ -18,6 +18,11 @@
         android:text="Use remote service"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/useBuyAppleServiceBtn"
+        android:text="Use buy apple service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/gotoAppleActivityBtn"
