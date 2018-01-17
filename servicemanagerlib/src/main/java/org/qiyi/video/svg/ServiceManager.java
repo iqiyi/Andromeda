@@ -2,7 +2,6 @@ package org.qiyi.video.svg;
 
 import android.content.Context;
 import android.os.IBinder;
-import android.os.IInterface;
 
 import org.qiyi.video.svg.local.LocalServiceManager;
 import org.qiyi.video.svg.remote.RemoteServiceManager;
@@ -80,6 +79,30 @@ public class ServiceManager implements IServiceManager {
 
     @Override
     public Object getLocalService(String serviceCanonicalName) {
+
+        /*
+        IBinder calculateBinder=null;
+        ICalculate calculate=ICalculate.Stub.asInterface(calculateBinder);
+        IPCCallback.Stub callback=new IPCCallback.Stub() {
+            @Override
+            public void onSucceed(String result) throws RemoteException {
+                //Binder线程中回调
+
+            }
+
+            @Override
+            public void onFail(String reason) throws RemoteException {
+
+            }
+        };
+        try{
+            calculate.sum(1,2,callback);
+        }catch(RemoteException ex){
+
+        }
+        */
+
+
         return LocalServiceManager.getInstance().getLocalService(serviceCanonicalName);
     }
 
@@ -87,4 +110,5 @@ public class ServiceManager implements IServiceManager {
     public IBinder getRemoteService(String serviceCanonicalName) {
         return RemoteServiceManager.getInstance().getRemoteService(serviceCanonicalName);
     }
+
 }
