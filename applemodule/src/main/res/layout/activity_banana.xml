@@ -5,17 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="wang.imallen.blog.servicemanager.MainActivity">
+    >
 
     <Button
-        android:id="@+id/showLocalServiceBtn"
-        android:text="本地服务注册和使用"
+        android:id="@+id/useRemoteServiceBtn1"
+        android:text="在:banana进程使用远程服务(buyAppleInShop)"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
     <Button
-        android:id="@+id/showRemoteServiceBtn"
-        android:text="远程服务注册和使用"
+        android:id="@+id/useRemoteServiceBtn2"
+        android:text="在:banana进程使用远程服务(buyAppleOnNet)"
+        android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

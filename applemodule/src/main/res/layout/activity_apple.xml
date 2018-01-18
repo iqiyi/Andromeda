@@ -5,17 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="wang.imallen.blog.servicemanager.MainActivity">
+    >
 
     <Button
-        android:id="@+id/showLocalServiceBtn"
-        android:text="本地服务注册和使用"
+        android:id="@+id/registerRemoteServiceBtn"
+        android:text="注册远程服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
     <Button
-        android:id="@+id/showRemoteServiceBtn"
-        android:text="远程服务注册和使用"
+        android:id="@+id/useRemoteInSameProcessBtn"
+        android:text="在同进程使用远程服务"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/useRemoteInOtherProcessBtn"
+        android:text="跳转到其他进程使用远程服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="wang.imallen.blog.applemodule">
 
-    <application></application>
+    <application>
+        <activity
+            android:name=".RemoteServiceDemo"
+            android:process=":apple" />
+        <activity
+            android:name=".LocalServiceDemo"
+            android:process=":apple" />
+        <activity android:name=".BananaActivity"
+            android:process=":banana"
+            ></activity>
+    </application>
 
 </manifest>
