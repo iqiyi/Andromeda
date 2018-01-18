@@ -4,23 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="wang.imallen.blog.servicemanager.AppleActivity">
+    android:orientation="vertical">
 
     <Button
-        android:id="@+id/registerStubServiceBtn"
-        android:text="Register stub service"
+        android:id="@+id/registerLocalServiceBtn"
+        android:text="注册本地服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
-        android:id="@+id/registerBuyAppleServiceBtn"
-        android:text="Register buy apple service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/useRemoteServiceBtn"
-        android:text="Use remote service in same process"
+        android:id="@+id/useLocalServiceBtn"
+        android:text="使用本地服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
