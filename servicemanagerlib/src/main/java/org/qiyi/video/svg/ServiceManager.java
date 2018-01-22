@@ -6,6 +6,8 @@ import android.os.IBinder;
 import org.qiyi.video.svg.local.LocalServiceManager;
 import org.qiyi.video.svg.remote.RemoteServiceManager;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Created by wangallen on 2018/1/8.
  */
@@ -17,8 +19,14 @@ public class ServiceManager implements IServiceManager {
 
     private static ServiceManager sInstance;
 
+    private static AtomicBoolean initFlag = new AtomicBoolean(false);
+
     public static void init(Context context) {
-        RemoteServiceManager.init(context);
+        if (initFlag.get() || context == null) {
+            return;
+        }
+        RemoteServiceManager.init(context.getApplicationContext());
+        initFlag.set(true);
     }
 
     public static ServiceManager getInstance() {
@@ -41,10 +49,9 @@ public class ServiceManager implements IServiceManager {
     }
 
     @Override
-    public void registerLocalService(String module, Object serviceImpl) {
-        LocalServiceManager.getInstance().registerService(module, serviceImpl);
+    public void registerLocalService(String serviceCanonicalName, Object serviceImpl) {
+        LocalServiceManager.getInstance().registerService(serviceCanonicalName, serviceImpl);
     }
-
 
     @Override
     public void unregisterLocalService(Class serviceClass) {
@@ -62,6 +69,11 @@ public class ServiceManager implements IServiceManager {
     }
 
     @Override
+    public void registerRemoteService(String serviceCanonicalName, IBinder stubBinder) {
+        RemoteServiceManager.getInstance().registerStubService(serviceCanonicalName, stubBinder);
+    }
+
+    @Override
     public Object getLocalService(Class serviceClass) {
         return LocalServiceManager.getInstance().getLocalService(serviceClass.getCanonicalName());
     }
@@ -70,38 +82,9 @@ public class ServiceManager implements IServiceManager {
     public IBinder getRemoteService(Class serviceClass) {
         return RemoteServiceManager.getInstance().getRemoteService(serviceClass.getCanonicalName());
     }
-    /*
-    @Override
-    public IInterface getStubService(String serviceCanonicalName) {
-        return RemoteServiceManager.getInstance().getStubService(serviceCanonicalName);
-    }
-    */
 
     @Override
     public Object getLocalService(String serviceCanonicalName) {
-
-        /*
-        IBinder calculateBinder=null;
-        ICalculate calculate=ICalculate.Stub.asInterface(calculateBinder);
-        IPCCallback.Stub callback=new IPCCallback.Stub() {
-            @Override
-            public void onSucceed(String result) throws RemoteException {
-                //Binder线程中回调
-
-            }
-
-            @Override
-            public void onFail(String reason) throws RemoteException {
-
-            }
-        };
-        try{
-            calculate.sum(1,2,callback);
-        }catch(RemoteException ex){
-
-        }
-        */
-
 
         return LocalServiceManager.getInstance().getLocalService(serviceCanonicalName);
     }

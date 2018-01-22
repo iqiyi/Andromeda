@@ -100,17 +100,17 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
 
     //TODO 还要把binder与serviceName绑定在一起，才能找到对应的类调用asInterface()方法
     @Override
-    public void registerRemoteService(final String serviceName, IBinder binder) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->registerStubService,serviceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+    public void registerRemoteService(final String serviceCanonicalName, IBinder binder) throws RemoteException {
+        Log.d(TAG, "ServiceDispatcher-->registerStubService,serviceCanonicalName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         if (binder != null) {
             binder.linkToDeath(new DeathRecipient() {
                 @Override
                 public void binderDied() {
-                    Logger.d("ServiceDispatcher-->binderDied,serviceName:" + serviceName);
-                    remoteBinderCache.remove(serviceName);
+                    Logger.d("ServiceDispatcher-->binderDied,serviceCanonicalName:" + serviceCanonicalName);
+                    remoteBinderCache.remove(serviceCanonicalName);
                 }
             }, 0);
-            remoteBinderCache.put(serviceName, binder);
+            remoteBinderCache.put(serviceCanonicalName, binder);
             Log.d(TAG, "binder is not null");
         } else {
             Log.d(TAG, "binder is null");
@@ -118,7 +118,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
     }
 
     @Override
-    public void unregisterRemoteService(String module) throws RemoteException {
-        remoteBinderCache.remove(module);
+    public void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
+        remoteBinderCache.remove(serviceCanonicalName);
     }
 }

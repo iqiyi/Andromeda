@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import org.qiyi.video.svg.ServiceManager;
 import org.qiyi.video.svg.callback.BaseCallback;
+import org.qiyi.video.svg.log.Logger;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 
@@ -64,12 +65,14 @@ public class BananaActivity extends AppCompatActivity {
                     @Override
                     public void onSucceed(Bundle result) {
                         int appleNum = result.getInt("Result", 0);
+                        Logger.d("got remote service with callback in other process(:banana),appleNum:" + appleNum);
                         Toast.makeText(BananaActivity.this,
                                 "got remote service with callback in other process(:banana),appleNum:" + appleNum, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailed(String reason) {
+                        Logger.e("buyAppleOnNet failed,reason:" + reason);
                         Toast.makeText(BananaActivity.this, "got remote service failed with callback!", Toast.LENGTH_SHORT).show();
                     }
                 });

@@ -23,7 +23,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance());
+                ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
                 Toast.makeText(RemoteServiceDemo.this, "just registered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });
