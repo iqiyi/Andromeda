@@ -14,16 +14,16 @@ ServiceManager的优势主要体现在以下几个方面:
 # 接入方式
 首先添加maven路径:
 ```groovy
-allprojects {
-    repositories {
-        google()
-        jcenter()
-
-        maven{
-            url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'
+    allprojects {
+        repositories {
+            google()
+            jcenter()
+    
+            maven{
+                url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'
+            }
         }
     }
-}
 ```
 其实是添加gradle依赖:
 ```groovy
@@ -72,17 +72,10 @@ allprojects {
 还有一种方法是通过接口的全路径名获取，如下:
 ```java
     ICheckApple checkApple = (ICheckApple) ServiceManager.getInstance().getLocalService(ICheckApple.class.getCanonicalName());
-    if (checkApple != null) {
-         int calories = checkApple.getAppleCalories(3);
-         String desc = checkApple.getAppleDescription(2);
-         Toast.makeText(LocalServiceDemo.this,
-          "got ICheckApple service,calories:" + calories + ",description:" + desc, Toast.LENGTH_SHORT).show();
-         }
 ```
 与注册类似，仍然不推荐使用如下方式来获取，除非双方始终协商好使用一个唯一的key（但是这样对于新的调用方或者新加入的开发者不友好，容易入坑):
 ```java
     ICheckApple checkApple = (ICheckApple) ServiceManager.getInstance().getLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple");
-...
 ```
 具体使用，可以察看applemodule中LocalServiceDemo这个Activity。如果还有不懂的，可以在热聊中联系**王龙海**进行询问。
 
@@ -191,10 +184,10 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 其中的buyAppleOnNet()方法就是耗时操作，所以需要在定义时加上IPCCallback,注意这里不能是自己随便定义的Callback接口，否则aidl编译通不过。
 其中的IPCCallback本身也是一个aidl接口，如下:
 ```aidl
-interface IPCCallback {
-   void onSuccess(in Bundle result);
-   void onFail(String reason);
-}
+    interface IPCCallback {
+       void onSuccess(in Bundle result);
+       void onFail(String reason);
+    }
 ```
 对于IPCCallback的调用，固然也可以用由调用者直接继承IPCCallback.Stub类，实现相关接口，如:
 ```java
