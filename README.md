@@ -1,9 +1,13 @@
-# ServiceManager
+# 项目简介
 
 ServiceManager设计的目的是让组件间通信如同调用Java Interface一样简单。
 目前ServiceManager支持本地服务的注册与使用，远程服务的注册与使用。
 **之所以分成本地服务和远程服务这两种，是由于本地服务的接口可以传递各种类型的参数和返回值，而远程接口则受AIDL的限制，参数和返回值只能是基本类型或者实现了Parcelable接口的自定义类型。**
 即服务方只要注册了接口和实现，调用方就可通过ServiceManager调用到。
+ServiceManager的优势主要体现在以下几个方面:
++ 同步调用，不需要bindService()的方法来获取对方的IBinder,只要服务提供方注册了服务，任何调用方都可以获取到，无需异步连接
++ 采用"接口+数据结构"的方式来实现组件间通信，这种方式相比协议的方式在于实现简单，使用方便，无需定义大量的java bean, 维护也更简单
++ 天然的互操作性，同步调用、生命周期自动管理、接口的版本兼容性管理
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
 
@@ -23,7 +27,7 @@ allprojects {
 ```
 其实是添加gradle依赖:
 ```groovy
-compile 'org.qiyi.video.svg:svglib:0.3.0'
+    compile 'org.qiyi.video.svg:svglib:0.3.0'
 ```
 **注:这里具体是采用implementation,api,compileOnly中的哪一种，需要结合具体的使用场景，比如如果是在一个独立的App中使用，则使用api; 
 反之，如果是在一个组件中使用(比如爱奇艺的Download组件),那么使用compileOnly即可。**
@@ -33,7 +37,7 @@ compile 'org.qiyi.video.svg:svglib:0.3.0'
 ## 初始化
 最好是在自己进程的Application中进行初始化(每个进程都有自己的ServiceManager对象)，代码如下:
 ```java
-ServiceManager.init(Context);
+    ServiceManager.init(Context);
 ```
 如果不能在Application中进行初始化(比如没有自己的Application),那么至少要保证在使用之前进行初始化。
 **另外，不用担心ServiceManager多次初始化的问题，在任一进程中，只有首次初始化有效，后面的初始化会自动忽略**。
@@ -48,28 +52,22 @@ ServiceManager.init(Context);
 ### 本地接口注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
 ```java
-ServiceManager.getInstance().registerLocalService(ICheckApple.class.getCanonicalName(),CheckAppleImpl.getInstance());
+    ServiceManager.getInstance().registerLocalService(ICheckApple.class.getCanonicalName(),CheckAppleImpl.getInstance());
 ```
 还有一种是调用接口class和接口的实现，其实在内部也是获取了它的全路径名,如下:
 ```java
-ServiceManager.getInstance().registerLocalService(ICheckApple.class,CheckAppleImpl.getInstance());
+    ServiceManager.getInstance().registerLocalService(ICheckApple.class,CheckAppleImpl.getInstance());
 ```
 其中ICheckApple.class为接口，虽然也可以采用下面这种方式注册:
 ```java
-ServiceManager.getInstance().registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
+    ServiceManager.getInstance().registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
 ```
 **但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上ServiceManager只需要保证有一个唯一的key与该服务对应即可).
 
 ### 本地接口使用
 注册完之后，与服务提供方同进程的任何模块都可以调用该服务,获取服务的方式与注册对应，也有两种方式，一种是通过接口的class获取,如下:
 ```java
-ICheckApple checkApple = (ICheckApple) ServiceManager.getInstance().getLocalService(ICheckApple.class);
-if (checkApple != null) {
-     int calories = checkApple.getAppleCalories(3);
-     String desc = checkApple.getAppleDescription(2);
-     Toast.makeText(LocalServiceDemo.this,
-      "got ICheckApple service,calories:" + calories + ",description:" + desc, Toast.LENGTH_SHORT).show();
-     }
+    ICheckApple checkApple = (ICheckApple) ServiceManager.getInstance().getLocalService(ICheckApple.class);
 ```
 还有一种方法是通过接口的全路径名获取，如下:
 ```java
@@ -129,38 +127,12 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 
     @Override
     public int buyAppleInShop(int userId) throws RemoteException {
-        Logger.d("BuyAppleImpl-->buyAppleInShop,userId:" + userId);
-        if (userId == 10) {
-            return 20;
-        } else if (userId == 20) {
-            return 30;
-        } else {
-            return -1;
-        }
+       ...
     }
 
     @Override
     public void buyAppleOnNet(int userId, IPCCallback callback) throws RemoteException {
-        Logger.d("BuyAppleImpl-->buyAppleOnNet,userId:" + userId);
-
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-
-
-        Bundle result = new Bundle();
-        if (userId == 10) {
-            result.putInt("Result", 20);
-            callback.onSuccess(result);
-        } else if (userId == 20) {
-            result.putInt("Result", 30);
-            callback.onSuccess(result);
-        } else {
-            callback.onFail("Sorry, u are not authorized!");
-        }
+       ...
     }
 
 }
@@ -236,16 +208,12 @@ interface IPCCallback {
                 buyApple.buyAppleOnNet(10, new IPCCallback.Stub() {
                     @Override
                     public void onSuccess(Bundle result) throws RemoteException {
-                        int appleNum = result.getInt("Result", 0);
-                        Logger.d("got remote service with callback in other process(:banana),appleNum:" + appleNum);
-                        Toast.makeText(BananaActivity.this,
-                                "got remote service with callback in other process(:banana),appleNum:" + appleNum, Toast.LENGTH_SHORT).show();
+                       ...
                     }
 
                     @Override
                     public void onFail(String reason) throws RemoteException {
-                        Logger.e("buyAppleOnNet failed,reason:" + reason);
-                        Toast.makeText(BananaActivity.this, "got remote service failed with callback!", Toast.LENGTH_SHORT).show();
+                       ...
                     }
                 });
 
@@ -267,16 +235,12 @@ interface IPCCallback {
                 buyApple.buyAppleOnNet(10, new BaseCallback() {
                     @Override
                     public void onSucceed(Bundle result) {
-                        int appleNum = result.getInt("Result", 0);
-                        Logger.d("got remote service with callback in other process(:banana),appleNum:" + appleNum);
-                        Toast.makeText(BananaActivity.this,
-                                "got remote service with callback in other process(:banana),appleNum:" + appleNum, Toast.LENGTH_SHORT).show();
+                       ...
                     }
 
                     @Override
                     public void onFailed(String reason) {
-                        Logger.e("buyAppleOnNet failed,reason:" + reason);
-                        Toast.makeText(BananaActivity.this, "got remote service failed with callback!", Toast.LENGTH_SHORT).show();
+                        ...
                     }
                 });
 
