@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-def lib_version="0.2.0"
+def lib_version="0.3.0"
 
 android {
     compileSdkVersion 26
@@ -48,12 +48,26 @@ android {
 
 }
 
+/* //上传到本地maven
 uploadArchives{
     repositories.mavenDeployer{
         repository(url:LOCAL_REPO_URL)
         pom.groupId=GROUP_ID
         pom.artifactId=ARTIFACTID
         pom.version="$lib_version"
+    }
+}
+*/
+
+uploadArchives{
+    repositories.mavenDeployer{
+        repository(url:NEXUS_REPO_URL){
+            authentication(userName:"mcg-arch",password:"123456")
+        }
+        pom.groupId="org.qiyi.video.svg"
+        pom.artifactId="svglib"
+        pom.version="$lib_version"
+
     }
 }
 

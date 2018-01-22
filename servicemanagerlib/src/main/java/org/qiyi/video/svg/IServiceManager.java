@@ -1,7 +1,6 @@
 package org.qiyi.video.svg;
 
 import android.os.IBinder;
-import android.os.IInterface;
 
 /**
  * Created by wangallen on 2018/1/8.
@@ -19,6 +18,7 @@ public interface IServiceManager {
 
     void registerRemoteService(Class serviceClass, IBinder stubBinder);
 
+    void registerRemoteService(String serviceCanonicalName, IBinder stubBinder);
     //TODO 不仅要支持懒加载，也要支持业务方主动注册!
     //void registerStubService(String serivceCanonicalName, Binder stubImpl);
 

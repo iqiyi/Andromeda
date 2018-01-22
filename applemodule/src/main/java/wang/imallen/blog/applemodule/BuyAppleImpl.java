@@ -45,6 +45,15 @@ public class BuyAppleImpl extends IBuyApple.Stub {
     @Override
     public void buyAppleOnNet(int userId, IPCCallback callback) throws RemoteException {
         Logger.d("BuyAppleImpl-->buyAppleOnNet,userId:" + userId);
+
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+
+
         Bundle result = new Bundle();
         if (userId == 10) {
             result.putInt("Result", 20);

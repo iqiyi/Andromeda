@@ -136,15 +136,7 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
         //TODO 这部分逻辑是不是要先去掉呢?
         synchronized (lock) {
             if (null == serviceDispatcherProxy) {
-                /*
-                BinderWrapper wrapper = new BinderWrapper(this.asBinder());
-                Intent intent = new Intent(context, RemoteGuardService.class);
-                intent.setAction(RemoteGuardService.BIND_U_SELF);
-                intent.putExtra(Constants.KEY_BINDER_WRAPPER, wrapper);
-                context.startService(intent);
-                */
                 sendRegisterInfo();
-
                 try {
                     lock.wait(3000);
                 } catch (InterruptedException ex) {
@@ -187,7 +179,6 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
                 ex.printStackTrace();
             }
         }
-        //TODO 要注册到ServiceDispatcher中去
     }
 
     ///////////////////
