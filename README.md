@@ -30,7 +30,7 @@ compile 'org.qiyi.video.svg:svglib:0.3.0'
 
 目前对外的接口是ServiceManager，业务方接入只需要跟这个类打交道。
 
-##初始化
+## 初始化
 最好是在自己进程的Application中进行初始化(每个进程都有自己的ServiceManager对象)，代码如下:
 ```java
 ServiceManager.init(Context);
@@ -38,14 +38,14 @@ ServiceManager.init(Context);
 如果不能在Application中进行初始化(比如没有自己的Application),那么至少要保证在使用之前进行初始化。
 **另外，不用担心ServiceManager多次初始化的问题，在任一进程中，只有首次初始化有效，后面的初始化会自动忽略**。
 
-##本地服务的注册与使用
-###本地接口定义与实现
+## 本地服务的注册与使用
+### 本地接口定义与实现
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
 + 接口需要就是要暴露出去，使其对项目中的所有模块都可见。
 **至于具体的打包方式，目前还在实现中，在Demo阶段先特殊处理。**
 + 接口的实现最好采用单例模式，否则后面的实现类会将全面的替换，从而可能出现
 
-###本地接口注册
+### 本地接口注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
 ```java
 ServiceManager.getInstance().registerLocalService(ICheckApple.class.getCanonicalName(),CheckAppleImpl.getInstance());
@@ -60,7 +60,7 @@ ServiceManager.getInstance().registerLocalService("wang.imallen.blog.moduleexpor
 ```
 **但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上ServiceManager只需要保证有一个唯一的key与该服务对应即可).
 
-###本地接口使用
+### 本地接口使用
 注册完之后，与服务提供方同进程的任何模块都可以调用该服务,获取服务的方式与注册对应，也有两种方式，一种是通过接口的class获取,如下:
 ```java
 ICheckApple checkApple = (ICheckApple) ServiceManager.getInstance().getLocalService(ICheckApple.class);
@@ -88,12 +88,12 @@ if (checkApple != null) {
 ```
 具体使用，可以察看applemodule中LocalServiceDemo这个Activity。如果还有不懂的，可以在热聊中联系**王龙海**进行询问。
 
-###本地接口的Callback问题
+### 本地接口的Callback问题
 如果是耗时操作，由本地接口自己定义Callback接口，调用方在调用接口时传入Callback对象即可。
 
-##远程服务的注册与使用
+## 远程服务的注册与使用
 远程服务的注册与使用略微麻烦一点，因为需要像实现AIDL Service那样定义aidl接口。
-###远程接口的定义与实现
+### 远程接口的定义与实现
 定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块。比如定义一个购买苹果的服务接口:
 ```aidl
     package wang.imallen.blog.moduleexportlib.apple;
@@ -167,7 +167,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 
 ```
 
-###远程接口的注册
+### 远程接口的注册
 与本地接口的注册略有不同，远程接口注册的是继承了Stub类的IBinder部分，注册方式有传递接口Class和接口全路径名两种，如下:
 ```java
     ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
@@ -183,7 +183,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
     ServiceManager.getInstance().registerRemoteService(IBuyApple.class.getCanonicalName(),BuyAppleImpl.getInstance().asBinder());
 ```
 
-###远程接口的使用
+### 远程接口的使用
 由于跨进程只能传递IBinder,所以只能获取到远程服务的IBinder之后，再调用XX.Stub.asInterface()获取到它的代理,如下:
 ```java
         //此处也可以是IBinder buyAppleBinder = ServiceManager.getInstance().getRemoteService(IBuyApple.class.getCanonicalName);
@@ -204,7 +204,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 ```
 值得注意的是，**远程服务其实既可在其他进程中调用，也可以在同进程中被调用，当在同一进程时，虽然调用方式一样，但其实会自动降级为进程内普通的接口调用，这个不需要开发者做额外的处理.**
 
-###远程接口的Callback问题
+### 远程接口的Callback问题
 考虑到远程服务也可能有耗时操作，所以需要支持远程调用的Callback功能。
 对于有耗时操作的远程服务，定义接口时需要借助lib中的IPCCallback,如下:
 ```aidl
