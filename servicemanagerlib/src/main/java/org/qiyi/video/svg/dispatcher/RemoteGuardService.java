@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.qiyi.video.svg.dispatcher.service.ServiceDispatcher;
+
 
 //TODO 在主进程启动时是调用bindService()还是startService()来将RemoteServiceManager注册到主进程呢?
 public class RemoteGuardService extends Service {

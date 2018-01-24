@@ -3,6 +3,8 @@ package org.qiyi.video.svg;
 import android.content.Context;
 import android.os.IBinder;
 
+import org.qiyi.video.svg.event.Event;
+import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.local.LocalServiceManager;
 import org.qiyi.video.svg.remote.RemoteServiceManager;
 
@@ -94,4 +96,20 @@ public class ServiceManager implements IServiceManager {
         return RemoteServiceManager.getInstance().getRemoteService(serviceCanonicalName);
     }
 
+    //TODO 如果同时对多个Event感兴趣呢？是不是就要注册多次?
+
+    @Override
+    public void subscribeEvent(String name, EventListener listener) {
+        RemoteServiceManager.getInstance().subscribeEvent(name, listener);
+    }
+
+    @Override
+    public void unsubscribeEvent(EventListener listener) {
+        RemoteServiceManager.getInstance().unsubscribeEvent(listener);
+    }
+
+    @Override
+    public void publishEvent(Event event) {
+
+    }
 }

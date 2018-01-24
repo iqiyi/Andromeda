@@ -5,16 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.qiyi.video.svg.BinderWrapper;
-import org.qiyi.video.svg.IDispatcherRegister;
-import org.qiyi.video.svg.IServiceDispatcher;
+import org.qiyi.video.svg.IDispatcher;
+import org.qiyi.video.svg.IRemoteTransfer;
 import org.qiyi.video.svg.config.Constants;
+import org.qiyi.video.svg.dispatcher.Dispatcher;
 import org.qiyi.video.svg.dispatcher.DispatcherService;
-import org.qiyi.video.svg.dispatcher.ServiceDispatcher;
+import org.qiyi.video.svg.event.Event;
+import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.log.Logger;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by wangallen on 2018/1/9.
  */
 //TODO 注意:所有startService()的地方都要加上try...catch,因为有些手机在后台如果startService()会抛出异常,比如Oppo
-public class RemoteServiceManager extends IDispatcherRegister.Stub implements IRemoteServiceManager {
+public class RemoteServiceManager extends IRemoteTransfer.Stub implements IRemoteServiceManager {
 
     private static final String TAG = "ServiceManager";
 
@@ -48,7 +55,8 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
 
     private Context context;
 
-    private IServiceDispatcher serviceDispatcherProxy;
+    //private IServiceDispatcher dispatcherProxy;
+    private IDispatcher dispatcherProxy;
 
     /**
      * 本地的Binder,需要给其他进程使用的,key为inteface的完整名称
@@ -60,6 +68,8 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
     private Map<String, IBinder> remoteBinderCache = new ConcurrentHashMap<>();
     private final Object lock = new Object();
 
+    //private Map<String,WeakReference<EventListener>>eventListeners=new ConcurrentHashMap<>();
+    private Map<String, List<WeakReference<EventListener>>> eventListeners = new HashMap<>();
 
     private RemoteServiceManager() {
     }
@@ -92,18 +102,19 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
 
     //让ServiceDispatcher注册到当前进程
     public void sendRegisterInfo() {
-        if(isMainProcess()){
+        if (isMainProcess()) {
             //KP 如果是主进程就走捷径,不然直接杀进程时会导致crash
-            serviceDispatcherProxy= ServiceDispatcher.getInstance(context);
+            dispatcherProxy = Dispatcher.getInstance(context);
             return;
         }
 
-        if (serviceDispatcherProxy == null) {
+        if (dispatcherProxy == null) {
             //后面考虑还是采用"has-a"的方式会更好
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
             Intent intent = new Intent(context, DispatcherService.class);
-            intent.setAction(Constants.DISPATCH_ACTION);
-            intent.putExtra(Constants.KEY_DISPATHCER_REGISTER_WRAPPER, wrapper);
+            intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
+            intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
+            intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
             context.startService(intent);
         }
     }
@@ -132,10 +143,9 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
             return remoteBinderCache.get(serviceName);
         }
 
-
         //TODO 这部分逻辑是不是要先去掉呢?
         synchronized (lock) {
-            if (null == serviceDispatcherProxy) {
+            if (null == dispatcherProxy) {
                 sendRegisterInfo();
                 try {
                     lock.wait(3000);
@@ -149,7 +159,7 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
         try {
             //TODO 这里是要改成获取更多的信息，比如类名，还是改成调用AsInterfaceHelper呢?
             //TODO 好像对于插件只能是通过反射来做，所以还是要获取实现类的完整名称,所以需要两者结合的方式! 而且注意这个是不能缓存的，因为你不确定当前这个调用是否一定跟服务端在不同的进程!
-            IBinder binder = serviceDispatcherProxy.getTargetBinder(serviceName);
+            IBinder binder = dispatcherProxy.getTargetBinder(serviceName);
             Log.d(TAG, "get IBinder from ServiceDispatcher");
             remoteBinderCache.put(serviceName, binder);
             return binder;
@@ -164,23 +174,73 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
     @Override
     public void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
         stubBinderCache.put(serviceCanonicalName, stubBinder);
-        if (serviceDispatcherProxy == null) {
+        if (dispatcherProxy == null) {
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
             Intent intent = new Intent(context, DispatcherService.class);
-            intent.setAction(Constants.DISPATCH_ACTION);
-            intent.putExtra(Constants.KEY_DISPATHCER_REGISTER_WRAPPER, wrapper);
+            intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
+            intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
             intent.putExtra(Constants.KEY_BUSINESS_BINDER_WRAPPER, new BinderWrapper(stubBinder));
             intent.putExtra(Constants.KEY_SERVICE_NAME, serviceCanonicalName);
+            intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
             context.startService(intent);
         } else {
             try {
-                serviceDispatcherProxy.registerRemoteService(serviceCanonicalName, stubBinder);
+                dispatcherProxy.registerRemoteService(serviceCanonicalName, stubBinder);
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
+    ///////////////start of event/////////////////////
+
+
+    @Override
+    public synchronized void subscribeEvent(String name, EventListener listener) {
+        if (TextUtils.isEmpty(name) || listener == null) {
+            return;
+        }
+        if (null == eventListeners.get(name)) {
+            List<WeakReference<EventListener>> list = new ArrayList<>();
+            eventListeners.put(name, list);
+        }
+        eventListeners.get(name).add(new WeakReference<>(listener));
+    }
+
+    @Override
+    public synchronized void unsubscribeEvent(EventListener listener) {
+        //TODO 直接遍历的话，效率会不会有点低?
+        for (Map.Entry<String, List<WeakReference<EventListener>>> entry : eventListeners.entrySet()) {
+            List<WeakReference<EventListener>> listeners = entry.getValue();
+            for (WeakReference<EventListener> weakRef : listeners) {
+                if (listener == weakRef) {
+                    listeners.remove(weakRef);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void publish(Event event) {
+        if (null == dispatcherProxy) {
+            BinderWrapper wrapper = new BinderWrapper(this.asBinder());
+            Intent intent = new Intent(context, DispatcherService.class);
+            intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
+            intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
+            intent.putExtra(Constants.KEY_EVENT, event);
+            intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
+            context.startService(intent);
+        } else {
+            try {
+                dispatcherProxy.publish(event);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    ////////////////end of event///////////////////////////
     ///////////////////
     @Override
     public void registerDispatcher(IBinder dispatcherBinder) throws RemoteException {
@@ -189,13 +249,30 @@ public class RemoteServiceManager extends IDispatcherRegister.Stub implements IR
             @Override
             public void binderDied() {
                 Logger.d("RemoteServiceManager-->dispatcherBinder binderDied");
-                serviceDispatcherProxy = null;
+                dispatcherProxy = null;
             }
         }, 0);
         //这里实现IServiceRegister仅仅是为了给RemoteServiceManager提供注册到当前进程的机会
-        serviceDispatcherProxy = IServiceDispatcher.Stub.asInterface(dispatcherBinder);
+        dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
         synchronized (lock) {
             lock.notify();
         }
+
     }
+
+    @Override
+    public void notify(Event event) throws RemoteException {
+        List<WeakReference<EventListener>> listeners = eventListeners.get(event.getName());
+
+        for (int i = listeners.size() - 1; i >= 0; --i) {
+            WeakReference<EventListener> listenerRef = listeners.get(i);
+            if (listenerRef.get() == null) {
+                listeners.remove(i);
+            } else {
+                listenerRef.get().onNotify(event);
+            }
+        }
+
+    }
+
 }
