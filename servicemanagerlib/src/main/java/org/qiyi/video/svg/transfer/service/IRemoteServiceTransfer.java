@@ -1,13 +1,12 @@
-package org.qiyi.video.svg.remote;
+package org.qiyi.video.svg.transfer.service;
 
 import android.os.IBinder;
-import android.os.IInterface;
 
 /**
  * Created by wangallen on 2018/1/9.
  */
 
-public interface IRemoteServiceManager {
+public interface IRemoteServiceTransfer {
 
     IBinder getRemoteService(String serviceCanonicalName);
 

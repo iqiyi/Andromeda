@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.ServiceManager;
+import org.qiyi.video.svg.ServiceRouter;
 
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 
@@ -19,7 +19,7 @@ public class LocalServiceDemo extends AppCompatActivity {
         findViewById(R.id.registerLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServiceManager.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
+                ServiceRouter.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
                 Toast.makeText(LocalServiceDemo.this, "registered ICheckApple service", Toast.LENGTH_SHORT).show();
             }
         });
@@ -27,7 +27,7 @@ public class LocalServiceDemo extends AppCompatActivity {
         findViewById(R.id.useLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ICheckApple checkApple = (ICheckApple) ServiceManager.getInstance().getLocalService(ICheckApple.class);
+                ICheckApple checkApple = (ICheckApple) ServiceRouter.getInstance().getLocalService(ICheckApple.class);
                 if (checkApple != null) {
                     int calories = checkApple.getAppleCalories(3);
                     String desc = checkApple.getAppleDescription(2);

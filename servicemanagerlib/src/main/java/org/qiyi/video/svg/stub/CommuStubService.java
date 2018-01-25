@@ -2,20 +2,14 @@ package org.qiyi.video.svg.stub;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
-import android.os.IInterface;
-import android.os.RemoteException;
 import android.util.Log;
 
-import org.qiyi.video.svg.BinderWrapper;
-import org.qiyi.video.svg.IServiceDispatcher;
-import org.qiyi.video.svg.ServiceManager;
 import org.qiyi.video.svg.config.Constants;
 
 public class CommuStubService extends Service {
 
-    private static final String TAG = "ServiceManager";
+    private static final String TAG = "ServiceRouter";
 
     public CommuStubService() {
     }
@@ -40,7 +34,7 @@ public class CommuStubService extends Service {
 
             if (proxy != null) {
                 try {
-                    IInterface stubImpl = ServiceManager.getInstance().getStubService(serviceName);
+                    IInterface stubImpl = ServiceRouter.getInstance().getStubService(serviceName);
                     if(stubImpl==null){
                         Log.d(TAG,"stubImpl is null");
                         proxy.registerRemoteService(serviceName,null);
@@ -60,18 +54,25 @@ public class CommuStubService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public static class CommuStubService0 extends CommuStubService{}
+    public static class CommuStubService0 extends CommuStubService {
+    }
 
-    public static class CommuStubService1 extends CommuStubService{}
+    public static class CommuStubService1 extends CommuStubService {
+    }
 
-    public static class CommuStubService2 extends CommuStubService{}
+    public static class CommuStubService2 extends CommuStubService {
+    }
 
-    public static class CommuStubService3 extends CommuStubService{}
+    public static class CommuStubService3 extends CommuStubService {
+    }
 
-    public static class CommuStubService4 extends CommuStubService{}
+    public static class CommuStubService4 extends CommuStubService {
+    }
 
-    public static class CommuStubService5 extends CommuStubService{}
+    public static class CommuStubService5 extends CommuStubService {
+    }
 
-    public static class CommuStubService6 extends CommuStubService{}
+    public static class CommuStubService6 extends CommuStubService {
+    }
 
 }

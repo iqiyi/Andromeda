@@ -7,8 +7,9 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 
 import org.qiyi.video.svg.BinderWrapper;
-import org.qiyi.video.svg.IDispatcherRegister;
+import org.qiyi.video.svg.IRemoteTransfer;
 import org.qiyi.video.svg.config.Constants;
+import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.log.Logger;
 
 public class DispatcherService extends Service {
@@ -27,49 +28,73 @@ public class DispatcherService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         Logger.d("DispatcherService-->onStartCommand,action:" + intent.getAction());
-        if (Constants.DISPATCH_ACTION.equals(intent.getAction())) {
-
-            BinderWrapper wrapper = intent.getParcelableExtra(Constants.KEY_DISPATHCER_REGISTER_WRAPPER);
-
-            //BinderWrapper messengerWrapper = intent.getParcelableExtra(Constants.KEY_MESSENGER_BINDER_WRAPPER);
-            BinderWrapper businessWrapper = intent.getParcelableExtra(Constants.KEY_BUSINESS_BINDER_WRAPPER);
-
-            String serviceCanonicalName = intent.getStringExtra(Constants.KEY_SERVICE_NAME);
-            //int pid = intent.getIntExtra(Constants.KEY_PID, -1);
-
-            try {
-                if (TextUtils.isEmpty(serviceCanonicalName)) {
-                    Logger.e("service canonical name is null");
-                } else {
-                    ServiceDispatcher.getInstance(this).registerRemoteService(serviceCanonicalName, businessWrapper.getBinder());
-                }
-                //注意这里其实是不会有RemoteException的，因为这里并不是远程调用，只是恰好这个接口既用于远程调用也用于同进程调用
-                //ServiceDispatcher.getInstance().registerRemoteService(serviceCanonicalName,pid);
-                //TODO 这里好像有点问题，实际上我们并不是要注册IDispatcherRegister.Stub的IBinder,而是要注册IMessenger.Stub的IBinder
-                //ServiceDispatcher.getInstance().registerRemoteServiceWithBinder(serviceCanonicalName, wrapper.getBinder(), pid);
-
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-            } finally {
-
-                IDispatcherRegister dispatcherRegister = IDispatcherRegister.Stub.asInterface(wrapper.getBinder());
-                if (dispatcherRegister != null) {
-                    Logger.d("now register to RemoteServiceManager");
-                    try {
-                        dispatcherRegister.registerDispatcher(ServiceDispatcher.getInstance(this).asBinder());
-                    } catch (RemoteException ex) {
-                        ex.printStackTrace();
-                    }
-                } else {
-                    Logger.d("IdspatcherRegister IBinder is null");
-                }
-
-            }
-
+        //TODO 其实这里应该叫REGISTER_SERVICE_ACTION更合适
+        if (Constants.DISPATCH_SERVICE_ACTION.equals(intent.getAction())) {
+            registerRemoteService(intent);
+        } else if (Constants.DISPATCH_EVENT_ACTION.equals(intent.getAction())) {
+            publishEvent(intent);
         }
 
 
         return super.onStartCommand(intent, flags, startId);
     }
+
+    private void publishEvent(Intent intent) {
+        BinderWrapper remoteTransferWrapper = intent.getParcelableExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER);
+        int pid = intent.getIntExtra(Constants.KEY_PID, -1);
+        IBinder remoteTransferBinder = remoteTransferWrapper.getBinder();
+        registerAndReverseRegister(pid, remoteTransferBinder);
+        Event event = intent.getParcelableExtra(Constants.KEY_EVENT);
+        try {
+            Dispatcher.getInstance(this).publish(event);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * 注册和反向注册
+     *
+     * @param pid
+     * @param transterBinder
+     */
+    private void registerAndReverseRegister(int pid, IBinder transterBinder) {
+        Logger.d("DispatcherService-->registerAndReverseRegister,pid=" + pid);
+        IRemoteTransfer remoteTransfer = IRemoteTransfer.Stub.asInterface(transterBinder);
+
+        Dispatcher.getInstance(this).registerRemoteTransfer(pid, transterBinder);
+
+        if (remoteTransfer != null) {
+            Logger.d("now register to RemoteTransfer");
+            try {
+                remoteTransfer.registerDispatcher(Dispatcher.getInstance(this).asBinder());
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            Logger.d("IdspatcherRegister IBinder is null");
+        }
+    }
+
+    private void registerRemoteService(Intent intent) {
+
+        BinderWrapper wrapper = intent.getParcelableExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER);
+        BinderWrapper businessWrapper = intent.getParcelableExtra(Constants.KEY_BUSINESS_BINDER_WRAPPER);
+        String serviceCanonicalName = intent.getStringExtra(Constants.KEY_SERVICE_NAME);
+        int pid = intent.getIntExtra(Constants.KEY_PID, -1);
+        try {
+            if (TextUtils.isEmpty(serviceCanonicalName)) {
+                Logger.e("service canonical name is null");
+            } else {
+                Dispatcher.getInstance(this).registerRemoteService(serviceCanonicalName, businessWrapper.getBinder());
+            }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } finally {
+            registerAndReverseRegister(pid, wrapper.getBinder());
+        }
+
+    }
+
 
 }

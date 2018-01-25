@@ -9,9 +9,12 @@
         <activity
             android:name=".LocalServiceDemo"
             android:process=":apple" />
-        <activity android:name=".BananaActivity"
-            android:process=":banana"
-            ></activity>
+        <activity
+            android:name=".BananaActivity"
+            android:process=":banana" />
+        <activity android:name=".EventActivity"
+            android:process=":apple"
+            />
     </application>
 
 </manifest>

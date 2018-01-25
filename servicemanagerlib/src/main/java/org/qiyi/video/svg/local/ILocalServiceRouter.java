@@ -4,7 +4,7 @@ package org.qiyi.video.svg.local;
  * Created by wangallen on 2018/1/8.
  */
 
-public interface ILocalServiceManager {
+public interface ILocalServiceRouter {
 
     Object getLocalService(String module);
 

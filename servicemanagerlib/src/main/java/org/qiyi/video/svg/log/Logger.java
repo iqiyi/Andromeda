@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class Logger {
 
-    private static final String TAG = "ServiceManager";
+    private static final String TAG = "ServiceRouter";
 
     public static void i(String msg) {
         Log.i(TAG, msg);

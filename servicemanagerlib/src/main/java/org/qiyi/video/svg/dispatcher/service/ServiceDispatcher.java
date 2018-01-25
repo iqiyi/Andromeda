@@ -1,11 +1,10 @@
-package org.qiyi.video.svg.dispatcher;
+package org.qiyi.video.svg.dispatcher.service;
 
 import android.content.Context;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import org.qiyi.video.svg.IServiceDispatcher;
 import org.qiyi.video.svg.log.Logger;
 
 import java.util.Map;
@@ -16,26 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 //TODO 要将自己注册到主进程的ServiceManager中
 //TODO 这个是不是叫ServiceDispatcher, ServiceRegistryCenter或者RemoteServiceCenter更合适呢？那样每个进程就可以有一个RemoteServiceManager，从架构上会更清晰
-public class ServiceDispatcher extends IServiceDispatcher.Stub {
+public class ServiceDispatcher implements IServiceDispatcher {
 
-    private static final String TAG = "ServiceManager";
-
-    private static ServiceDispatcher sInstance;
-
-    public static ServiceDispatcher getInstance(Context context) {
-        if (null == sInstance) {
-            synchronized (ServiceDispatcher.class) {
-                if (null == sInstance) {
-                    sInstance = new ServiceDispatcher(context);
-                }
-            }
-        }
-        return sInstance;
-    }
+    private static final String TAG = "ServiceRouter";
 
     private Context context;
 
-    private ServiceDispatcher(Context context) {
+    public ServiceDispatcher(Context context) {
         this.context = context;
         //serviceActionPolicy = ServiceActionPolicyImpl.getInstance();
     }
@@ -47,7 +33,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
     private final Object lock = new Object();
 
     @Override
-    public IBinder getTargetBinder(String serviceName) throws RemoteException {
+    public IBinder getTargetBinder(String serviceName) {
         Log.d(TAG, "ServiceDispatcher-->getTargetBinder,serivceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         IBinder binder = remoteBinderCache.get(serviceName);
         return binder;
@@ -86,16 +72,10 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
                 ex.printStackTrace();
             }
         }
-        Log.d(TAG, "now return to RemoteServiceManager in request process");
+        Log.d(TAG, "now return to RemoteTransfer in request process");
         //TODO 要增加判空操作
         return remoteBinderCache.get(serviceName);
         */
-    }
-
-    @Override
-    public IBinder fetchTargetBinder(String uri) throws RemoteException {
-        //TODO 暂时还不确定是否要支持uri
-        return null;
     }
 
     //TODO 还要把binder与serviceName绑定在一起，才能找到对应的类调用asInterface()方法
@@ -103,7 +83,7 @@ public class ServiceDispatcher extends IServiceDispatcher.Stub {
     public void registerRemoteService(final String serviceCanonicalName, IBinder binder) throws RemoteException {
         Log.d(TAG, "ServiceDispatcher-->registerStubService,serviceCanonicalName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         if (binder != null) {
-            binder.linkToDeath(new DeathRecipient() {
+            binder.linkToDeath(new IBinder.DeathRecipient() {
                 @Override
                 public void binderDied() {
                     Logger.d("ServiceDispatcher-->binderDied,serviceCanonicalName:" + serviceCanonicalName);

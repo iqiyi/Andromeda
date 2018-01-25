@@ -7,15 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by wangallen on 2018/1/8.
  */
 
-public class LocalServiceManager implements ILocalServiceManager {
+public class LocalServiceRouter implements ILocalServiceRouter {
 
-    private static LocalServiceManager sInstance;
+    private static LocalServiceRouter sInstance;
 
-    public static LocalServiceManager getInstance() {
+    public static LocalServiceRouter getInstance() {
         if (null == sInstance) {
-            synchronized (LocalServiceManager.class) {
+            synchronized (LocalServiceRouter.class) {
                 if (null == sInstance) {
-                    sInstance = new LocalServiceManager();
+                    sInstance = new LocalServiceRouter();
                 }
             }
         }
@@ -24,7 +24,7 @@ public class LocalServiceManager implements ILocalServiceManager {
 
     private Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 
-    private LocalServiceManager() {
+    private LocalServiceRouter() {
     }
 
 
