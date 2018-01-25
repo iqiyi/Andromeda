@@ -5,6 +5,7 @@ import android.os.RemoteException;
 
 import org.qiyi.video.svg.IRemoteTransfer;
 import org.qiyi.video.svg.event.Event;
+import org.qiyi.video.svg.log.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +21,7 @@ public class EventDispatcher implements IEventDispatcher {
 
     @Override
     public void registerRemoteTransfer(final int pid, IBinder transferBinder) {
+        Logger.d("EventDispatcher-->registerRemoteTransfer,pid:" + pid);
         if (transferBinder == null) {
             return;
         }
@@ -40,7 +42,7 @@ public class EventDispatcher implements IEventDispatcher {
 
     @Override
     public void publish(Event event) throws RemoteException {
-
+        Logger.d("EventDispatcher-->publish,event.name:" + event.getName());
         RemoteException ex = null;
 
         for (Map.Entry<Integer, IBinder> entry : transferBinders.entrySet()) {

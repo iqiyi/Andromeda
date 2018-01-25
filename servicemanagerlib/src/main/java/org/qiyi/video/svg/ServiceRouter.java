@@ -5,8 +5,8 @@ import android.os.IBinder;
 
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
-import org.qiyi.video.svg.local.LocalServiceManager;
-import org.qiyi.video.svg.remote.RemoteServiceManager;
+import org.qiyi.video.svg.local.LocalServiceRouter;
+import org.qiyi.video.svg.transfer.RemoteTransfer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -15,11 +15,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 //注意:这个ServiceManager可能会存在于很多进程中，不要以为只有主进程才有
-public class ServiceManager implements IServiceManager {
+public class ServiceRouter implements IServiceRouter {
 
-    private static final String TAG = "ServiceManager";
+    private static final String TAG = "ServiceRouter";
 
-    private static ServiceManager sInstance;
+    private static ServiceRouter sInstance;
 
     private static AtomicBoolean initFlag = new AtomicBoolean(false);
 
@@ -27,89 +27,88 @@ public class ServiceManager implements IServiceManager {
         if (initFlag.get() || context == null) {
             return;
         }
-        RemoteServiceManager.init(context.getApplicationContext());
+        RemoteTransfer.init(context.getApplicationContext());
         initFlag.set(true);
     }
 
-    public static ServiceManager getInstance() {
+    public static ServiceRouter getInstance() {
         if (null == sInstance) {
-            synchronized (ServiceManager.class) {
+            synchronized (ServiceRouter.class) {
                 if (null == sInstance) {
-                    sInstance = new ServiceManager();
+                    sInstance = new ServiceRouter();
                 }
             }
         }
         return sInstance;
     }
 
-    private ServiceManager() {
+    private ServiceRouter() {
     }
 
     @Override
     public void registerLocalService(Class serviceClass, Object serviceImpl) {
-        LocalServiceManager.getInstance().registerService(serviceClass.getCanonicalName(), serviceImpl);
+        LocalServiceRouter.getInstance().registerService(serviceClass.getCanonicalName(), serviceImpl);
     }
 
     @Override
     public void registerLocalService(String serviceCanonicalName, Object serviceImpl) {
-        LocalServiceManager.getInstance().registerService(serviceCanonicalName, serviceImpl);
+        LocalServiceRouter.getInstance().registerService(serviceCanonicalName, serviceImpl);
     }
 
     @Override
     public void unregisterLocalService(Class serviceClass) {
-        LocalServiceManager.getInstance().unregisterService(serviceClass.getCanonicalName());
+        LocalServiceRouter.getInstance().unregisterService(serviceClass.getCanonicalName());
     }
 
     @Override
     public void unregisterLocalService(String serivceCanonicalName) {
-        LocalServiceManager.getInstance().unregisterService(serivceCanonicalName);
+        LocalServiceRouter.getInstance().unregisterService(serivceCanonicalName);
     }
 
     @Override
     public void registerRemoteService(Class serviceClass, IBinder stubBinder) {
-        RemoteServiceManager.getInstance().registerStubService(serviceClass.getCanonicalName(), stubBinder);
+        RemoteTransfer.getInstance().registerStubService(serviceClass.getCanonicalName(), stubBinder);
     }
 
     @Override
     public void registerRemoteService(String serviceCanonicalName, IBinder stubBinder) {
-        RemoteServiceManager.getInstance().registerStubService(serviceCanonicalName, stubBinder);
+        RemoteTransfer.getInstance().registerStubService(serviceCanonicalName, stubBinder);
     }
 
     @Override
     public Object getLocalService(Class serviceClass) {
-        return LocalServiceManager.getInstance().getLocalService(serviceClass.getCanonicalName());
+        return LocalServiceRouter.getInstance().getLocalService(serviceClass.getCanonicalName());
     }
 
     @Override
     public IBinder getRemoteService(Class serviceClass) {
-        return RemoteServiceManager.getInstance().getRemoteService(serviceClass.getCanonicalName());
+        return RemoteTransfer.getInstance().getRemoteService(serviceClass.getCanonicalName());
     }
 
     @Override
     public Object getLocalService(String serviceCanonicalName) {
-
-        return LocalServiceManager.getInstance().getLocalService(serviceCanonicalName);
+        return LocalServiceRouter.getInstance().getLocalService(serviceCanonicalName);
     }
 
     @Override
     public IBinder getRemoteService(String serviceCanonicalName) {
-        return RemoteServiceManager.getInstance().getRemoteService(serviceCanonicalName);
+        return RemoteTransfer.getInstance().getRemoteService(serviceCanonicalName);
     }
 
     //TODO 如果同时对多个Event感兴趣呢？是不是就要注册多次?
 
     @Override
-    public void subscribeEvent(String name, EventListener listener) {
-        RemoteServiceManager.getInstance().subscribeEvent(name, listener);
+    public void subscribe(String name, EventListener listener) {
+        RemoteTransfer.getInstance().subscribeEvent(name, listener);
     }
 
     @Override
-    public void unsubscribeEvent(EventListener listener) {
-        RemoteServiceManager.getInstance().unsubscribeEvent(listener);
+    public void unsubscribe(EventListener listener) {
+        RemoteTransfer.getInstance().unsubscribeEvent(listener);
     }
 
     @Override
-    public void publishEvent(Event event) {
-
+    public void publish(Event event) {
+        RemoteTransfer.getInstance().publish(event);
     }
 }

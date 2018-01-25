@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-def lib_version="0.3.0"
+def lib_version="0.4.0"
 
 android {
     compileSdkVersion 26

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 //TODO 这个是不是叫ServiceDispatcher, ServiceRegistryCenter或者RemoteServiceCenter更合适呢？那样每个进程就可以有一个RemoteServiceManager，从架构上会更清晰
 public class ServiceDispatcher implements IServiceDispatcher {
 
-    private static final String TAG = "ServiceManager";
+    private static final String TAG = "ServiceRouter";
 
     private Context context;
 
@@ -72,7 +72,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
                 ex.printStackTrace();
             }
         }
-        Log.d(TAG, "now return to RemoteServiceManager in request process");
+        Log.d(TAG, "now return to RemoteTransfer in request process");
         //TODO 要增加判空操作
         return remoteBinderCache.get(serviceName);
         */

@@ -8,10 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.ServiceManager;
+import org.qiyi.video.svg.ServiceRouter;
 import org.qiyi.video.svg.callback.BaseCallback;
+import org.qiyi.video.svg.event.Event;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
+import wang.imallen.blog.moduleexportlib.event.EventConstants;
 
 public class RemoteServiceDemo extends AppCompatActivity {
 
@@ -23,7 +25,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
+                ServiceRouter.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
                 Toast.makeText(RemoteServiceDemo.this, "just registered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });
@@ -31,14 +33,14 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.useRemoteInSameProcessBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               useRemoteServiceInSameProcess();
+                useRemoteServiceInSameProcess();
             }
         });
 
         findViewById(R.id.useRemoteInOtherProcessBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            startActivity(new Intent(RemoteServiceDemo.this,BananaActivity.class));
+                startActivity(new Intent(RemoteServiceDemo.this, BananaActivity.class));
             }
         });
 
@@ -50,7 +52,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
      * 2.远程服务既可以在本进程使用也可在其他进程中使用，当在本进程使用时会
      */
     private void useRemoteServiceInSameProcess() {
-        IBinder buyAppleBinder = ServiceManager.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder = ServiceRouter.getInstance().getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             return;
         }
@@ -79,7 +81,6 @@ public class RemoteServiceDemo extends AppCompatActivity {
             }
         }
     }
-
 
 
 }

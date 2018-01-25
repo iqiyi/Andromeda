@@ -17,6 +17,11 @@ public class Event implements Parcelable {
     public Event() {
     }
 
+    public Event(String name, Bundle data) {
+        this.name = name;
+        this.data = data;
+    }
+
     public Event(Parcel in) {
         this.name = in.readString();
         this.data = in.readBundle(Event.class.getClassLoader());

@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.ServiceManager;
+import org.qiyi.video.svg.ServiceRouter;
 import org.qiyi.video.svg.callback.BaseCallback;
 import org.qiyi.video.svg.log.Logger;
 
@@ -37,7 +37,7 @@ public class BananaActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleInShop() {
-        IBinder buyAppleBinder = ServiceManager.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder = ServiceRouter.getInstance().getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             return;
         }
@@ -54,7 +54,7 @@ public class BananaActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleOnNet() {
-        IBinder buyAppleBinder = ServiceManager.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder = ServiceRouter.getInstance().getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             return;
         }

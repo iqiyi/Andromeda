@@ -59,12 +59,13 @@ public class DispatcherService extends Service {
      * @param transterBinder
      */
     private void registerAndReverseRegister(int pid, IBinder transterBinder) {
+        Logger.d("DispatcherService-->registerAndReverseRegister,pid=" + pid);
         IRemoteTransfer remoteTransfer = IRemoteTransfer.Stub.asInterface(transterBinder);
 
         Dispatcher.getInstance(this).registerRemoteTransfer(pid, transterBinder);
 
         if (remoteTransfer != null) {
-            Logger.d("now register to RemoteServiceManager");
+            Logger.d("now register to RemoteTransfer");
             try {
                 remoteTransfer.registerDispatcher(Dispatcher.getInstance(this).asBinder());
             } catch (RemoteException ex) {

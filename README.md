@@ -246,8 +246,45 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 
 详情可察看applemodule中的BananaActivity,如果还有疑问，欢迎联系**王龙海**进行讨论。
 
+## 事件订阅与发布
+### 事件定义:Event
+Event的定义如下:
+```java
+public class Event implements Parcelable {
+
+    private String name;
+
+    private Bundle data;
+    
+    ...
+}
+```
+即 事件=名称+数据  
+其中**名称要求在整个项目中唯一**，否则可能出错。
+由于要跨进程传输，所以所有数据只能放在Bundle中进行包装。
+
+### 事件订阅
+事件订阅很简单，首先需要有一个实现了EventListener接口的对象。
+然后就可以订阅自己感兴趣的事件了，如下:
+```java
+    ServiceRouter.getInstance().subscribe(EventConstants.APPLE_EVENT,MainActivity.this);
+```
+其中MainActivity实现了EventListener接口，此处表示订阅了名称为EventConstnts.APPLE_EVENT的事件。
+
+### 事件发布
+事件发布很简单，调用publish方法即可，如下:
+```java
+       Bundle bundle = new Bundle();
+       bundle.putString("Result", "gave u five apples!");
+       ServiceRouter.getInstance().publish(new Event(EventConstants.APPLE_EVENT, bundle));
+```
+
 # 已知问题
 
+# TODO
+1.做成透明依赖，最好是让使用者不需要写额外的代码  
+2.事件总线需要支持粘性事件  
+3.事件总线需要支持三种threadMode回调
 
 # 技术支持
 
