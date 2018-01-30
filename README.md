@@ -18,7 +18,7 @@ xxx.getSomething();
 
 # 接入方式
 
-##编译接入
+## 编译接入
 
 添加maven路径:
 
@@ -59,7 +59,7 @@ Local接口定义与实现这方面，和普通的接口定义、实现没什么
 + 接口的实现推荐采用单例模式，防止多次注册造成的实现被覆盖的问题。
 
 ### 服务端接口注册
-本地服务的注册有三种方法，如下:
+Local服务的注册有三种方法，如下:
 
 ```java
 ServiceManager.getInstance().registerLocalService(ICheckApple.class.getCanonicalName(),CheckAppleImpl.getInstance());
@@ -132,8 +132,8 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 }
 ```
 
-### 远程接口的注册
-与本地接口的注册略有不同，远程接口注册的是继承了Stub类的IBinder部分，注册方式有传递接口Class和接口全路径名两种，如下:
+### IPC接口的注册
+与Local接口的注册略有不同，IPC接口注册的是继承了Stub类的IBinder部分，注册方式有传递接口Class和接口全路径名两种，如下:
 
 ```java
 ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
@@ -141,8 +141,8 @@ ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl
 //ServiceManager.getInstance().registerRemoteService(IBuyApple.class.getCanonicalName(),BuyAppleImpl.getInstance().asBinder());
 ```
 
-### 远程接口的使用
-由于跨进程只能传递IBinder,所以只能获取到远程服务的IBinder之后，再调用XX.Stub.asInterface()获取到它的代理,如下:
+### IPC接口的使用
+由于跨进程只能传递IBinder,所以只能获取到IPC服务的IBinder之后，再调用XX.Stub.asInterface()获取到它的代理,如下:
 
 ```java
         IBinder buyAppleBinder = ServiceManager.getInstance().getRemoteService(IBuyApple.class);
@@ -161,7 +161,7 @@ ServiceManager.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl
                 }
          }
 ```
-[注：远程服务也可以在同进程中被调用，此时会自动降级为进程内普通的接口调用，这个是binder原生支持的]
+[注：IPC服务也可以在同进程中被调用，此时会自动降级为进程内普通的接口调用，这个是binder原生支持的]
 
 ### IPC接口的Callback问题
 对于有耗时操作的IPC服务，定义接口时需要借助lib中的IPCCallback,如下:
