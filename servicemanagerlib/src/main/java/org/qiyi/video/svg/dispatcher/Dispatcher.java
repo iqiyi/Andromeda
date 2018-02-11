@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import org.qiyi.video.svg.IDispatcher;
+import org.qiyi.video.svg.bean.BinderBean;
 import org.qiyi.video.svg.dispatcher.event.EventDispatcher;
 import org.qiyi.video.svg.dispatcher.event.IEventDispatcher;
 import org.qiyi.video.svg.dispatcher.service.IServiceDispatcher;
@@ -35,7 +36,7 @@ public class Dispatcher extends IDispatcher.Stub {
     private IEventDispatcher eventDispatcher;
 
     private Dispatcher(Context context) {
-        serviceDispatcher = new ServiceDispatcher(context);
+        serviceDispatcher = new ServiceDispatcher();
         eventDispatcher = new EventDispatcher();
     }
 
@@ -48,8 +49,15 @@ public class Dispatcher extends IDispatcher.Stub {
     }
 
 
+    /*
     @Override
     public IBinder getTargetBinder(String serviceCanonicalName) throws RemoteException {
+        return serviceDispatcher.getTargetBinder(serviceCanonicalName);
+    }
+    */
+
+    @Override
+    public BinderBean getTargetBinder(String serviceCanonicalName) throws RemoteException {
         return serviceDispatcher.getTargetBinder(serviceCanonicalName);
     }
 
@@ -59,8 +67,8 @@ public class Dispatcher extends IDispatcher.Stub {
     }
 
     @Override
-    public void registerRemoteService(String serviceCanonicalName, IBinder binder) throws RemoteException {
-        serviceDispatcher.registerRemoteService(serviceCanonicalName, binder);
+    public void registerRemoteService(String serviceCanonicalName, String processName,IBinder binder) throws RemoteException {
+        serviceDispatcher.registerRemoteService(serviceCanonicalName, processName,binder);
     }
 
     @Override

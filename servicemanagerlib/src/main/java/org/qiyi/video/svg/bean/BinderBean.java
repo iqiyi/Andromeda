@@ -12,21 +12,20 @@ import android.os.Parcelable;
 public class BinderBean implements Parcelable {
 
     private IBinder binder;
-    private String stubImplCanonicalName;
+    private String processName;
 
     public BinderBean() {
 
     }
 
-    public BinderBean(Binder stubImpl) {
-        this.binder = stubImpl;
-        this.stubImplCanonicalName = stubImpl.getClass().getCanonicalName();
-        //this.stubImplCanonicalName=stubImpl.getInterfaceDescriptor();
+    public BinderBean(IBinder binder, String processName) {
+        this.binder = binder;
+        this.processName = processName;
     }
 
     public BinderBean(Parcel in) {
         this.binder = in.readStrongBinder();
-        this.stubImplCanonicalName = in.readString();
+        this.processName = in.readString();
     }
 
     @Override
@@ -37,7 +36,7 @@ public class BinderBean implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStrongBinder(binder);
-        dest.writeString(stubImplCanonicalName);
+        dest.writeString(processName);
     }
 
     public static final Parcelable.Creator<BinderBean> CREATOR = new Creator<BinderBean>() {
@@ -52,4 +51,11 @@ public class BinderBean implements Parcelable {
         }
     };
 
+    public IBinder getBinder() {
+        return binder;
+    }
+
+    public String getProcessName() {
+        return processName;
+    }
 }

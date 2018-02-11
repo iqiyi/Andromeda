@@ -40,6 +40,8 @@ public class Constants {
 
     public static final String KEY_PID = "KeyPid";
 
+    public static final String KEY_PROCESS_NAME = "KeyProcessName";
+
     public static final String KEY_EVENT = "KeyEvent";
 
 
