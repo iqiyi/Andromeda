@@ -8,9 +8,11 @@ import android.os.RemoteException;
 import org.qiyi.video.svg.BinderWrapper;
 import org.qiyi.video.svg.IDispatcher;
 import org.qiyi.video.svg.IRemoteTransfer;
+import org.qiyi.video.svg.bean.BinderBean;
 import org.qiyi.video.svg.config.Constants;
 import org.qiyi.video.svg.dispatcher.DispatcherService;
 import org.qiyi.video.svg.log.Logger;
+import org.qiyi.video.svg.utils.ProcessUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +29,7 @@ public class RemoteServiceTransfer {
     //TODO 这个还是改成让他们注册IBinder,这样子也能保持注册和取出来的是一样的东西
     private Map<String, IBinder> stubBinderCache = new ConcurrentHashMap<>();
 
-    private Map<String, IBinder> remoteBinderCache = new ConcurrentHashMap<>();
+    private Map<String, BinderBean> remoteBinderCache = new ConcurrentHashMap<>();
 
     public void registerStubService(String serviceCanonicalName, IBinder stubBinder,
                                     Context context, IDispatcher dispatcherProxy, IRemoteTransfer.Stub stub) {
@@ -40,19 +42,23 @@ public class RemoteServiceTransfer {
             intent.putExtra(Constants.KEY_BUSINESS_BINDER_WRAPPER, new BinderWrapper(stubBinder));
             intent.putExtra(Constants.KEY_SERVICE_NAME, serviceCanonicalName);
             intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
+            intent.putExtra(Constants.KEY_PROCESS_NAME, ProcessUtils.getProcessName(context));
             context.startService(intent);
         } else {
             try {
-                dispatcherProxy.registerRemoteService(serviceCanonicalName, stubBinder);
+                dispatcherProxy.registerRemoteService(serviceCanonicalName,
+                        ProcessUtils.getProcessName(context), stubBinder);
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    public IBinder getIBinderFromCache(String serviceCanonicalName) {
+    public BinderBean getIBinderFromCache(Context context, String serviceCanonicalName) {
+        //TODO 如果是自己进程或者主进程，就不要进行bind操作了
         if (stubBinderCache.get(serviceCanonicalName) != null) {
-            return stubBinderCache.get(serviceCanonicalName);
+            return new BinderBean(stubBinderCache.get(serviceCanonicalName),
+                    ProcessUtils.getProcessName(context));
         }
 
         if (remoteBinderCache.get(serviceCanonicalName) != null) {
@@ -61,12 +67,23 @@ public class RemoteServiceTransfer {
         return null;
     }
 
-    public IBinder getAndSaveIBinder(String serviceName,IDispatcher dispatcherProxy) {
+    public BinderBean getAndSaveIBinder(final String serviceName, IDispatcher dispatcherProxy) {
         try {
-            IBinder binder = dispatcherProxy.getTargetBinder(serviceName);
+            BinderBean binderBean = dispatcherProxy.getTargetBinder(serviceName);
+            //TODO 这里要处理linkToDeath的问题!
+            try {
+                binderBean.getBinder().linkToDeath(new IBinder.DeathRecipient() {
+                    @Override
+                    public void binderDied() {
+                        remoteBinderCache.remove(serviceName);
+                    }
+                }, 0);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            }
             Logger.d("get IBinder from ServiceDispatcher");
-            remoteBinderCache.put(serviceName, binder);
-            return binder;
+            remoteBinderCache.put(serviceName, binderBean);
+            return binderBean;
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }

@@ -1,13 +1,20 @@
 package org.qiyi.video.svg.transfer;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 import org.qiyi.video.svg.BinderWrapper;
 import org.qiyi.video.svg.IDispatcher;
 import org.qiyi.video.svg.IRemoteTransfer;
+import org.qiyi.video.svg.bean.BinderBean;
 import org.qiyi.video.svg.config.Constants;
 import org.qiyi.video.svg.dispatcher.Dispatcher;
 import org.qiyi.video.svg.dispatcher.DispatcherService;
@@ -18,7 +25,11 @@ import org.qiyi.video.svg.transfer.event.EventTransfer;
 import org.qiyi.video.svg.transfer.event.IEventTransfer;
 import org.qiyi.video.svg.transfer.service.IRemoteServiceTransfer;
 import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
+import org.qiyi.video.svg.utils.MatchStubServiceHelper;
 import org.qiyi.video.svg.utils.ProcessUtils;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by wangallen on 2018/1/9.
@@ -89,16 +100,81 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     @Override
     public IBinder getRemoteService(String serviceName) {
         Logger.d("RemoteTransfer-->getRemoteService,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        IBinder binder = getIBinder(serviceName);
-        return binder;
+        //TODO 这里就不只要获取IBinder,还要获取到对方的processName,这样才能进行bind操作
+        BinderBean binderBean = getIBinder(serviceName);
+        //TODO 要进行bind操作
+        bindAction(serviceName, binderBean.getProcessName());
+        return binderBean.getBinder();
     }
 
-    private IBinder getIBinder(String serviceName) {
-        //KP 首先检查是否就在本地!这非常重要，否则有可能导致死锁!
-        IBinder cacheBinder = serviceTransfer.getIBinderFromCache(serviceName);
-        if (cacheBinder != null) {
-            return cacheBinder;
+    private void unbindAction(String serviceName) {
+        ServiceConnection connection = connectionCache.get(serviceName);
+        if (connection == null) {
+            return;
         }
+        context.unbindService(connection);
+    }
+
+    private Map<String, ServiceConnection> connectionCache = new ConcurrentHashMap<>();
+
+    //TODO 是让当前进程去bind呢?还是只让主进程去bind?要考虑到当前进程可能是在插件进程，同时对方可能是主进程这种情况？
+    private void bindAction(String serviceName, String serverProcessName) {
+        //如果是主进程或者跟当前进程在同一个进程，MatchStubServiceHelper.matchIntent()就会返回null
+        Intent intent = MatchStubServiceHelper.matchIntent(context, serviceName, serverProcessName);
+        if (null == intent) {
+            return;
+        }
+        ServiceConnection connection = connectionCache.get(serviceName);
+        if (null == connection) {
+            connection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    Logger.d("onServiceConnected");
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    Logger.d("onServiceDisconnected");
+                }
+            };
+            connectionCache.put(serviceName, connection);
+        }
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
+    }
+
+    @Override
+    public IBinder getRemoteService(final LifecycleOwner owner, final String serviceCanonicalName) {
+        BinderBean binderBean = getIBinder(serviceCanonicalName);
+        if (owner != null) {
+            bindAction(serviceCanonicalName, binderBean.getProcessName());
+            //TODO 那什么时候remove掉呢?
+            owner.getLifecycle().addObserver(new LifecycleObserver() {
+                @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+                public void onStop() {
+                    unbindAction(serviceCanonicalName);
+                    owner.getLifecycle().removeObserver(this);
+                }
+            });
+        }
+        return binderBean.getBinder();
+    }
+
+    //TODO 这个是不是应该为unbind(String serviceCanonicalName);
+    @Override
+    public void unbind(String serviceCanonicalName) {
+        unbindAction(serviceCanonicalName);
+    }
+
+    private BinderBean getIBinder(String serviceName) {
+        Logger.d("RemoteTransfer-->getIBinder()");
+        //KP 首先检查是否就在本地!这非常重要，否则有可能导致死锁!
+
+        //TODO bindAction看来还是要放到RemoteServiceTransfer中
+        BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceName);
+        if (cacheBinderBean != null) {
+            return cacheBinderBean;
+        }
+        Logger.d("RemoteTransfer-->getIBinder(),start to wait");
         //TODO 这部分逻辑是不是要先去掉呢?
         synchronized (lock) {
             if (null == dispatcherProxy) {
@@ -110,6 +186,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
                 }
             }
         }
+        Logger.d("RemoteTransfer-->getIBinder(),end of wait");
         return serviceTransfer.getAndSaveIBinder(serviceName, dispatcherProxy);
     }
 
@@ -142,7 +219,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     @Override
     public void registerDispatcher(IBinder dispatcherBinder) throws RemoteException {
         Logger.d("RemoteTransfer-->registerDispatcher");
-        dispatcherBinder.linkToDeath(new DeathRecipient() {
+        dispatcherBinder.linkToDeath(new IBinder.DeathRecipient() {
             @Override
             public void binderDied() {
                 Logger.d("RemoteTransfer-->dispatcherBinder binderDied");
@@ -152,7 +229,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         //这里实现IServiceRegister仅仅是为了给RemoteServiceManager提供注册到当前进程的机会
         dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
         synchronized (lock) {
-            //TODO 这个要再测试一下，只用lock.notify()行不行
+            //由于只有一个地方使用到lock,所以这里使用notify()和notifyAll()的效果是一样的
             lock.notifyAll();
         }
     }

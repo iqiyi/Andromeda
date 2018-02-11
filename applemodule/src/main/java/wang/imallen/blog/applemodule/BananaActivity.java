@@ -15,6 +15,14 @@ import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 
 public class BananaActivity extends AppCompatActivity {
 
+    //TODO 目前的方案是服务提供方需要3个注解:
+    //TODO  第一个注解是加在服务的实现类上
+    //TODO 第二个注解是加在变量的声明上
+    //TODO 第三个注解是加在变量具体要注册的方法里，比如Application的onCreate()中
+    //TODO 不过这是针对最复杂的情况，对于更简单的情形，比如直接通过默认构造方法或者带一个Context的方法就可以生成对象，并且在Application注入的，要做到只需要一个注解即可完成注入。
+
+    //TODO 在注入点加上参数信息，要区分方法参数和类的成员参数
+    //TODO 或者就是通过反射来获取对象，只需要让业务方告诉我们变量名
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

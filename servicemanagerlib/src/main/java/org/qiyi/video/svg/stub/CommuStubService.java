@@ -2,9 +2,12 @@ package org.qiyi.video.svg.stub;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
+import org.qiyi.video.svg.ICommuStub;
 import org.qiyi.video.svg.config.Constants;
 
 public class CommuStubService extends Service {
@@ -16,40 +19,18 @@ public class CommuStubService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        //TODO 返回null和返回有实际含义的binder,会不会造成oom_adj值不一样？
+        return new ICommuStub.Stub() {
+            @Override
+            public void commu(Bundle args) throws RemoteException {
+                //do nothing now
+            }
+        };
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand,pid:" + android.os.Process.myPid() + ",action:" + intent.getAction() + ",serviceName:" + intent.getStringExtra(Constants.KEY_SERVICE_NAME));
-        /*
-        //if (Constants.APPLE_PROCESS_SEVICE_ACTION.equals(intent.getAction())) {
-            BinderWrapper binderWrapper = intent.getParcelableExtra(Constants.KEY_BINDER_WRAPPER);
-            IBinder binder = binderWrapper.getBinder();
-            IServiceDispatcher proxy = IServiceDispatcher.Stub.asInterface(binder);
-
-            String serviceName = intent.getStringExtra(Constants.KEY_SERVICE_NAME);
-            //TODO 根据moduleName找到对应的IBinder，这部分可能需要gradle插件来生成相应代码
-
-            if (proxy != null) {
-                try {
-                    IInterface stubImpl = ServiceRouter.getInstance().getStubService(serviceName);
-                    if(stubImpl==null){
-                        Log.d(TAG,"stubImpl is null");
-                        proxy.registerRemoteService(serviceName,null);
-                    }else{
-                        Log.d(TAG,"stubImpl is not null");
-                        //TODO 直接这样是不行的，要使用asBinder
-                        proxy.registerRemoteService(serviceName, stubImpl.asBinder());
-                    }
-
-                } catch (RemoteException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        //}
-        */
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -74,5 +55,27 @@ public class CommuStubService extends Service {
 
     public static class CommuStubService6 extends CommuStubService {
     }
+
+    public static class CommuStubService7 extends CommuStubService {
+    }
+
+    public static class CommuStubService8 extends CommuStubService {
+    }
+
+    public static class CommuStubService9 extends CommuStubService {
+    }
+
+    public static class CommuStubService10 extends CommuStubService {
+    }
+
+    public static class CommuStubService11 extends CommuStubService {
+    }
+
+    public static class CommuStubService12 extends CommuStubService {
+    }
+
+    public static class CommuStubService13 extends CommuStubService {
+    }
+
 
 }

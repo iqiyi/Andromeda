@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-def lib_version="0.4.0"
+def lib_version="0.5.0"
 
 android {
     compileSdkVersion 26
@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 20
+        versionCode 50
         versionName "$lib_version"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -76,6 +76,15 @@ dependencies {
 
     //TODO 这个后面要移除，现在只是临时应对
     //compileOnly project(":moduleexportlib")
+
+    //TODO 为什么使用1.1.0版本就不行？
+    // Lifecycles only (no ViewModel or LiveData)
+    implementation "android.arch.lifecycle:runtime:1.0.0"
+    api "android.arch.lifecycle:extensions:1.0.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
+
+    // Java8 support for Lifecycles
+    //implementation "android.arch.lifecycle:common-java8:1.1.0"
 
     compileOnly 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'

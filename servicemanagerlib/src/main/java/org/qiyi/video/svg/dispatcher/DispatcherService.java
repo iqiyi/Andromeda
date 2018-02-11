@@ -29,6 +29,7 @@ public class DispatcherService extends Service {
         }
         Logger.d("DispatcherService-->onStartCommand,action:" + intent.getAction());
         //TODO 其实这里应该叫REGISTER_SERVICE_ACTION更合适
+        //TODO 另外，注册操作是不是可以放到子线程中呢？否则可能会影响主线程!
         if (Constants.DISPATCH_SERVICE_ACTION.equals(intent.getAction())) {
             registerRemoteService(intent);
         } else if (Constants.DISPATCH_EVENT_ACTION.equals(intent.getAction())) {
@@ -82,11 +83,13 @@ public class DispatcherService extends Service {
         BinderWrapper businessWrapper = intent.getParcelableExtra(Constants.KEY_BUSINESS_BINDER_WRAPPER);
         String serviceCanonicalName = intent.getStringExtra(Constants.KEY_SERVICE_NAME);
         int pid = intent.getIntExtra(Constants.KEY_PID, -1);
+        String processName = intent.getStringExtra(Constants.KEY_PROCESS_NAME);
         try {
             if (TextUtils.isEmpty(serviceCanonicalName)) {
                 Logger.e("service canonical name is null");
             } else {
-                Dispatcher.getInstance(this).registerRemoteService(serviceCanonicalName, businessWrapper.getBinder());
+                Dispatcher.getInstance(this).registerRemoteService(serviceCanonicalName,
+                        processName, businessWrapper.getBinder());
             }
         } catch (RemoteException ex) {
             ex.printStackTrace();
