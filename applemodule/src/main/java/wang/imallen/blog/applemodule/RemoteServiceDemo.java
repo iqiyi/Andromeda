@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import org.qiyi.video.starbridge_annotations.local.LBind;
+import org.qiyi.video.starbridge_annotations.remote.RBind;
+import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.svg.ServiceRouter;
 import org.qiyi.video.svg.callback.BaseCallback;
 import org.qiyi.video.svg.event.Event;
@@ -17,15 +20,24 @@ import wang.imallen.blog.moduleexportlib.event.EventConstants;
 
 public class RemoteServiceDemo extends AppCompatActivity {
 
+    //TODO 这样看的话，是不是LBind的值也可以为空，如果它为空的话就默认是它声明的那个接口
+    @RBind(IBuyApple.class)
+    private IBuyApple buyApple;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apple);
 
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
+
+            @RRegister(services = IBuyApple.class)
             @Override
             public void onClick(View v) {
-                ServiceRouter.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
+                //ServiceRouter.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
+                //在这里完成buyApple的实例化
+                buyApple=BuyAppleImpl.getInstance();
+
                 Toast.makeText(RemoteServiceDemo.this, "just registered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });

@@ -1,0 +1,20 @@
+apply plugin: 'java-library'
+
+dependencies {
+
+    //javapoet
+    implementation 'com.squareup:javapoet:1.9.0'
+    //AutoService annotation processor
+    implementation 'com.google.auto.service:auto-service:1.0-rc4'
+    //Apache Commons StringUtils
+    implementation 'org.apache.commons:commons-lang3:3.4'
+
+    compile project(":StarBridge-Annotations")
+
+    implementation 'com.google.code.gson:gson:2.8.2'
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

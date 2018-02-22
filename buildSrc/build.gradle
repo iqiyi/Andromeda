@@ -1,0 +1,43 @@
+apply plugin: 'groovy'
+//apply plugin: 'maven'
+
+dependencies {
+
+    //build tools
+    compile 'com.android.tools.build:gradle:3.0.1'
+
+    //gradle sdk
+    compile gradleApi()
+    //groovy sdk
+    compile localGroovy()
+
+    //transform
+    compile 'com.android.tools.build:transform-api:1.9.0'
+    //javassist,可以对字节码进行编辑
+    compile 'javassist:javassist:3.12.1.GA'
+
+    //开源框架,io操作
+    compile 'commons-io:commons-io:2.5'
+
+    compile 'com.google.code.gson:gson:2.8.2'
+}
+
+repositories{
+    mavenCentral()
+    jcenter()
+    google()
+}
+
+/*
+uploadArchives{
+    repositories.mavenDeployer{
+        repository(url:LOCAL_REPO_URL)
+        pom.groupId=GROUP_ID
+        pom.artifactId=ARTIFACT_ID
+        pom.version=VERSION
+    }
+}
+*/
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
