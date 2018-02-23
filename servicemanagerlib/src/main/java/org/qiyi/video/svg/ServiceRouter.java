@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * 3.先利用注解解释器将相应的信息放到某个类的static信息中，然后利用gradle插件+javaassist在合适的位置插入代码
  *
+ * 4.如果javassit没有类似aspectj那种include和exclude的选项的话，就自己封装一个增强型的javassist
  *
  */
 public class ServiceRouter implements IServiceRouter {
