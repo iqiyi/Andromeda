@@ -27,6 +27,7 @@ import org.qiyi.video.svg.transfer.service.IRemoteServiceTransfer;
 import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
 import org.qiyi.video.svg.utils.MatchStubServiceHelper;
 import org.qiyi.video.svg.utils.ProcessUtils;
+import org.qiyi.video.svg.utils.ServiceUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,7 +93,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
             intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
             intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
-            context.startService(intent);
+            ServiceUtils.startServiceSafely(context, intent);
         }
     }
 

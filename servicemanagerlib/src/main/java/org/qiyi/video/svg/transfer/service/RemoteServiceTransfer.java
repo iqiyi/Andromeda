@@ -13,6 +13,7 @@ import org.qiyi.video.svg.config.Constants;
 import org.qiyi.video.svg.dispatcher.DispatcherService;
 import org.qiyi.video.svg.log.Logger;
 import org.qiyi.video.svg.utils.ProcessUtils;
+import org.qiyi.video.svg.utils.ServiceUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +44,7 @@ public class RemoteServiceTransfer {
             intent.putExtra(Constants.KEY_SERVICE_NAME, serviceCanonicalName);
             intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
             intent.putExtra(Constants.KEY_PROCESS_NAME, ProcessUtils.getProcessName(context));
-            context.startService(intent);
+            ServiceUtils.startServiceSafely(context, intent);
         } else {
             try {
                 dispatcherProxy.registerRemoteService(serviceCanonicalName,

@@ -13,6 +13,7 @@ import org.qiyi.video.svg.dispatcher.DispatcherService;
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.log.Logger;
+import org.qiyi.video.svg.utils.ServiceUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class EventTransfer {
             intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
             intent.putExtra(Constants.KEY_EVENT, event);
             intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
-            context.startService(intent);
+            ServiceUtils.startServiceSafely(context, intent);
         } else {
             try {
                 dispatcherProxy.publish(event);
