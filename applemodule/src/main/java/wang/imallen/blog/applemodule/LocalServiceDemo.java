@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import org.qiyi.video.starbridge_annotations.local.LBind;
+import org.qiyi.video.starbridge_annotations.local.LGet;
+import org.qiyi.video.starbridge_annotations.local.LInject;
 import org.qiyi.video.starbridge_annotations.local.LRegister;
 import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 import org.qiyi.video.svg.ServiceRouter;
@@ -26,6 +28,12 @@ public class LocalServiceDemo extends AppCompatActivity {
     private CheckAppleImpl checkApple;
     */
 
+    //TODO 考虑改一下注解名称，将@LInject, @LGet分别改为@Local和@LInject，那样更好理解!
+    @LInject
+    ICheckApple checkApple;
+
+    //TODO 表示要在这里注入ICheckApple的实例，那是不是最好再加上一个"checkApple"呢?不然万一在几个地方都要用到呢?
+    @LGet(ICheckApple.class)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

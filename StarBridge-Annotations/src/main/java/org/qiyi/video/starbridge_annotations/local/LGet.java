@@ -6,11 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by wangallen on 2018/2/11.
+ * Created by wangallen on 2018/2/26.
  */
-//注入本地服务对象,如果使用默认值，则使用其定义类型
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface LInject {
-    Class<?> value() default Object.class;
+public @interface LGet {
+    Class<?>[] value() default {Object.class};
 }
