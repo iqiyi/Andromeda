@@ -9,6 +9,9 @@ import android.view.View;
 
 import org.qiyi.video.starbridge_annotations.local.LBind;
 import org.qiyi.video.starbridge_annotations.local.LRegister;
+import org.qiyi.video.starbridge_annotations.local.LUnRegister;
+import org.qiyi.video.starbridge_annotations.remote.RBind;
+import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.svg.IPCCallback;
 import org.qiyi.video.svg.ServiceRouter;
 import org.qiyi.video.svg.callback.BaseCallback;
@@ -22,6 +25,7 @@ import wang.imallen.blog.applemodule.LocalServiceDemo;
 import wang.imallen.blog.applemodule.RemoteServiceDemo;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
+import wang.imallen.blog.moduleexportlib.cherry.IBuyCherry;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
@@ -29,12 +33,20 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     private static final String TAG = "ServiceRouter";
 
     @LBind(ICheckPear.class)
-    public static ICheckPear checkPear = new CheckPearImpl();
+    private ICheckPear checkPear = new CheckPearImpl();
 
     @LBind(ICheckApple.class)
-    public static ICheckApple checkApple;
+    private ICheckApple checkApple;
 
 
+    @RBind(IBuyApple.class)
+    private IBuyApple.Stub buyApple;
+
+    @RBind(IBuyCherry.class)
+    private IBuyCherry.Stub buyCherry;
+
+
+    /*
     //为了测试重载方法
     private class Apple {
         //TODO 先规定不能用于内部类，如果用于内部类的话就编译报错!
@@ -61,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         }
 
     }
+    */
 
     //TODO 为什么@LRegister在@Override之下时，Processor就采集不到?
     @LRegister(ICheckApple.class)
@@ -69,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkApple= CheckAppleImpl.getInstance();
+        checkApple = CheckAppleImpl.getInstance();
 
         findViewById(R.id.showLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +150,12 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         Logger.d("MainActivity-->event result:" + result);
     }
 
+    @RRegister({IBuyApple.class, IBuyCherry.class})
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     //使用方式一:只要实现BaseCallback这个抽象类即可，在主线程回调
     private void useBuyAppleService() {
         IBuyApple buyApple = IBuyApple.Stub.asInterface(ServiceRouter.getInstance().getRemoteService(IBuyApple.class));
@@ -172,5 +191,9 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         }
     }
 
-
+    @LUnRegister({ICheckApple.class, ICheckPear.class})
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

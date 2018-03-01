@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 public @interface RRegister {
-    Class<?>[] services() default Object.class;
+    Class<?>[] value() default Object.class;
 }

@@ -17,6 +17,11 @@ public interface IServiceRouter {
 
     void registerLocalService(String serviceCanonicalName, Object serviceImpl);
 
+    /**
+     * 服务提供方才能调用
+     *
+     * @param serviceClass
+     */
     void unregisterLocalService(Class serviceClass);
 
     void unregisterLocalService(String serviceName);
@@ -26,6 +31,12 @@ public interface IServiceRouter {
     void registerRemoteService(String serviceCanonicalName, IBinder stubBinder);
     //TODO 不仅要支持懒加载，也要支持业务方主动注册!
     //void registerStubService(String serivceCanonicalName, Binder stubImpl);
+    //TODO 考虑到远程服务会在本地缓存IBinder,对于远程服务的注销暂时不提供!
+    /*
+    void unregisterRemoteService(Class serviceClass);
+
+    void unregisterRemoteService(String serviceCanonicalName);
+    */
 
     Object getLocalService(Class serviceClass);
 

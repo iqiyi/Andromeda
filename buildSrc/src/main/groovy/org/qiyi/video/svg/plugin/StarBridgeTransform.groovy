@@ -10,11 +10,11 @@ import org.gradle.api.Project
 public class StarBridgeTransform extends Transform {
 
     private Project project
-    private ServiceInject serviceInject
+    private ServiceInjector serviceInject
 
     public StarBridgeTransform(Project project) {
         this.project = project
-        //this.serviceInject = new ServiceInject(project)
+        //this.serviceInject = new ServiceInjector(project)
     }
 
     @Override
@@ -49,7 +49,7 @@ public class StarBridgeTransform extends Transform {
 
         ClassAppender.appendAllClasses(transformInvocation.getInputs(), classPool)
 
-        this.serviceInject=new ServiceInject(project,classPool)
+        this.serviceInject=new ServiceInjector(project,classPool)
 
         //serviceInject.injectService()
 

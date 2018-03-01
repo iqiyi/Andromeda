@@ -8,7 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Created by wangallen on 2018/2/11.
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 public @interface RInject {
+    Class<?> value() default Object.class;
 }

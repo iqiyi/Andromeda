@@ -2,14 +2,8 @@ package org.qiyi.video.svg.plugin.bean
 
 import javax.lang.model.element.VariableElement
 
-public class MethodBean {
+public class MethodBean implements Serializable {
 
-    /////////////////////用空间换时间，所以加上这两个字段//////////////////
-    private String serviceImplField
-    private String serviceCanonicalName
-    //////////////////////////////////////////////////////////////////
-
-    private String registerClassName;
     private String methodName;
     private List<String> parameterTypeNames;
 
@@ -40,28 +34,4 @@ public class MethodBean {
         this.parameterTypeNames = parameterTypeNames;
     }
 
-    public String getRegisterClassName() {
-        return registerClassName;
-    }
-
-    public void setRegisterClassName(String registerClassName) {
-        this.registerClassName = registerClassName;
-    }
-
-    String getServiceImplField() {
-        return serviceImplField
-    }
-
-    void setServiceImplField(String serviceImplField) {
-        this.serviceImplField = serviceImplField
-    }
-
-    String getServiceCanonicalName() {
-        return serviceCanonicalName
-    }
-
-    void setServiceCanonicalName(String serviceCanonicalName) {
-        this.serviceCanonicalName = serviceCanonicalName
-    }
 }
-

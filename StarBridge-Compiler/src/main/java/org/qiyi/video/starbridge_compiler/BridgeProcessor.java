@@ -11,6 +11,7 @@ import org.qiyi.video.starbridge_annotations.remote.RBind;
 import org.qiyi.video.starbridge_annotations.remote.RInject;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
+import org.qiyi.video.starbridge_compiler.bean.LocalServiceBean;
 import org.qiyi.video.starbridge_compiler.bean.MethodBean;
 
 import java.io.BufferedWriter;
@@ -318,9 +319,8 @@ public class BridgeProcessor extends AbstractProcessor {
             List<? extends VariableElement> variableElements = methodElement.getParameters();
 
             for (String serviceName : serviceNameSet) {
-                LocalServiceBean bean = chooseRightBean(serviceName, methodElement);
+                LocalServiceBean bean = chooseRightBean(serviceName, registerClassName);
                 MethodBean methodBean = new MethodBean(methodName, variableElements);
-                methodBean.setRegisterClassName(registerClassName);
                 bean.addMethodBean(methodBean);
             }
 
@@ -338,22 +338,22 @@ public class BridgeProcessor extends AbstractProcessor {
         return registerClassName;
     }
 
-    private LocalServiceBean chooseRightBean(String serviceName, Element methodElement) throws ProcessingException {
+    private LocalServiceBean chooseRightBean(String serviceName, String registerClassName) throws ProcessingException {
         List<LocalServiceBean> beanList = localServiceBeanMap.get(serviceName);
         if (null == beanList) {
             throw new ProcessingException("No field annotated by @LBind(" + serviceName + ")!");
         }
+
         LocalServiceBean bean = null;
-        Element enclosingElement = methodElement.getEnclosingElement();
-        while (enclosingElement != null) {
-            bean = getBeanInSameClass(beanList, enclosingElement);
-            if (bean != null) {
+        for (LocalServiceBean localServiceBean : beanList) {
+            if (localServiceBean.getEnclosingClassName().equals(registerClassName)) {
+                bean = localServiceBean;
                 break;
             }
-            enclosingElement = enclosingElement.getEnclosingElement();
         }
+
         if (bean == null) {
-            throw new ProcessingException("No field annotated by @LBind(" + serviceName + ") in the same or outer class!");
+            throw new ProcessingException("No field annotated by @LBind(" + serviceName + ") in the same class! Attention:Inner class is not supported now!");
         }
         return bean;
     }
