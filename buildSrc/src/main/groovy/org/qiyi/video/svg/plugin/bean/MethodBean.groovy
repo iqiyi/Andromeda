@@ -1,15 +1,13 @@
-package org.qiyi.video.starbridge_compiler.bean;
+package org.qiyi.video.svg.plugin.bean
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.lang.model.element.VariableElement
 
-import javax.lang.model.element.VariableElement;
-
-/**
- * Created by wangallen on 2018/2/12.
- */
-//TODO 考虑干脆把LocalServiceBean中的serviceImplField和serviceCanonicalName这两个属性也放到MethodBean中，这样一来逻辑也简单多了。
 public class MethodBean {
+
+    /////////////////////用空间换时间，所以加上这两个字段//////////////////
+    private String serviceImplField
+    private String serviceCanonicalName
+    //////////////////////////////////////////////////////////////////
 
     private String registerClassName;
     private String methodName;
@@ -49,4 +47,21 @@ public class MethodBean {
     public void setRegisterClassName(String registerClassName) {
         this.registerClassName = registerClassName;
     }
+
+    String getServiceImplField() {
+        return serviceImplField
+    }
+
+    void setServiceImplField(String serviceImplField) {
+        this.serviceImplField = serviceImplField
+    }
+
+    String getServiceCanonicalName() {
+        return serviceCanonicalName
+    }
+
+    void setServiceCanonicalName(String serviceCanonicalName) {
+        this.serviceCanonicalName = serviceCanonicalName
+    }
 }
+

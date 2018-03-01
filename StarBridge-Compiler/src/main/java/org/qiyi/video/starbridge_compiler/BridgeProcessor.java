@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -55,12 +56,15 @@ public class BridgeProcessor extends AbstractProcessor {
     private Filer filer;
     private Messager messager;
 
+    boolean isFirst = true;
     private Gson gson;
 
     //最后根据这个数据生成一个配置文件，放在这个配置文件的static域中即可
     //TODO 应该是List<Entry<String,LocalServiceBean>>这样的更合适？因为一个服务有可能在多个地方注册!
     //TODO 另外，是不是还要考虑在一个类中，一个服务的对象有可能在多个方法中注册？
-    private Map<String, LocalServiceBean> localServiceBeanMap = new HashMap<>();
+    //private Map<String, LocalServiceBean> localServiceBeanMap = new HashMap<>();
+    //考虑到一个服务可能在多个类中注册，所以value是List<LocalServiceBean>, key为serviceCanonicalName, value为List<LocalServiceBean>
+    private Map<String, List<LocalServiceBean>> localServiceBeanMap = new HashMap<>();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -99,6 +103,11 @@ public class BridgeProcessor extends AbstractProcessor {
     //注意:process有可能被回调多次!那要如何区分呢?
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        if (!isFirst) {
+            return false;
+        }
+        isFirst = false;
+
         Set<? extends Element> lBindElements = roundEnv.getElementsAnnotatedWith(LBind.class);
         try {
             processLBind(lBindElements);
@@ -130,37 +139,6 @@ public class BridgeProcessor extends AbstractProcessor {
 
         return true;
     }
-    /*
-    private void readLocalServiceInfo(String fileName) {
-        if (gson == null) {
-            gson = new Gson();
-        }
-        //代表当前目录
-        File directory = new File(DIR);
-
-        List<LocalServiceBean> beanList = new ArrayList<>();
-        File file = new File(directory, fileName);
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            String content;
-            while ((content = reader.readLine()) != null) {
-                beanList.add(gson.fromJson(content, LocalServiceBean.class));
-            }
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-    */
 
     //Debug发现permission denied,难道Processor中只能利用file来创建文件?
     //不对，应该也可以创建文件，permission不允许只是因为自己没有那个目录的权限，不信的话换到当前用户的Public目录下试一下，应该就可以!
@@ -197,11 +175,13 @@ public class BridgeProcessor extends AbstractProcessor {
 
             //TODO 但是一次性转换为字符串然后再写入，容易出现OOM吧？所以第二期需要优化，使用okio或者逐条记录写入。
             //TODO 不能这样写入，需要以list的方式写入，然后再以list的方式读出
-            for (Map.Entry<String, LocalServiceBean> entry : localServiceBeanMap.entrySet()) {
-                writer.write(gson.toJson(entry.getValue()));
-                writer.write("\n");
+            for (Map.Entry<String, List<LocalServiceBean>> entry : localServiceBeanMap.entrySet()) {
+                //writer.write(gson.toJson)
+                for (LocalServiceBean bean : entry.getValue()) {
+                    writer.write(gson.toJson(bean));
+                    writer.write("\n");
+                }
             }
-
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -253,15 +233,41 @@ public class BridgeProcessor extends AbstractProcessor {
                 serviceCanonicalName = element.asType().toString();
             }
 
-            if (localServiceBeanMap.get(serviceCanonicalName) != null) {
-                //TODO 这里是不是要抛异常?
-                return;
+            //包裹@LBind修饰的域的类，比如checkApple所在的类MainActivity
+            Element enclosingElement = element.getEnclosingElement();
+            if (enclosingElement == null) {
+                throw new ProcessingException(element.toString() + " must enclosed by Class!");
+            }
+            String enclosingClassName = enclosingElement.toString();
+            /*
+            try {
+                Class<?> enclosingClass = element.getClass();
+                enclosingClassName = enclosingClass.getCanonicalName();
+            } catch (MirroredTypeException mte) {
+                DeclaredType enclosingType = (DeclaredType) mte.getTypeMirrors();
+                enclosingClassName = enclosingType.asElement().toString();
+            }
+            */
+
+            List<LocalServiceBean> beanList;
+            if (localServiceBeanMap.get(serviceCanonicalName) == null) {
+                beanList = new ArrayList<>();
+                localServiceBeanMap.put(serviceCanonicalName, beanList);
+            } else {
+                //要检查同一个类中是否有其他相同也是用同一个@LBind+serviceCanonicalName修饰的field，如果有则要抛出异常
+                beanList = localServiceBeanMap.get(serviceCanonicalName);
+                for (LocalServiceBean bean : beanList) {
+                    if (enclosingClassName.equals(bean.getEnclosingClassName())) {
+                        throw new ProcessingException("Error! More than one field annotated by " + serviceCanonicalName + " in " + enclosingClassName + "!");
+                    }
+                }
             }
 
             LocalServiceBean bean = new LocalServiceBean();
             bean.setServiceCanonicalName(serviceCanonicalName);
             bean.setServiceImplField(element.toString());
-            localServiceBeanMap.put(serviceCanonicalName, bean);
+            bean.setEnclosingClassName(enclosingClassName);
+            beanList.add(bean);
         }
     }
 
@@ -297,21 +303,68 @@ public class BridgeProcessor extends AbstractProcessor {
             Element enclosingElement = element.getEnclosingElement();
             //TODO debug发现registerClassName是"wang.imallen.blog.servicemanager.MainActivity.Apple",
             //TODO 为什么不是"wang.imallen.blog.servicemanager.MainActivity$Apple"呢?
+
+            //TODO 这里其实有个问题，就是可能某个类是内部类的内部类，所以实际上需要循环替换!
+            Element outerElement = enclosingElement.getEnclosingElement();
             String registerClassName = enclosingElement.toString();
+            while (outerElement != null && outerElement instanceof TypeElement) {
+                registerClassName = replaceSingleDot(outerElement, registerClassName);
+                outerElement = outerElement.getEnclosingElement();
+            }
+
             String tmp = enclosingElement.asType().toString();  //Debug发现tmp也是"wang.imallen.blog.servicemanager.MainActivity.Apple"
 
             String methodName = methodElement.getSimpleName().toString();
             List<? extends VariableElement> variableElements = methodElement.getParameters();
+
             for (String serviceName : serviceNameSet) {
-                LocalServiceBean bean = localServiceBeanMap.get(serviceName);
-                if (bean == null) {
-                    throw new ProcessingException("Cannot register for %s cause no respective field defined for it.", serviceName);
-                }
-                bean.setRegisterClassName(registerClassName);
-                bean.setMethodBean(new MethodBean(methodName, variableElements));
+                LocalServiceBean bean = chooseRightBean(serviceName, methodElement);
+                MethodBean methodBean = new MethodBean(methodName, variableElements);
+                methodBean.setRegisterClassName(registerClassName);
+                bean.addMethodBean(methodBean);
             }
 
         }
+    }
+
+    private String replaceSingleDot(Element outerElement, String registerClassName) {
+        //if (outerElement != null && outerElement instanceof TypeElement) {
+        //要把最后一个"."替换为"$"
+        int index = registerClassName.lastIndexOf('.');
+        if (index > 0) {
+            registerClassName = registerClassName.substring(0, index) + "$" + registerClassName.substring(index + 1, registerClassName.length());
+        }
+        //}
+        return registerClassName;
+    }
+
+    private LocalServiceBean chooseRightBean(String serviceName, Element methodElement) throws ProcessingException {
+        List<LocalServiceBean> beanList = localServiceBeanMap.get(serviceName);
+        if (null == beanList) {
+            throw new ProcessingException("No field annotated by @LBind(" + serviceName + ")!");
+        }
+        LocalServiceBean bean = null;
+        Element enclosingElement = methodElement.getEnclosingElement();
+        while (enclosingElement != null) {
+            bean = getBeanInSameClass(beanList, enclosingElement);
+            if (bean != null) {
+                break;
+            }
+            enclosingElement = enclosingElement.getEnclosingElement();
+        }
+        if (bean == null) {
+            throw new ProcessingException("No field annotated by @LBind(" + serviceName + ") in the same or outer class!");
+        }
+        return bean;
+    }
+
+    private LocalServiceBean getBeanInSameClass(List<LocalServiceBean> beanList, Element enclosingElement) {
+        for (LocalServiceBean bean : beanList) {
+            if (bean.getEnclosingClassName().equals(enclosingElement.toString())) {
+                return bean;
+            }
+        }
+        return null;
     }
 
     private void processLUnRegister(Set<? extends Element> elements) {

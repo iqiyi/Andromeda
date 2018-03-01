@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 //apply plugin: org.qiyi.video.svg.plugin.StarBridgePlugin
-
 apply plugin: 'org.qiyi.svg.plugin'
 
 android {
@@ -20,6 +19,7 @@ android {
         }
     }
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
