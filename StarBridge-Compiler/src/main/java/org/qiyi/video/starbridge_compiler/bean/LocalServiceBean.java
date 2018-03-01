@@ -17,15 +17,8 @@ public class LocalServiceBean implements Serializable {
     private String serviceCanonicalName;
 
     //这个类只是处理过程中用到，最终结果是不需要的，所以使用transient修饰符
-    private transient String enclosingClassName;
+    private String enclosingClassName;
 
-    //如果是匿名内部类就类似wang.imallen.blog.applemodule.MainActivity$OnClickListener$1这样的类
-    //private String registerClassName;
-    //private Class<?>registerClass;
-
-    //private MethodBean methodBean;
-    //TODO 这里要考虑到方法重载的情况!
-    //private String registerMethod;
     //考虑到可能在一个类中的多个地方注册，所以这里为List<MethodBean>而非单个的MethodBean
     private List<MethodBean> methodBeanList = new ArrayList<>();
 
