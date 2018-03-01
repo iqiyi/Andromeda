@@ -31,7 +31,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
 
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
 
-            @RRegister(services = IBuyApple.class)
+            @RRegister(IBuyApple.class)
             @Override
             public void onClick(View v) {
                 //ServiceRouter.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());

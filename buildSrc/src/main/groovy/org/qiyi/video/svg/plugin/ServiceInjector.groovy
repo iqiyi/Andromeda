@@ -9,18 +9,12 @@ import org.qiyi.video.svg.plugin.bean.LocalServiceBean
 import org.qiyi.video.svg.plugin.bean.MethodBean
 import org.qiyi.video.svg.plugin.bean.MethodWrapper
 
-public class ServiceInject {
+public class ServiceInjector {
 
-    //private static final ClassPool pool = ClassPool.getDefault()
-    //private ClassPool pool=new ClassPool(true)
     private ClassPool pool
 
     private Gson gson
     private List<LocalServiceBean> localServiceBeanList = new ArrayList<>()
-    //key为registerClassName
-    //private Map<String,LocalServiceBean>methodBeanMap=new HashMap<>()
-    //private Map<String, List<LocalServiceBean>> methodBeanMap = new HashMap<>()
-    //private Map<String, Set<MethodBean>> methodBeanMap = new HashMap<>();
     //key是enclosingClassName,value是所有注册在这个类中的
     private Map<String, Set<LocalServiceBean>> localServiceBeanMap = new HashMap<>()
 
@@ -29,7 +23,7 @@ public class ServiceInject {
 
     private boolean appendBootFlag = false
 
-    public ServiceInject(Project project, ClassPool pool) {
+    public ServiceInjector(Project project, ClassPool pool) {
         this.buildDir = project.buildDir
         this.pool = pool
         readLocalServiceInfo("local_service_register_info.json")
@@ -89,14 +83,13 @@ public class ServiceInject {
         }
         //考虑到重载，所以value是List<MethodWrapper>
         Map<String, List<MethodWrapper>> methodWrappers = new HashMap<>()
-        //TODO 两种方案，一种是逐个MethodBean遍历，还有一种是把在同一个方法中进行Register的MethodBean都集合到一起，然后逐个插入，这种效率应该会更高一点!
         for (LocalServiceBean localServiceBean : localServiceBeans) {
             String serviceImplField = localServiceBean.getServiceImplField()
             String serviceCanonicalName = localServiceBean.getServiceCanonicalName()
 
             for (MethodBean methodBean : localServiceBean.getMethodBeanList()) {
 
-                println("----------------methodName:"+methodBean.getMethodName()+"------------------")
+                println("----------------methodName:" + methodBean.getMethodName() + "------------------")
 
                 MethodWrapper wrapper = chooseMethodWrapper(methodBean, methodWrappers)
                 CtMethod ctMethod
@@ -108,8 +101,8 @@ public class ServiceInject {
 
                     ctMethod = createCtMethod(ctClass, methodBean)
                     wrapper.setMethod(ctMethod)
-                }else{
-                    ctMethod=wrapper.getMethod()
+                } else {
+                    ctMethod = wrapper.getMethod()
                     println("-----------found one cached MethodWrapper!---------")
                 }
 
@@ -140,7 +133,7 @@ public class ServiceInject {
     }
 
     private boolean isSameParameters(MethodBean methodBean, MethodWrapper methodWrapper) {
-        if(methodBean.getParameterTypeNames()==null&&methodWrapper.getParameterTypeNames()==null){
+        if (methodBean.getParameterTypeNames() == null && methodWrapper.getParameterTypeNames() == null) {
             return true;
         }
         for (int i = 0; i < methodBean.getParameterTypeNames().size(); ++i) {
@@ -179,58 +172,6 @@ public class ServiceInject {
         return ctMethod
     }
 
-    /*
-    private void injectSingleRegisterInfo(MethodBean methodBean, String path) {
-        CtClass ctClass = pool.getCtClass(methodBean.getRegisterClassName())
-        if (ctClass == null) {
-            return
-        }
-        if (ctClass.isFrozen()) {
-            ctClass.defrost()
-        }
-        CtClass[] paramClasses = null
-
-        if (methodBean.getParameterTypeNames() != null &&
-                methodBean.getParameterTypeNames().size() > 0) {
-            paramClasses = new CtClass[methodBean.getParameterTypeNames().size()]
-            int i = 0
-            for (String paramTypeName : methodBean.getParameterTypeNames()) {
-                CtClass paramType
-                if (paramClassCache.get(paramTypeName) == null) {
-                    paramType = pool.getCtClass(paramTypeName)
-                    paramClassCache.put(paramTypeName, paramType)
-                } else {
-                    paramType = paramClassCache.get(paramTypeName)
-                }
-                paramClasses[i++] = paramType
-            }
-        }
-
-
-        CtMethod ctMethod
-        if (paramClasses == null) {
-            ctMethod = ctClass.getDeclaredMethod(methodBean.getMethodName())
-        } else {
-            ctMethod = ctClass.getDeclaredMethod(methodBean.getMethodName(), paramClasses)
-        }
-
-        if (ctMethod == null) {
-            return
-        }
-        println("-----------------methodName:" + methodBean.getMethodName() + ",field:" + methodBean.getServiceImplField() + "------------")
-
-
-        String registerLocalServiceCode = "org.qiyi.video.svg.ServiceRouter.getInstance().registerLocalService(" + methodBean.getServiceCanonicalName() +
-                ".class," + methodBean.getServiceImplField() + ");"
-
-
-        ctMethod.insertAfter(registerLocalServiceCode)
-        ctClass.writeFile(path)
-        //TODO 是不是还不能detach()呢？因为可能它需要作为后面某个方法的参数!
-        //ctClass.detach()
-    }
-    */
-
     //TODO 不用的类要即使detach,否则编译时容易OOM
     void injectRegisterInfo(String path, Project project) {
         /*
@@ -261,17 +202,16 @@ public class ServiceInject {
 
                     if (localServiceBeanMap.get(className) != null) {
 
-                        println("-----------className:"+className+"---------------")
+                        println("-----------className:" + className + "---------------")
 
                         Set<LocalServiceBean> localServiceBeans = localServiceBeanMap.get(className)
-                        injectRegisterInfoForOneClass(className,localServiceBeans,path)
+                        injectRegisterInfoForOneClass(className, localServiceBeans, path)
                     }
                 }
             }
 
         }
     }
-
 
     private void insertRemoteService() {
         //TODO 远程服务的注册还没完成

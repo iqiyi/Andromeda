@@ -31,7 +31,9 @@ dependencies {
     api project(":moduleexportlib")
     api project(":servicemanagerlib")
 
-    api project(":StarBridge-Annotations")
+    ///api project(":StarBridge-Annotations")
+    implementation project(":StarBridge-Annotations")
+    annotationProcessor project(":StarBridge-Compiler")
 
     implementation 'com.android.support:appcompat-v7:26.1.0'
     testImplementation 'junit:junit:4.12'

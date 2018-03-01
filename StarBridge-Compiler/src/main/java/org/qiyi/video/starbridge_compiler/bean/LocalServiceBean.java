@@ -1,6 +1,4 @@
-package org.qiyi.video.starbridge_compiler;
-
-import org.qiyi.video.starbridge_compiler.bean.MethodBean;
+package org.qiyi.video.starbridge_compiler.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;

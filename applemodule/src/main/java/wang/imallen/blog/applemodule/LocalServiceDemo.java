@@ -28,6 +28,9 @@ public class LocalServiceDemo extends AppCompatActivity {
     private CheckAppleImpl checkApple;
     */
 
+    @LBind(ICheckApple.class)
+    ICheckApple myCheckApple;
+
     //TODO 考虑改一下注解名称，将@LInject, @LGet分别改为@Local和@LInject，那样更好理解!
     @LInject
     ICheckApple checkApple;
@@ -77,4 +80,12 @@ public class LocalServiceDemo extends AppCompatActivity {
         });
 
     }
+
+    @LRegister(ICheckApple.class)
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+
 }
