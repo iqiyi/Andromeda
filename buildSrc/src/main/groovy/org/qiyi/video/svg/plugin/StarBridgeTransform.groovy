@@ -61,7 +61,7 @@ public class StarBridgeTransform extends Transform {
             //遍历文件夹
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 //注入代码
-                serviceInject.appendClassPath(directoryInput.file.absolutePath, project)
+                serviceInject.injectRegisterInfo(directoryInput.file.absolutePath, project)
 
                 //获取output目录
                 def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,

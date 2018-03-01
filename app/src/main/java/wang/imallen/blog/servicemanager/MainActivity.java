@@ -29,31 +29,24 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     private static final String TAG = "ServiceRouter";
 
     @LBind(ICheckPear.class)
-    private ICheckPear checkPear = new CheckPearImpl();
+    public static ICheckPear checkPear = new CheckPearImpl();
 
     @LBind(ICheckApple.class)
-    private ICheckApple checkApple;
-
-    /*
-    @LBind
-    private ICheckApple checkApple2;
+    public static ICheckApple checkApple;
 
 
-    @LBind
-    private ICheckApple checkApple3;
-    */
-
-    /*
     //为了测试重载方法
     private class Apple {
-
+        //TODO 先规定不能用于内部类，如果用于内部类的话就编译报错!
         @LRegister({ICheckApple.class, ICheckPear.class})
         String getDesc(String userId) {
+            //checkPear.getPearDesc(20);
             return "This is an apple";
         }
 
         @LRegister({ICheckApple.class, ICheckPear.class})
         String getDesc() {
+            ServiceRouter.getInstance().registerLocalService(ICheckPear.class,checkPear);
             return "Big Apple";
         }
 
@@ -68,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         }
 
     }
-    */
+
     //TODO 为什么@LRegister在@Override之下时，Processor就采集不到?
     @LRegister(ICheckApple.class)
     @Override
