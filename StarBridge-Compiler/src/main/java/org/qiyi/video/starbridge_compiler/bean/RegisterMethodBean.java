@@ -1,6 +1,7 @@
 package org.qiyi.video.starbridge_compiler.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,11 +16,11 @@ public class RegisterMethodBean implements Serializable {
 
     private List<ServiceInfo> localRegisterInfos;
     private List<ServiceInfo> localGetInfos;
+    //名称为serviceCanonicalName
     private List<String> localUnregisterInfos;
 
     private List<ServiceInfo> remoteRegisterInfos;
     private List<ServiceInfo> remoteGetInfos;
-
 
     public String getMethodName() {
         return methodName;
@@ -76,4 +77,40 @@ public class RegisterMethodBean implements Serializable {
     public void setRemoteGetInfos(List<ServiceInfo> remoteGetInfos) {
         this.remoteGetInfos = remoteGetInfos;
     }
+
+    public void addLocalRegisterInfo(ServiceInfo serviceInfo) {
+        if (localRegisterInfos == null) {
+            localRegisterInfos = new ArrayList<>();
+        }
+        localRegisterInfos.add(serviceInfo);
+    }
+
+    public void addLocalGetInfo(ServiceInfo serviceInfo) {
+        if (localGetInfos == null) {
+            localGetInfos = new ArrayList<>();
+        }
+        localGetInfos.add(serviceInfo);
+    }
+
+    public void addLocalUnRegisterInfo(String serviceCanonicalName) {
+        if (null == localUnregisterInfos) {
+            localUnregisterInfos = new ArrayList<>();
+        }
+        localUnregisterInfos.add(serviceCanonicalName);
+    }
+
+    public void addRemoteRegisterInfo(ServiceInfo serviceInfo) {
+        if (remoteRegisterInfos == null) {
+            remoteRegisterInfos = new ArrayList<>();
+        }
+        remoteRegisterInfos.add(serviceInfo);
+    }
+
+    public void addRemoteGetInfo(ServiceInfo serviceInfo) {
+        if (null == remoteGetInfos) {
+            remoteGetInfos = new ArrayList<>();
+        }
+        remoteGetInfos.add(serviceInfo);
+    }
+
 }

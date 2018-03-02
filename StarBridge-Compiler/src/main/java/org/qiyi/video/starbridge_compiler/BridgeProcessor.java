@@ -4,22 +4,22 @@ import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
 
 import org.qiyi.video.starbridge_annotations.local.LBind;
+import org.qiyi.video.starbridge_annotations.local.LGet;
 import org.qiyi.video.starbridge_annotations.local.LInject;
 import org.qiyi.video.starbridge_annotations.local.LRegister;
 import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 import org.qiyi.video.starbridge_annotations.remote.RBind;
+import org.qiyi.video.starbridge_annotations.remote.RGet;
 import org.qiyi.video.starbridge_annotations.remote.RInject;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
-import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
 import org.qiyi.video.starbridge_compiler.bean.LocalServiceBean;
-import org.qiyi.video.starbridge_compiler.bean.MethodBean;
+import org.qiyi.video.starbridge_compiler.bean.RegisterClassBean;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -67,6 +67,11 @@ public class BridgeProcessor extends AbstractProcessor {
     //考虑到一个服务可能在多个类中注册，所以value是List<LocalServiceBean>, key为serviceCanonicalName, value为List<LocalServiceBean>
     private Map<String, List<LocalServiceBean>> localServiceBeanMap = new HashMap<>();
 
+    /**
+     * key为classCanonicalName, value为RegisterClassBean
+     */
+    private Map<String, RegisterClassBean> registerClassBeanMap = new HashMap<>();
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -86,12 +91,14 @@ public class BridgeProcessor extends AbstractProcessor {
         annotations.add(LRegister.class.getCanonicalName());
         annotations.add(LUnRegister.class.getCanonicalName());
         annotations.add(LInject.class.getCanonicalName());
+        annotations.add(LGet.class.getCanonicalName());
 
         //remote
         annotations.add(RBind.class.getCanonicalName());
         annotations.add(RRegister.class.getCanonicalName());
-        annotations.add(RUnRegister.class.getCanonicalName());
+        //annotations.add(RUnRegister.class.getCanonicalName());
         annotations.add(RInject.class.getCanonicalName());
+        annotations.add(RGet.class.getCanonicalName());
 
         return annotations;
     }
@@ -162,18 +169,6 @@ public class BridgeProcessor extends AbstractProcessor {
             FileOutputStream fos = new FileOutputStream(file, false);
             writer = new BufferedWriter(new OutputStreamWriter(fos));
 
-            /*
-            JsonWriter jsonWriter = new JsonWriter(writer);
-            for (Map.Entry<String, LocalServiceBean> entry : localServiceBeanMap.entrySet()) {
-                jsonWriter.beginObject();
-                jsonWriter.jsonValue(gson.toJson(entry.getValue()));
-                jsonWriter.endObject();
-            }
-
-            jsonWriter.close();
-            */
-
-
             //TODO 但是一次性转换为字符串然后再写入，容易出现OOM吧？所以第二期需要优化，使用okio或者逐条记录写入。
             //TODO 不能这样写入，需要以list的方式写入，然后再以list的方式读出
             for (Map.Entry<String, List<LocalServiceBean>> entry : localServiceBeanMap.entrySet()) {
@@ -240,35 +235,17 @@ public class BridgeProcessor extends AbstractProcessor {
                 throw new ProcessingException(element.toString() + " must enclosed by Class!");
             }
             String enclosingClassName = enclosingElement.toString();
-            /*
-            try {
-                Class<?> enclosingClass = element.getClass();
-                enclosingClassName = enclosingClass.getCanonicalName();
-            } catch (MirroredTypeException mte) {
-                DeclaredType enclosingType = (DeclaredType) mte.getTypeMirrors();
-                enclosingClassName = enclosingType.asElement().toString();
-            }
-            */
 
-            List<LocalServiceBean> beanList;
-            if (localServiceBeanMap.get(serviceCanonicalName) == null) {
-                beanList = new ArrayList<>();
-                localServiceBeanMap.put(serviceCanonicalName, beanList);
+            RegisterClassBean registerClassBean;
+            if (registerClassBeanMap.get(enclosingClassName) == null) {
+                registerClassBean = new RegisterClassBean();
+                registerClassBean.setRegisterClassName(enclosingClassName);
+                registerClassBeanMap.put(enclosingClassName, registerClassBean);
             } else {
-                //要检查同一个类中是否有其他相同也是用同一个@LBind+serviceCanonicalName修饰的field，如果有则要抛出异常
-                beanList = localServiceBeanMap.get(serviceCanonicalName);
-                for (LocalServiceBean bean : beanList) {
-                    if (enclosingClassName.equals(bean.getEnclosingClassName())) {
-                        throw new ProcessingException("Error! More than one field annotated by " + serviceCanonicalName + " in " + enclosingClassName + "!");
-                    }
-                }
+                registerClassBean = registerClassBeanMap.get(enclosingClassName);
             }
+            registerClassBean.addLocalBindField(serviceCanonicalName, element.toString());
 
-            LocalServiceBean bean = new LocalServiceBean();
-            bean.setServiceCanonicalName(serviceCanonicalName);
-            bean.setServiceImplField(element.toString());
-            bean.setEnclosingClassName(enclosingClassName);
-            beanList.add(bean);
         }
     }
 
@@ -318,11 +295,22 @@ public class BridgeProcessor extends AbstractProcessor {
             String methodName = methodElement.getSimpleName().toString();
             List<? extends VariableElement> variableElements = methodElement.getParameters();
 
+
             for (String serviceName : serviceNameSet) {
+                RegisterClassBean registerClassBean = registerClassBeanMap.get(registerClassName);
+                if (registerClassBean == null) {
+                    throw new ProcessingException("no matched field annotated by @LBind(" + serviceName + ") in " + registerClassName);
+                }
+
+                registerClassBean.addLocalRegisterInfo(serviceName,methodName,variableElements);
+
+                /*
                 LocalServiceBean bean = chooseRightBean(serviceName, registerClassName);
                 MethodBean methodBean = new MethodBean(methodName, variableElements);
                 bean.addMethodBean(methodBean);
+                */
             }
+
 
         }
     }
