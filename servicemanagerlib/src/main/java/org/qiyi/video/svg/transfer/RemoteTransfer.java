@@ -155,6 +155,11 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
                     unbindAction(serviceCanonicalName);
                     owner.getLifecycle().removeObserver(this);
                 }
+                //TODO 这部分后面要移除!
+                @Override
+                public void onStateChange() {
+
+                }
             });
         }
         return binderBean.getBinder();

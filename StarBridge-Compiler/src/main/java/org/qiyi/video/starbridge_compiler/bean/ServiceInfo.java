@@ -11,6 +11,11 @@ public class ServiceInfo implements Serializable {
     private String serviceCanonicalName;
     private String serviceFieldName;
 
+    public ServiceInfo(String serviceCanonicalName, String serviceFieldName) {
+        this.serviceCanonicalName = serviceCanonicalName;
+        this.serviceFieldName = serviceFieldName;
+    }
+
     public String getServiceCanonicalName() {
         return serviceCanonicalName;
     }
