@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-def lib_version="0.6.2"
+def lib_version="0.6.3"
 
 android {
     compileSdkVersion 26
@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 62
+        versionCode 63
         versionName "$lib_version"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -85,7 +85,7 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
     */
     //由于基线还没升级support版本到26.1.0,所以目前无法直接使用arch-components，只能采用折衷的方案
-    implementation 'org.iqiyi.datareact:datareact:1.0.7@aar'
+    implementation 'org.iqiyi.datareact:datareact:1.0.8@aar'
 
 
     // Java8 support for Lifecycles

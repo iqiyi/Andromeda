@@ -86,7 +86,10 @@ public class RegisterClassBean implements Serializable {
         }
         registerMethodBean.addLocalRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
         */
-        initOrSetInfo4RegisterMethodBean(localBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
+
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(localBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String serviceFieldName = localBindInfoMap.get(serviceCanonicalName);
+        methodBean.addLocalRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
     }
 
     public void addRemoteRegisterInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
@@ -102,7 +105,9 @@ public class RegisterClassBean implements Serializable {
         }
         registerMethodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName,serviceFieldName));
         */
-        initOrSetInfo4RegisterMethodBean(remoteBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(remoteBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String serviceFieldName = remoteBindInfoMap.get(serviceCanonicalName);
+        methodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
     }
 
 
@@ -119,15 +124,20 @@ public class RegisterClassBean implements Serializable {
         }
         registerMethodBean.addLocalGetInfo(new ServiceInfo(serviceCanonicalName,localInjectFieldName));
         */
-        initOrSetInfo4RegisterMethodBean(localInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(localInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String localInjectFieldName = localInjectInfoMap.get(serviceCanonicalName);
+        methodBean.addLocalGetInfo(new ServiceInfo(serviceCanonicalName, localInjectFieldName));
+
     }
 
     public void addRemoteGetInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
-        initOrSetInfo4RegisterMethodBean(remoteInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(remoteInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String remoteInjectFieldName = remoteInjectInfoMap.get(serviceCanonicalName);
+        methodBean.addRemoteGetInfo(new ServiceInfo(serviceCanonicalName, remoteInjectFieldName));
     }
 
-    private void initOrSetInfo4RegisterMethodBean(Map<String, String> fieldMap, String serviceCanonicalName,
-                                                  String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
+    private RegisterMethodBean initOrSetInfo4RegisterMethodBean(Map<String, String> fieldMap, String serviceCanonicalName,
+                                                                String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
         String serviceFieldName = fieldMap.get(serviceCanonicalName);
         if (serviceFieldName == null) {
             throw new ProcessingException("No field whose type is " + serviceCanonicalName + " in " + registerClassName);
@@ -136,8 +146,10 @@ public class RegisterClassBean implements Serializable {
         RegisterMethodBean registerMethodBean = chooseMethodBean(methodName, parameterTypeNames);
         if (registerMethodBean == null) {
             registerMethodBean = createRegisterMethodBean(methodName, parameterTypeNames);
+            methodBeans.add(registerMethodBean);
         }
-        registerMethodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
+        return registerMethodBean;
+        //registerMethodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
     }
 
     private List<String> createParameterTypeNames(List<? extends VariableElement> parameterTypes) {
