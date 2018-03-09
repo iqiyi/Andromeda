@@ -26,14 +26,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile project(":ServiceAnnotation")
 
     api project(":moduleexportlib")
     api project(":servicemanagerlib")
 
     ///api project(":StarBridge-Annotations")
-    implementation project(":StarBridge-Annotations")
-    annotationProcessor project(":StarBridge-Compiler")
+    implementation project(':StarBridge-Annotations')
+    annotationProcessor project(':StarBridge-Compiler')
 
     implementation 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'

@@ -1,7 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+
+    //ext.nexus_repo_url='http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'
+
+    ext.maven_config=[
+            'nexus_repo_url':'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch',
+            'userName':'mcg-arch',
+            'groupId':'org.qiyi.video.svg',
+            'passWord':'123456',
+            'version_code':64,
+            'version_name':'0.6.6'
+    ]
+
     repositories {
         google()
         jcenter()
@@ -20,6 +31,7 @@ allprojects {
         maven {
             url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-paopao-android'
         }
+        maven { url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'}
     }
 }
 

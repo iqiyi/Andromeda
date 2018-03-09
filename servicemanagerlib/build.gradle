@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 63
-        versionName "$lib_version"
+        versionCode maven_config.version_code
+        versionName maven_config.version_name
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -62,11 +62,11 @@ uploadArchives{
 uploadArchives{
     repositories.mavenDeployer{
         repository(url:NEXUS_REPO_URL){
-            authentication(userName:"mcg-arch",password:"123456")
+            authentication(userName:maven_config.userName,password:maven_config.passWord)
         }
-        pom.groupId="org.qiyi.video.svg"
+        pom.groupId=maven_config.groupId
         pom.artifactId="svglib"
-        pom.version="$lib_version"
+        pom.version=maven_config.version_name
 
     }
 }
