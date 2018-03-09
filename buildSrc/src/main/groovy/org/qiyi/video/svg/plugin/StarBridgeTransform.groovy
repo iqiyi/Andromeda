@@ -10,11 +10,11 @@ import org.gradle.api.Project
 public class StarBridgeTransform extends Transform {
 
     private Project project
-    private ServiceInjector serviceInject
+    //private OldServiceInjector serviceInject
+    private ServiceInjector serviceInjector
 
     public StarBridgeTransform(Project project) {
         this.project = project
-        //this.serviceInject = new ServiceInjector(project)
     }
 
     @Override
@@ -49,9 +49,7 @@ public class StarBridgeTransform extends Transform {
 
         ClassAppender.appendAllClasses(transformInvocation.getInputs(), classPool)
 
-        this.serviceInject=new ServiceInjector(project,classPool)
-
-        //serviceInject.injectService()
+        this.serviceInjector = new ServiceInjector(project, classPool)
 
         //遍历input
         transformInvocation.inputs.each { TransformInput input ->
@@ -61,7 +59,8 @@ public class StarBridgeTransform extends Transform {
             //遍历文件夹
             input.directoryInputs.each { DirectoryInput directoryInput ->
                 //注入代码
-                serviceInject.injectRegisterInfo(directoryInput.file.absolutePath, project)
+                //serviceInject.injectRegisterInfo(directoryInput.file.absolutePath, project)
+                serviceInjector.injectRegisterAndGetInfo(directoryInput.file.absolutePath, project)
 
                 //获取output目录
                 def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,
@@ -70,8 +69,6 @@ public class StarBridgeTransform extends Transform {
                 //将input的目录复制到output指定目录
                 FileUtils.copyDirectory(directoryInput.file, dest)
             }
-
-            //serviceInject.injectService()
 
             //遍历jar文件，对jar不操作，但是要输出到out路径
             input.jarInputs.each { JarInput jarInput ->

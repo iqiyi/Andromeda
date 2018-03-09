@@ -1,4 +1,17 @@
 apply plugin: 'java-library'
+apply plugin: 'maven'
+
+uploadArchives{
+    repositories.mavenDeployer{
+        repository(url:maven_config.nexus_repo_url){
+            authentication(userName:maven_config.userName,password:maven_config.passWord)
+        }
+        pom.groupId=maven_config.groupId
+        pom.artifactId='compiler'
+        pom.version=maven_config.version_name
+    }
+}
+
 
 dependencies {
 
@@ -9,7 +22,8 @@ dependencies {
     //Apache Commons StringUtils
     implementation 'org.apache.commons:commons-lang3:3.4'
 
-    compile project(":StarBridge-Annotations")
+    //implementation project(":StarBridge-Annotations")
+    implementation 'org.qiyi.video.svg:annotation:0.6.4'
 
     implementation 'com.google.code.gson:gson:2.8.2'
 

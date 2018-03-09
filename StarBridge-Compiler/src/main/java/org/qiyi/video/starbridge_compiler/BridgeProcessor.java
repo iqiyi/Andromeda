@@ -14,6 +14,14 @@ import org.qiyi.video.starbridge_annotations.remote.RInject;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.starbridge_compiler.bean.LocalServiceBean;
 import org.qiyi.video.starbridge_compiler.bean.RegisterClassBean;
+import org.qiyi.video.starbridge_compiler.impl.local.LBindProcessor;
+import org.qiyi.video.starbridge_compiler.impl.local.LGetProcessor;
+import org.qiyi.video.starbridge_compiler.impl.local.LInjectProcessor;
+import org.qiyi.video.starbridge_compiler.impl.local.LRegisterProcessor;
+import org.qiyi.video.starbridge_compiler.impl.remote.RBindProcessor;
+import org.qiyi.video.starbridge_compiler.impl.remote.RGetProcessor;
+import org.qiyi.video.starbridge_compiler.impl.remote.RInjectProcessor;
+import org.qiyi.video.starbridge_compiler.impl.remote.RRegisterProcessor;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +42,7 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.MirroredTypeException;
-import javax.lang.model.type.MirroredTypesException;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -72,6 +72,19 @@ public class BridgeProcessor extends AbstractProcessor {
      */
     private Map<String, RegisterClassBean> registerClassBeanMap = new HashMap<>();
 
+    private ElementProcessor lBindProcessor;
+    private ElementProcessor lRegisterProcessor;
+
+    private ElementProcessor lInjectProcessor;
+    private ElementProcessor lGetProcessor;
+
+    private ElementProcessor rBindProcessor;
+    private ElementProcessor rRegisterProcessor;
+
+    private ElementProcessor rInjectProcessor;
+    private ElementProcessor rGetProcessor;
+
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
@@ -80,6 +93,18 @@ public class BridgeProcessor extends AbstractProcessor {
         this.elementUtils = processingEnv.getElementUtils();
         this.filer = processingEnv.getFiler();
         this.messager = processingEnv.getMessager();
+
+        lBindProcessor = new LBindProcessor(registerClassBeanMap);
+        lRegisterProcessor = new LRegisterProcessor(registerClassBeanMap);
+
+        lInjectProcessor = new LInjectProcessor(registerClassBeanMap);
+        lGetProcessor = new LGetProcessor(registerClassBeanMap);
+
+        rBindProcessor = new RBindProcessor(registerClassBeanMap);
+        rRegisterProcessor = new RRegisterProcessor(registerClassBeanMap);
+
+        rInjectProcessor = new RInjectProcessor(registerClassBeanMap);
+        rGetProcessor = new RGetProcessor(registerClassBeanMap);
     }
 
     @Override
@@ -116,9 +141,11 @@ public class BridgeProcessor extends AbstractProcessor {
         }
         isFirst = false;
 
+
         Set<? extends Element> lBindElements = roundEnv.getElementsAnnotatedWith(LBind.class);
         try {
-            processLBind(lBindElements);
+            //processLBind(lBindElements);
+            lBindProcessor.process(lBindElements);
         } catch (ProcessingException ex) {
             ex.printStackTrace();
             messager.printMessage(Diagnostic.Kind.ERROR, "Unpected error in BridgeProcessor:" + ex);
@@ -127,23 +154,69 @@ public class BridgeProcessor extends AbstractProcessor {
 
         Set<? extends Element> lRegisterElements = roundEnv.getElementsAnnotatedWith(LRegister.class);
         try {
-            processLRegister(lRegisterElements);
+            //processLRegister(lRegisterElements);
+            lRegisterProcessor.process(lRegisterElements);
         } catch (ProcessingException ex) {
             ex.printStackTrace();
             messager.printMessage(Diagnostic.Kind.ERROR, "Unpected error in BridgeProcessor:" + ex);
             return false;
         }
 
+        Set<? extends Element> lInjectElements = roundEnv.getElementsAnnotatedWith(LInject.class);
+        try {
+            lInjectProcessor.process(lInjectElements);
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unpected error in BridgeProcessor:" + ex);
+            return false;
+        }
+
+
+        Set<? extends Element> lGetElements = roundEnv.getElementsAnnotatedWith(LGet.class);
+        try {
+            lGetProcessor.process(lGetElements);
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unpected error in when processing @LGet:" + ex);
+            return false;
+        }
+
+        /////////////////////下面开始是remote服务的添加了
+        try {
+            rBindProcessor.process(roundEnv.getElementsAnnotatedWith(RBind.class));
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in RBindProcessor:" + ex);
+            return false;
+        }
+
+        try {
+            rRegisterProcessor.process(roundEnv.getElementsAnnotatedWith(RRegister.class));
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in RRegisterProcessor:" + ex);
+            return false;
+        }
+
+        try {
+            rInjectProcessor.process(roundEnv.getElementsAnnotatedWith(RInject.class));
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in RInjectProcessor:" + ex);
+            return false;
+        }
+
+        try {
+            rGetProcessor.process(roundEnv.getElementsAnnotatedWith(RGet.class));
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in RGetProcessor:" + ex);
+            return false;
+        }
+
         String fileName = "local_service_register_info.json";
         //TODO 然后是不是要生成json文件保存起来？到gradle插件时再使用
         saveLocalServiceInfo(fileName);
-
-        //readLocalServiceInfo(fileName);
-
-        Set<? extends Element> lUnRegisterElements = roundEnv.getElementsAnnotatedWith(LUnRegister.class);
-        processLUnRegister(lUnRegisterElements);
-        Set<? extends Element> lInjectElements = roundEnv.getElementsAnnotatedWith(LInject.class);
-        processLInject(lInjectElements);
 
         return true;
     }
@@ -171,13 +244,11 @@ public class BridgeProcessor extends AbstractProcessor {
 
             //TODO 但是一次性转换为字符串然后再写入，容易出现OOM吧？所以第二期需要优化，使用okio或者逐条记录写入。
             //TODO 不能这样写入，需要以list的方式写入，然后再以list的方式读出
-            for (Map.Entry<String, List<LocalServiceBean>> entry : localServiceBeanMap.entrySet()) {
-                //writer.write(gson.toJson)
-                for (LocalServiceBean bean : entry.getValue()) {
-                    writer.write(gson.toJson(bean));
-                    writer.write("\n");
-                }
+            for (Map.Entry<String, RegisterClassBean> entry : registerClassBeanMap.entrySet()) {
+                writer.write(gson.toJson(entry.getValue()));
+                writer.write("\n");
             }
+
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -194,137 +265,6 @@ public class BridgeProcessor extends AbstractProcessor {
         System.out.println("end of saveLocalServiceInfo");
     }
 
-    /**
-     * 利用它来获取serviceCanonicalName
-     *
-     * @param elements
-     * @throws ProcessingException
-     */
-    private void processLBind(Set<? extends Element> elements) throws ProcessingException {
-        for (Element element : elements) {
-            if (element.getKind() != ElementKind.FIELD) {
-                throw new ProcessingException(element, "Only fields can be annotated with @%s", LBind.class.getSimpleName());
-            }
-            //TypeElement enclosingElement=(TypeElement)element.getEnclosingElement();
-            String serviceCanonicalName = null;
-
-            String tmp;
-            //debug发现tmp的值是变量名，类似"checkApple"这样的
-            tmp = element.toString();
-
-            try {
-                Class<?> service = element.getAnnotation(LBind.class).value();
-                serviceCanonicalName = service.getCanonicalName();
-            } catch (MirroredTypeException mte) {
-                DeclaredType serviceType = (DeclaredType) mte.getTypeMirror();
-                serviceCanonicalName = serviceType.toString();
-                tmp = serviceType.asElement().toString();  //打log发现tmp的值也是"wang.imallen.blog.moduleexportlib.apple.ICheckApple"
-            }
-
-            //debug发现tmp的值是wang.imallen.blog.servicemanager.MainActivity
-            //tmp=element.getEnclosingElement().toString();
-
-            if (serviceCanonicalName == null || serviceCanonicalName.equals("java.lang.Object")) {
-                //debug发现采用这种方式可以获取到成员变量的类名(全路径名)
-                serviceCanonicalName = element.asType().toString();
-            }
-
-            //包裹@LBind修饰的域的类，比如checkApple所在的类MainActivity
-            Element enclosingElement = element.getEnclosingElement();
-            if (enclosingElement == null) {
-                throw new ProcessingException(element.toString() + " must enclosed by Class!");
-            }
-            String enclosingClassName = enclosingElement.toString();
-
-            RegisterClassBean registerClassBean;
-            if (registerClassBeanMap.get(enclosingClassName) == null) {
-                registerClassBean = new RegisterClassBean();
-                registerClassBean.setRegisterClassName(enclosingClassName);
-                registerClassBeanMap.put(enclosingClassName, registerClassBean);
-            } else {
-                registerClassBean = registerClassBeanMap.get(enclosingClassName);
-            }
-            registerClassBean.addLocalBindField(serviceCanonicalName, element.toString());
-
-        }
-    }
-
-    /**
-     * //TODO 考虑一个问题，就是如果有多个地方出现对于同一个接口的@LBind和@LRegister怎么办？
-     * //TODO 考虑到这个问题的话，必须引入Scope的概念，即在同一个Scope中对于一个接口，只能有一个@LBind和@LRegister
-     * //TODO 如果一个Scope中对于一个接口，出现多个@LRegister和@LBind,那就有问题，需要抛出异常提示!
-     * //TODO 对于这个问题，lancet应该也遇到了，看下它是怎么解决的。
-     * //TODO 第一期就强制只允许出现一次好了，Scope的问题比较复杂，到第二期再解决！
-     *
-     * @param elements
-     * @throws ProcessingException
-     */
-    private void processLRegister(Set<? extends Element> elements) throws ProcessingException {
-        for (Element element : elements) {
-            if (element.getKind() != ElementKind.METHOD) {
-                throw new ProcessingException(element, "Only methods can be annotated with @%s", LRegister.class.getSimpleName());
-            }
-            Set<String> serviceNameSet = new HashSet<>();
-            try {
-                Class<?>[] services = element.getAnnotation(LRegister.class).value();
-                for (Class<?> clazz : services) {
-                    serviceNameSet.add(clazz.getCanonicalName());
-                }
-            } catch (MirroredTypesException mte) {  //注意:由于LRegister的value对应的是Class<?>[],所以这里是MirroredTypesException而不是MirroredTypeException
-                List<? extends TypeMirror> typeMirrors = mte.getTypeMirrors();
-                for (TypeMirror typeMirror : typeMirrors) {
-                    serviceNameSet.add(typeMirror.toString());
-                }
-            }
-
-            ExecutableElement methodElement = (ExecutableElement) element;
-            Element enclosingElement = element.getEnclosingElement();
-            //TODO debug发现registerClassName是"wang.imallen.blog.servicemanager.MainActivity.Apple",
-            //TODO 为什么不是"wang.imallen.blog.servicemanager.MainActivity$Apple"呢?
-
-            //TODO 这里其实有个问题，就是可能某个类是内部类的内部类，所以实际上需要循环替换!
-            Element outerElement = enclosingElement.getEnclosingElement();
-            String registerClassName = enclosingElement.toString();
-            while (outerElement != null && outerElement instanceof TypeElement) {
-                registerClassName = replaceSingleDot(outerElement, registerClassName);
-                outerElement = outerElement.getEnclosingElement();
-            }
-
-            String tmp = enclosingElement.asType().toString();  //Debug发现tmp也是"wang.imallen.blog.servicemanager.MainActivity.Apple"
-
-            String methodName = methodElement.getSimpleName().toString();
-            List<? extends VariableElement> variableElements = methodElement.getParameters();
-
-
-            for (String serviceName : serviceNameSet) {
-                RegisterClassBean registerClassBean = registerClassBeanMap.get(registerClassName);
-                if (registerClassBean == null) {
-                    throw new ProcessingException("no matched field annotated by @LBind(" + serviceName + ") in " + registerClassName);
-                }
-
-                registerClassBean.addLocalRegisterInfo(serviceName,methodName,variableElements);
-
-                /*
-                LocalServiceBean bean = chooseRightBean(serviceName, registerClassName);
-                MethodBean methodBean = new MethodBean(methodName, variableElements);
-                bean.addMethodBean(methodBean);
-                */
-            }
-
-
-        }
-    }
-
-    private String replaceSingleDot(Element outerElement, String registerClassName) {
-        //if (outerElement != null && outerElement instanceof TypeElement) {
-        //要把最后一个"."替换为"$"
-        int index = registerClassName.lastIndexOf('.');
-        if (index > 0) {
-            registerClassName = registerClassName.substring(0, index) + "$" + registerClassName.substring(index + 1, registerClassName.length());
-        }
-        //}
-        return registerClassName;
-    }
 
     private LocalServiceBean chooseRightBean(String serviceName, String registerClassName) throws ProcessingException {
         List<LocalServiceBean> beanList = localServiceBeanMap.get(serviceName);
@@ -353,15 +293,6 @@ public class BridgeProcessor extends AbstractProcessor {
             }
         }
         return null;
-    }
-
-    private void processLUnRegister(Set<? extends Element> elements) {
-
-    }
-
-    private void processLInject(Set<? extends Element> elements) {
-
-
     }
 
 }
