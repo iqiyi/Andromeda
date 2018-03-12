@@ -49,7 +49,7 @@ public class LocalServiceDemo extends AppCompatActivity {
 
                 //checkApple=CheckAppleImpl.getInstance();
 
-                //ServiceRouter.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
+                ServiceRouter.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
                 Toast.makeText(LocalServiceDemo.this, "registered ICheckApple service", Toast.LENGTH_SHORT).show();
 
                 //TODO 这部分代码会通过gradle插件插入
@@ -75,7 +75,7 @@ public class LocalServiceDemo extends AppCompatActivity {
             @LUnRegister(ICheckApple.class) //通过注解完成本地服务的注销操作
             public void onClick(View v) {
 
-                //ServiceRouter.getInstance().unregisterLocalService(ICheckApple.class);
+                ServiceRouter.getInstance().unregisterLocalService(ICheckApple.class);
             }
         });
 

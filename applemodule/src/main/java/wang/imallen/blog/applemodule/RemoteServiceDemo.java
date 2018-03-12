@@ -34,9 +34,9 @@ public class RemoteServiceDemo extends AppCompatActivity {
             @RRegister(IBuyApple.class)
             @Override
             public void onClick(View v) {
-                //ServiceRouter.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
+                ServiceRouter.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
                 //在这里完成buyApple的实例化
-                buyApple=BuyAppleImpl.getInstance();
+                //buyApple=BuyAppleImpl.getInstance();
 
                 Toast.makeText(RemoteServiceDemo.this, "just registered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }

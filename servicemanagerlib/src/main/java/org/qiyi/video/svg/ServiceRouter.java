@@ -1,6 +1,6 @@
 package org.qiyi.video.svg;
 
-import android.arch.lifecycle.LifecycleOwner;
+//import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.os.IBinder;
 
@@ -111,7 +111,7 @@ public class ServiceRouter implements IServiceRouter {
     public IBinder getRemoteService(String serviceCanonicalName) {
         return RemoteTransfer.getInstance().getRemoteService(serviceCanonicalName);
     }
-
+    /*
     @Override
     public IBinder getRemoteService(LifecycleOwner owner, Class serviceClass) {
         return RemoteTransfer.getInstance().getRemoteService(owner, serviceClass.getCanonicalName());
@@ -121,6 +121,7 @@ public class ServiceRouter implements IServiceRouter {
     public IBinder getRemoteService(LifecycleOwner owner, String serviceCanonicalName) {
         return RemoteTransfer.getInstance().getRemoteService(owner, serviceCanonicalName);
     }
+    */
 
     @Override
     public void unbind(String serviceCanonicalName) {

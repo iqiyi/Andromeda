@@ -1,6 +1,6 @@
 package org.qiyi.video.svg.transfer.service;
 
-import android.arch.lifecycle.LifecycleOwner;
+//import android.arch.lifecycle.LifecycleOwner;
 import android.os.IBinder;
 
 /**
@@ -9,7 +9,7 @@ import android.os.IBinder;
 
 public interface IRemoteServiceTransfer {
 
-    IBinder getRemoteService(LifecycleOwner owner, String serviceCanonicalName);
+    //IBinder getRemoteService(LifecycleOwner owner, String serviceCanonicalName);
 
     IBinder getRemoteService(String serviceCanonicalName);
 
