@@ -38,13 +38,13 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     @LBind(ICheckApple.class)
     private ICheckApple checkApple;
 
-
+    /*
     @RBind(IBuyApple.class)
     private IBuyApple.Stub buyApple;
 
     @RBind(IBuyCherry.class)
     private IBuyCherry.Stub buyCherry;
-
+    */
 
     /*
     //为了测试重载方法
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         Logger.d("MainActivity-->event result:" + result);
     }
 
-    @RRegister({IBuyApple.class, IBuyCherry.class})
+    //@RRegister({IBuyApple.class, IBuyCherry.class})
     @Override
     protected void onResume() {
         super.onResume();

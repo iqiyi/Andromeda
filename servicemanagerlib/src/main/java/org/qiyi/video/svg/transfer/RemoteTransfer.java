@@ -1,9 +1,9 @@
 package org.qiyi.video.svg.transfer;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.OnLifecycleEvent;
+//import android.arch.lifecycle.Lifecycle;
+//import android.arch.lifecycle.LifecycleObserver;
+//import android.arch.lifecycle.LifecycleOwner;
+//import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -142,7 +142,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
     }
-
+    /*
     @Override
     public IBinder getRemoteService(final LifecycleOwner owner, final String serviceCanonicalName) {
         BinderBean binderBean = getIBinder(serviceCanonicalName);
@@ -164,6 +164,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
         return binderBean.getBinder();
     }
+    */
 
     //TODO 这个是不是应该为unbind(String serviceCanonicalName);
     @Override
