@@ -7,10 +7,15 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/goToUseBtn"
-        android:text="跳转到其他Activity中使用该服务"
+        android:id="@+id/useAppleServiceBtn"
+        android:text="使用检查苹果服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/usePearServiceBtn"
+        android:text="使用检查梨服务"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

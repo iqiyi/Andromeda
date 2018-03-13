@@ -7,10 +7,17 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/goToUseBtn"
-        android:text="跳转到其他Activity中使用该服务"
+        android:id="@+id/useBuyAppleServiceBtn1"
+        android:textAllCaps="false"
+        android:text="使用IBuyApple的远程服务的buyAppleInShop()接口"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/useBuyAppleServiceBtn2"
+        android:textAllCaps="false"
+        android:text="使用IBuyApple的远程服务的buyAppleOnNet()接口"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
