@@ -1,6 +1,7 @@
 package org.qiyi.video.svg.transfer.service;
 
 //import android.arch.lifecycle.LifecycleOwner;
+
 import android.os.IBinder;
 
 /**
@@ -19,4 +20,9 @@ public interface IRemoteServiceTransfer {
     //其实是registerStubService
     void registerStubService(String serviceCanonicalName, IBinder stubBinder);
 
+    /**
+     * 要注销本进程的某个服务，注意它与
+     * @param serviceCanonicalName
+     */
+    void unregisterStubService(String serviceCanonicalName);
 }

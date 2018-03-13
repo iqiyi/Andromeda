@@ -59,7 +59,7 @@ public class EventTransfer {
         if (null == dispatcherProxy) {
             BinderWrapper wrapper = new BinderWrapper(stub.asBinder());
             Intent intent = new Intent(context, DispatcherService.class);
-            intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
+            intent.setAction(Constants.DISPATCH_REGISTER_SERVICE_ACTION);
             intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
             intent.putExtra(Constants.KEY_EVENT, event);
             intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());

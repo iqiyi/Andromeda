@@ -27,7 +27,9 @@ public class Constants {
     public static final String PLUGIN1_PROCESS_SERVICE_ACTION = "qiyi.plugin1.process.stub";
 
     ////////////////////////////
-    public static final String DISPATCH_SERVICE_ACTION = "org.qiyi.video.svg.dispatch_service";
+    public static final String DISPATCH_REGISTER_SERVICE_ACTION = "org.qiyi.video.svg.dispatch_register_service";
+
+    public static final String DISPATCH_UNREGISTER_SERVICE_ACTION = "org.qiyi.video.svg.dispatch_unregister_service";
 
     public static final String DISPATCH_EVENT_ACTION = "org.qiyi.video.svg.dispatch_event";
 

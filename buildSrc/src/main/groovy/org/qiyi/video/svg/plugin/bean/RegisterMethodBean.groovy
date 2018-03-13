@@ -1,6 +1,6 @@
 package org.qiyi.video.svg.plugin.bean
 
-public class RegisterMethodBean{
+public class RegisterMethodBean {
 
     private String methodName;
     private List<String> parameterTypeNames;
@@ -8,10 +8,13 @@ public class RegisterMethodBean{
     private List<ServiceInfo> localRegisterInfos;
     private List<ServiceInfo> localGetInfos;
     //名称为serviceCanonicalName
-    private List<String> localUnregisterInfos;
+    private List<String> localUnRegisterInfos;
 
     private List<ServiceInfo> remoteRegisterInfos;
-    private List<ServiceInfo> remoteGetInfos;String getMethodName() {
+    private List<ServiceInfo> remoteGetInfos
+    private List<String> remoteUnRegisterInfos
+
+    String getMethodName() {
         return methodName
     }
 
@@ -43,12 +46,12 @@ public class RegisterMethodBean{
         this.localGetInfos = localGetInfos
     }
 
-    List<String> getLocalUnregisterInfos() {
-        return localUnregisterInfos
+    List<String> getLocalUnRegisterInfos() {
+        return localUnRegisterInfos
     }
 
-    void setLocalUnregisterInfos(List<String> localUnregisterInfos) {
-        this.localUnregisterInfos = localUnregisterInfos
+    void setLocalUnRegisterInfos(List<String> localUnRegisterInfos) {
+        this.localUnRegisterInfos = localUnRegisterInfos
     }
 
     List<ServiceInfo> getRemoteRegisterInfos() {
@@ -57,6 +60,14 @@ public class RegisterMethodBean{
 
     void setRemoteRegisterInfos(List<ServiceInfo> remoteRegisterInfos) {
         this.remoteRegisterInfos = remoteRegisterInfos
+    }
+
+    List<String> getRemoteUnRegisterInfos() {
+        return remoteUnRegisterInfos
+    }
+
+    void setRemoteUnRegisterInfos(List<String> remoteUnRegisterInfos) {
+        this.remoteUnRegisterInfos = remoteUnRegisterInfos
     }
 
     List<ServiceInfo> getRemoteGetInfos() {

@@ -1,6 +1,7 @@
 package org.qiyi.video.svg;
 
 //import android.arch.lifecycle.LifecycleOwner;
+
 import android.os.IBinder;
 
 import org.qiyi.video.svg.event.Event;
@@ -10,12 +11,17 @@ import org.qiyi.video.svg.event.EventListener;
  * Created by wangallen on 2018/1/8.
  */
 //TODO 后期要考虑一个Module下分很多个interfaces的情况，即一对多。因为可能一个Module也很复杂，需要几个不同的业务分别实现各自的接口
-public interface IServiceRouter {
+public interface IStarBridge {
 
     //TODO 这里是不是要将resiter改成add呢？不然容易跟下面的注册事件引起混淆!
     void registerLocalService(Class serviceClass, Object serviceImpl);
 
     void registerLocalService(String serviceCanonicalName, Object serviceImpl);
+
+    <T> T getLocalService(Class serviceClass);
+
+    //只能用于同进程通信,所以支持的返回值和参数类型都不受限制
+    <T> T getLocalService(String serivceCanonicalName);
 
     /**
      * 服务提供方才能调用
@@ -26,23 +32,13 @@ public interface IServiceRouter {
 
     void unregisterLocalService(String serviceName);
 
-    void registerRemoteService(Class serviceClass, IBinder stubBinder);
+    <T extends IBinder> void registerRemoteService(Class serviceClass, T stubBinder);
 
-    void registerRemoteService(String serviceCanonicalName, IBinder stubBinder);
-    //TODO 不仅要支持懒加载，也要支持业务方主动注册!
-    //void registerStubService(String serivceCanonicalName, Binder stubImpl);
-    //TODO 考虑到远程服务会在本地缓存IBinder,对于远程服务的注销暂时不提供!
-    /*
+    <T extends IBinder> void registerRemoteService(String serviceCanonicalName, T stubBinder);
+
     void unregisterRemoteService(Class serviceClass);
 
     void unregisterRemoteService(String serviceCanonicalName);
-    */
-
-    Object getLocalService(Class serviceClass);
-
-    //只能用于同进程通信,所以支持的返回值和参数类型都不受限制
-    Object getLocalService(String serivceCanonicalName);
-    //<T> T getLocalService(String serivceCanonicalName);
 
     //TODO 那对于这种什么都不传递的，是不是只能调用ApplicationContext去bind了呢？
     IBinder getRemoteService(Class serviceClass);

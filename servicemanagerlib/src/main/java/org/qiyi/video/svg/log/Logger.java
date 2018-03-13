@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class Logger {
 
-    private static final String TAG = "ServiceRouter";
+    private static final String TAG = "StarBridge";
 
     public static void i(String msg) {
         Log.i(TAG, msg);

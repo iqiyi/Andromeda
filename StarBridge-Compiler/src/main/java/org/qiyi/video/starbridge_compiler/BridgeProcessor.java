@@ -12,16 +12,19 @@ import org.qiyi.video.starbridge_annotations.remote.RBind;
 import org.qiyi.video.starbridge_annotations.remote.RGet;
 import org.qiyi.video.starbridge_annotations.remote.RInject;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
+import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
 import org.qiyi.video.starbridge_compiler.bean.LocalServiceBean;
 import org.qiyi.video.starbridge_compiler.bean.RegisterClassBean;
 import org.qiyi.video.starbridge_compiler.impl.local.LBindProcessor;
 import org.qiyi.video.starbridge_compiler.impl.local.LGetProcessor;
 import org.qiyi.video.starbridge_compiler.impl.local.LInjectProcessor;
 import org.qiyi.video.starbridge_compiler.impl.local.LRegisterProcessor;
+import org.qiyi.video.starbridge_compiler.impl.local.LUnRegisterProcessor;
 import org.qiyi.video.starbridge_compiler.impl.remote.RBindProcessor;
 import org.qiyi.video.starbridge_compiler.impl.remote.RGetProcessor;
 import org.qiyi.video.starbridge_compiler.impl.remote.RInjectProcessor;
 import org.qiyi.video.starbridge_compiler.impl.remote.RRegisterProcessor;
+import org.qiyi.video.starbridge_compiler.impl.remote.RUnRegisterProcessor;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -74,12 +77,14 @@ public class BridgeProcessor extends AbstractProcessor {
 
     private ElementProcessor lBindProcessor;
     private ElementProcessor lRegisterProcessor;
+    private ElementProcessor lUnRegisterProcessor;
 
     private ElementProcessor lInjectProcessor;
     private ElementProcessor lGetProcessor;
 
     private ElementProcessor rBindProcessor;
     private ElementProcessor rRegisterProcessor;
+    private ElementProcessor rUnRegisterProcessor;
 
     private ElementProcessor rInjectProcessor;
     private ElementProcessor rGetProcessor;
@@ -96,12 +101,14 @@ public class BridgeProcessor extends AbstractProcessor {
 
         lBindProcessor = new LBindProcessor(registerClassBeanMap);
         lRegisterProcessor = new LRegisterProcessor(registerClassBeanMap);
+        lUnRegisterProcessor = new LUnRegisterProcessor(registerClassBeanMap);
 
         lInjectProcessor = new LInjectProcessor(registerClassBeanMap);
         lGetProcessor = new LGetProcessor(registerClassBeanMap);
 
         rBindProcessor = new RBindProcessor(registerClassBeanMap);
         rRegisterProcessor = new RRegisterProcessor(registerClassBeanMap);
+        rUnRegisterProcessor = new RUnRegisterProcessor(registerClassBeanMap);
 
         rInjectProcessor = new RInjectProcessor(registerClassBeanMap);
         rGetProcessor = new RGetProcessor(registerClassBeanMap);
@@ -121,7 +128,7 @@ public class BridgeProcessor extends AbstractProcessor {
         //remote
         annotations.add(RBind.class.getCanonicalName());
         annotations.add(RRegister.class.getCanonicalName());
-        //annotations.add(RUnRegister.class.getCanonicalName());
+        annotations.add(RUnRegister.class.getCanonicalName());
         annotations.add(RInject.class.getCanonicalName());
         annotations.add(RGet.class.getCanonicalName());
 
@@ -162,6 +169,14 @@ public class BridgeProcessor extends AbstractProcessor {
             return false;
         }
 
+        try {
+            lUnRegisterProcessor.process(roundEnv.getElementsAnnotatedWith(LUnRegister.class));
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in LUnRegisterProcessor:" + ex);
+            return false;
+        }
+
         Set<? extends Element> lInjectElements = roundEnv.getElementsAnnotatedWith(LInject.class);
         try {
             lInjectProcessor.process(lInjectElements);
@@ -195,6 +210,14 @@ public class BridgeProcessor extends AbstractProcessor {
         } catch (ProcessingException ex) {
             ex.printStackTrace();
             messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in RRegisterProcessor:" + ex);
+            return false;
+        }
+
+        try {
+            rUnRegisterProcessor.process(roundEnv.getElementsAnnotatedWith(RUnRegister.class));
+        } catch (ProcessingException ex) {
+            ex.printStackTrace();
+            messager.printMessage(Diagnostic.Kind.ERROR, "Unexpected error in RUnRegisterProcessor:" + ex);
             return false;
         }
 

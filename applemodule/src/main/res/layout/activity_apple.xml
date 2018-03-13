@@ -17,6 +17,13 @@
         android:text="在同进程使用远程服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/unregisterRemoteServiceBtn"
+        android:text="注销远程服务"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/useRemoteInOtherProcessBtn"
         android:text="跳转到其他进程使用远程服务"

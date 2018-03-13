@@ -38,17 +38,48 @@ public class RemoteServiceTransfer {
         if (dispatcherProxy == null) {
             BinderWrapper wrapper = new BinderWrapper(stub.asBinder());
             Intent intent = new Intent(context, DispatcherService.class);
-            intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
+            intent.setAction(Constants.DISPATCH_REGISTER_SERVICE_ACTION);
             intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
             intent.putExtra(Constants.KEY_BUSINESS_BINDER_WRAPPER, new BinderWrapper(stubBinder));
             intent.putExtra(Constants.KEY_SERVICE_NAME, serviceCanonicalName);
-            intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
-            intent.putExtra(Constants.KEY_PROCESS_NAME, ProcessUtils.getProcessName(context));
+            setProcessInfo(intent, context);
             ServiceUtils.startServiceSafely(context, intent);
         } else {
             try {
                 dispatcherProxy.registerRemoteService(serviceCanonicalName,
                         ProcessUtils.getProcessName(context), stubBinder);
+            } catch (RemoteException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void setProcessInfo(Intent intent, Context context) {
+        intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
+        intent.putExtra(Constants.KEY_PROCESS_NAME, ProcessUtils.getProcessName(context));
+    }
+
+    /**
+     * 思考:其实是不是不用这么麻烦，直接利用事件通知机制进行通知就可以了吧？
+     * 可以是可以，但是逻辑上就不那么清晰了，而且要写很多ugly的if语句，可读性和可维护性也差了。
+     *
+     * @param serviceCanonicalName
+     * @param context
+     * @param dispatcherProxy
+     */
+    public void unregisterStubService(String serviceCanonicalName, Context context, IDispatcher dispatcherProxy) {
+        //第一步，清除本地的缓存
+        clearStubBinderCache(serviceCanonicalName);
+        //第二步，通知Dispatcher,然后让Dispatcher通知各进程
+        if (null == dispatcherProxy) {
+            Intent intent = new Intent(context, DispatcherService.class);
+            intent.setAction(Constants.DISPATCH_UNREGISTER_SERVICE_ACTION);
+            intent.putExtra(Constants.KEY_SERVICE_NAME, serviceCanonicalName);
+            //setProcessInfo(intent, context);
+            ServiceUtils.startServiceSafely(context, intent);
+        } else {
+            try {
+                dispatcherProxy.unregisterRemoteService(serviceCanonicalName);
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }
@@ -71,6 +102,9 @@ public class RemoteServiceTransfer {
     public BinderBean getAndSaveIBinder(final String serviceName, IDispatcher dispatcherProxy) {
         try {
             BinderBean binderBean = dispatcherProxy.getTargetBinder(serviceName);
+            if (null == binderBean) {
+                return null;
+            }
             //TODO 这里要处理linkToDeath的问题!
             try {
                 binderBean.getBinder().linkToDeath(new IBinder.DeathRecipient() {
@@ -90,6 +124,19 @@ public class RemoteServiceTransfer {
         }
 
         return null;
+    }
+
+    /**
+     * 清除本地的IBinder缓存
+     *
+     * @param serviceName
+     */
+    public void clearStubBinderCache(String serviceName) {
+        stubBinderCache.remove(serviceName);
+    }
+
+    public void clearRemoteBinderCache(String serviceName) {
+        remoteBinderCache.remove(serviceName);
     }
 
 }

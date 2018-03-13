@@ -12,7 +12,7 @@ import org.qiyi.video.svg.config.Constants;
 
 public class CommuStubService extends Service {
 
-    private static final String TAG = "ServiceRouter";
+    private static final String TAG = "StarBridge";
 
     public CommuStubService() {
     }

@@ -4,10 +4,12 @@ import org.qiyi.video.starbridge_annotations.local.LBind;
 import org.qiyi.video.starbridge_annotations.local.LGet;
 import org.qiyi.video.starbridge_annotations.local.LInject;
 import org.qiyi.video.starbridge_annotations.local.LRegister;
+import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 import org.qiyi.video.starbridge_annotations.remote.RBind;
 import org.qiyi.video.starbridge_annotations.remote.RGet;
 import org.qiyi.video.starbridge_annotations.remote.RInject;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
+import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
 import org.qiyi.video.starbridge_compiler.ProcessingException;
 import org.qiyi.video.starbridge_compiler.bean.RegisterClassBean;
 
@@ -116,8 +118,12 @@ public final class ProcessorUtils {
             Class<?>[] services = null;
             if (annotationClass == LRegister.class) {
                 services = element.getAnnotation(LRegister.class).value();
+            } else if (annotationClass == LUnRegister.class) {
+                services = element.getAnnotation(LUnRegister.class).value();
             } else if (annotationClass == RRegister.class) {
                 services = element.getAnnotation(RRegister.class).value();
+            } else if (annotationClass == RUnRegister.class) {
+                services = element.getAnnotation(RUnRegister.class).value();
             } else if (annotationClass == LGet.class) {
                 services = element.getAnnotation(LGet.class).value();
             } else if (annotationClass == RGet.class) {

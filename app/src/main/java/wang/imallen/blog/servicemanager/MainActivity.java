@@ -10,10 +10,8 @@ import android.view.View;
 import org.qiyi.video.starbridge_annotations.local.LBind;
 import org.qiyi.video.starbridge_annotations.local.LRegister;
 import org.qiyi.video.starbridge_annotations.local.LUnRegister;
-import org.qiyi.video.starbridge_annotations.remote.RBind;
-import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.svg.IPCCallback;
-import org.qiyi.video.svg.ServiceRouter;
+import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.callback.BaseCallback;
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
@@ -25,18 +23,12 @@ import wang.imallen.blog.applemodule.LocalServiceDemo;
 import wang.imallen.blog.applemodule.RemoteServiceDemo;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
-import wang.imallen.blog.moduleexportlib.cherry.IBuyCherry;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
+import wang.imallen.blog.servicemanager.annotation.LocalServiceAnnotationDemo;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
 
-    private static final String TAG = "ServiceRouter";
-
-    @LBind(ICheckPear.class)
-    private ICheckPear checkPear = new CheckPearImpl();
-
-    @LBind(ICheckApple.class)
-    private ICheckApple checkApple;
+    private static final String TAG = "StarBridge";
 
     /*
     @RBind(IBuyApple.class)
@@ -58,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
 
         @LRegister({ICheckApple.class, ICheckPear.class})
         String getDesc() {
-            ServiceRouter.getInstance().registerLocalService(ICheckPear.class,checkPear);
+            StarBridge.getInstance().registerLocalService(ICheckPear.class,checkPear);
             return "Big Apple";
         }
 
@@ -75,19 +67,22 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     }
     */
 
-    //TODO 为什么@LRegister在@Override之下时，Processor就采集不到?
-    @LRegister(ICheckApple.class)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkApple = CheckAppleImpl.getInstance();
-
         findViewById(R.id.showLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, LocalServiceDemo.class));
+            }
+        });
+
+        findViewById(R.id.showLocalServiceByAnno).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LocalServiceAnnotationDemo.class));
             }
         });
 
@@ -99,11 +94,18 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             }
         });
 
+        findViewById(R.id.showRemoteServiceByAnno).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //startActivity(new Intent(MainActivity.this,));
+            }
+        });
+
         findViewById(R.id.subscribeEventBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //订阅事件
-                ServiceRouter.getInstance().subscribe(EventConstants.APPLE_EVENT, MainActivity.this);
+                StarBridge.getInstance().subscribe(EventConstants.APPLE_EVENT, MainActivity.this);
             }
         });
 
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("Result", "gave u five apples!");
-                ServiceRouter.getInstance().publish(new Event(EventConstants.APPLE_EVENT, bundle));
+                StarBridge.getInstance().publish(new Event(EventConstants.APPLE_EVENT, bundle));
             }
         });
 
@@ -127,13 +129,12 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 //取消订阅
-                ServiceRouter.getInstance().unsubscribe(MainActivity.this);
+                StarBridge.getInstance().unsubscribe(MainActivity.this);
             }
         });
 
     }
 
-    @LRegister(ICheckPear.class)
     @Override
     protected void onStart() {
         super.onStart();
@@ -150,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         Logger.d("MainActivity-->event result:" + result);
     }
 
-    //@RRegister({IBuyApple.class, IBuyCherry.class})
     @Override
     protected void onResume() {
         super.onResume();
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
 
     //使用方式一:只要实现BaseCallback这个抽象类即可，在主线程回调
     private void useBuyAppleService() {
-        IBuyApple buyApple = IBuyApple.Stub.asInterface(ServiceRouter.getInstance().getRemoteService(IBuyApple.class));
+        IBuyApple buyApple = IBuyApple.Stub.asInterface(StarBridge.getInstance().getRemoteService(IBuyApple.class));
         try {
             //buyApple.buyApple(10, new MyCallback());
             buyApple.buyAppleOnNet(10, new BaseCallback() {
@@ -191,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         }
     }
 
-    @LUnRegister({ICheckApple.class, ICheckPear.class})
     @Override
     protected void onDestroy() {
         super.onDestroy();
