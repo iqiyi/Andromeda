@@ -14,4 +14,6 @@ public interface IEventDispatcher {
     void registerRemoteTransfer(int pid, IBinder transferBinder);
 
     void publish(Event event) throws RemoteException;
+
+    void unregisterRemoteService(String serviceCanonicalName) throws RemoteException;
 }

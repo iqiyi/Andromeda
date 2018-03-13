@@ -4,7 +4,7 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 
-import org.qiyi.video.svg.ServiceRouter;
+import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.log.Logger;
 
 /**
@@ -17,7 +17,7 @@ public class CustomApp extends Application {
     public void onCreate() {
         Logger.d("CustomApp-->onCreate(),pid:" + android.os.Process.myPid() + ",processName:" + getCurrentProcessName());
         super.onCreate();
-        ServiceRouter.init(this);
+        StarBridge.init(this);
     }
 
     private boolean isMainProcess() {

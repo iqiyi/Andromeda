@@ -11,6 +11,8 @@ import org.qiyi.video.svg.plugin.bean.ServiceInfo
 
 public class ServiceInjector {
 
+    private static final String STAR_BRIDGE_INSTANCE = "org.qiyi.video.svg.StarBridge.getInstance()"
+
     private ClassPool pool
 
     private Gson gson
@@ -105,6 +107,10 @@ public class ServiceInjector {
             injectLocalGetInfo(ctMethod, methodBean)
             //插入获取远程服务的代码
             injectRemoteGetInfo(ctMethod, methodBean)
+
+            injectLocalUnRegisterInfo(ctMethod, methodBean)
+
+            injectRemoteUnRegisterInfo(ctMethod, methodBean)
         }
 
         ctClass.writeFile(path)
@@ -112,7 +118,7 @@ public class ServiceInjector {
 
     private void injectLocalGetInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
         for (ServiceInfo serviceInfo : methodBean.getLocalGetInfos()) {
-            String getLocalServiceCode = serviceInfo.getServiceFieldName() + "=(" + serviceInfo.getServiceCanonicalName() + ")org.qiyi.video.svg.ServiceRouter.getInstance().getLocalService(" +
+            String getLocalServiceCode = serviceInfo.getServiceFieldName() + "=" + STAR_BRIDGE_INSTANCE + ".getLocalService(" +
                     serviceInfo.getServiceCanonicalName() + ".class);"
             ctMethod.insertAfter(getLocalServiceCode)
         }
@@ -121,14 +127,22 @@ public class ServiceInjector {
     private void injectRemoteGetInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
         for (ServiceInfo serviceInfo : methodBean.getRemoteGetInfos()) {
             String getRemoteServiceCode = serviceInfo.getServiceFieldName() + "=" + serviceInfo.getServiceCanonicalName() +
-                    ".Stub.asInterface(" + "org.qiyi.video.svg.ServiceRouter.getInstance().getRemoteService(" + serviceInfo.getServiceCanonicalName() + ".class))"
+                    ".Stub.asInterface(" + STAR_BRIDGE_INSTANCE + ".getRemoteService(" + serviceInfo.getServiceCanonicalName() + ".class))"
             ctMethod.insertAfter(getRemoteServiceCode)
         }
     }
 
+    private void injectLocalUnRegisterInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
+        for (String serviceName : methodBean.getLocalUnRegisterInfos()) {
+            String unregisterLocalServiceCode = STAR_BRIDGE_INSTANCE + ".unregisterLocalService(\"" + serviceName + "\");"
+            ctMethod.insertAfter(unregisterLocalServiceCode)
+        }
+    }
+
+    //TODO ?为什么对于LocalServiceAnnotationDemo中的onResume()方法会插入失败呢? 是因为还没引入ICheckPear这个类吗？应该不是，因为在之前没有加入unregister相关的代码插入时，是没有这个错误的。
     private void injectLocalRegisterInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
         for (ServiceInfo serviceInfo : methodBean.getLocalRegisterInfos()) {
-            String registerLocalServiceCode = "org.qiyi.video.svg.ServiceRouter.getInstance().registerLocalService(" + serviceInfo.getServiceCanonicalName() +
+            String registerLocalServiceCode = STAR_BRIDGE_INSTANCE + ".registerLocalService(" + serviceInfo.getServiceCanonicalName() +
                     ".class," + serviceInfo.getServiceFieldName() + ");"
             ctMethod.insertAfter(registerLocalServiceCode)
         }
@@ -138,10 +152,17 @@ public class ServiceInjector {
         for (ServiceInfo serviceInfo : methodBean.getRemoteRegisterInfos()) {
             //TODO 这样的话，对象必须是继承自IBinder的
 
-            String registerRemoteServiceCode = "org.qiyi.video.svg.ServiceRouter.getInstance().registerRemoteService(" + serviceInfo.getServiceCanonicalName() +
+            String registerRemoteServiceCode = STAR_BRIDGE_INSTANCE + ".registerRemoteService(" + serviceInfo.getServiceCanonicalName() +
                     ".class,org.qiyi.video.svg.utils.ServiceUtils.getIBinder(" + serviceInfo.getServiceFieldName() + "));"
 
             ctMethod.insertAfter(registerRemoteServiceCode)
+        }
+    }
+
+    private void injectRemoteUnRegisterInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
+        for (String serviceName : methodBean.getRemoteUnRegisterInfos()) {
+            String unregisterRemoteServiceCode = STAR_BRIDGE_INSTANCE + ".unregisterRemoteService(\"" + serviceName + "\");"
+            ctMethod.insertAfter(unregisterRemoteServiceCode)
         }
     }
 

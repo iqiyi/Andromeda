@@ -4,6 +4,7 @@ package org.qiyi.video.svg.transfer;
 //import android.arch.lifecycle.LifecycleObserver;
 //import android.arch.lifecycle.LifecycleOwner;
 //import android.arch.lifecycle.OnLifecycleEvent;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -90,7 +91,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             //后面考虑还是采用"has-a"的方式会更好
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
             Intent intent = new Intent(context, DispatcherService.class);
-            intent.setAction(Constants.DISPATCH_SERVICE_ACTION);
+            intent.setAction(Constants.DISPATCH_REGISTER_SERVICE_ACTION);
             intent.putExtra(Constants.KEY_REMOTE_TRANSFER_WRAPPER, wrapper);
             intent.putExtra(Constants.KEY_PID, android.os.Process.myPid());
             ServiceUtils.startServiceSafely(context, intent);
@@ -103,7 +104,9 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         Logger.d("RemoteTransfer-->getRemoteService,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         //TODO 这里就不只要获取IBinder,还要获取到对方的processName,这样才能进行bind操作
         BinderBean binderBean = getIBinder(serviceName);
-        //TODO 要进行bind操作
+        if (null == binderBean) {
+            return null;
+        }
         bindAction(serviceName, binderBean.getProcessName());
         return binderBean.getBinder();
     }
@@ -204,6 +207,17 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         serviceTransfer.registerStubService(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);
     }
 
+    /**
+     * 要注销本进程的某个服务,注意它与unregisterRemoteService()的区别!
+     * 这个方法表示要注销本进程的某个服务
+     *
+     * @param serviceCanonicalName
+     */
+    @Override
+    public void unregisterStubService(String serviceCanonicalName) {
+        serviceTransfer.unregisterStubService(serviceCanonicalName, context, dispatcherProxy);
+    }
+
     ///////////////start of event/////////////////////
 
     @Override
@@ -239,6 +253,18 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             //由于只有一个地方使用到lock,所以这里使用notify()和notifyAll()的效果是一样的
             lock.notifyAll();
         }
+    }
+
+    /**
+     * 接收到来自Dispatcher的通知，如果本地有相应的IBinder,就要清除
+     *
+     * @param serviceCanonicalName
+     * @throws RemoteException
+     */
+    @Override
+    public void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
+        Logger.d("RemoteTransfer-->unregisterRemoteService,pid:" + android.os.Process.myPid() + ",serviceName:" + serviceCanonicalName);
+        serviceTransfer.clearRemoteBinderCache(serviceCanonicalName);
     }
 
     @Override

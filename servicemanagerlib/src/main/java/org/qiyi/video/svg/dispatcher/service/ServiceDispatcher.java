@@ -17,27 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 //TODO 这个是不是叫ServiceDispatcher, ServiceRegistryCenter或者RemoteServiceCenter更合适呢？那样每个进程就可以有一个RemoteServiceManager，从架构上会更清晰
 public class ServiceDispatcher implements IServiceDispatcher {
 
-    private static final String TAG = "ServiceRouter";
+    private static final String TAG = "StarBridge";
 
     public ServiceDispatcher() {
     }
 
-    //private Map<String, IBinder> remoteBinderCache = new ConcurrentHashMap<>();
     private Map<String, BinderBean> remoteBinderCache = new ConcurrentHashMap<>();
-    //TODO 这样的话，仅仅是获取IBinder就不够了，而是要同时获取到与IBinder对应的processName
-    /*
-    @Override
-    public IBinder getTargetBinder(String serviceName) {
-        Log.d(TAG, "ServiceDispatcher-->getTargetBinder,serivceName:" + serviceName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        IBinder binder = remoteBinderCache.get(serviceName);
-        if (null == binder) {
-            //TODO 这里是不是要在出现这种情况时通过startService()来启动进程?
-            return null;
-        } else {
-            return binder;
-        }
-    }
-    */
 
     @Override
     public BinderBean getTargetBinder(String serviceCanonicalName) throws RemoteException {
@@ -72,7 +57,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
     }
 
     @Override
-    public void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
+    public void removeBinderCache(String serviceCanonicalName) {
         remoteBinderCache.remove(serviceCanonicalName);
     }
 }

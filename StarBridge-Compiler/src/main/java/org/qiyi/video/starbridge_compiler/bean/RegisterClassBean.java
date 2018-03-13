@@ -74,66 +74,31 @@ public class RegisterClassBean implements Serializable {
     }
 
     public void addLocalRegisterInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
-        /*
-        String serviceFieldName = localBindInfoMap.get(serviceCanonicalName);
-        if (serviceFieldName == null) {
-            throw new ProcessingException("No field whose type is " + serviceCanonicalName + " in " + registerClassName);
-        }
-        List<String> parameterTypeNames = createParameterTypeNames(parameterTypes);
-        RegisterMethodBean registerMethodBean = chooseMethodBean(methodName, parameterTypeNames);
-        if (registerMethodBean == null) {
-            registerMethodBean = createRegisterMethodBean(methodName, parameterTypeNames);
-        }
-        registerMethodBean.addLocalRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
-        */
-
         RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(localBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
         String serviceFieldName = localBindInfoMap.get(serviceCanonicalName);
         methodBean.addLocalRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
     }
 
-    public void addRemoteRegisterInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
-        /*
-        String serviceFieldName=remoteBindInfoMap.get(serviceCanonicalName);
-        if(serviceFieldName==null){
-            throw new ProcessingException("No field whose type is "+serviceCanonicalName+" in "+registerClassName);
+    public void addLocalUnRegisterInfo(String serviceCanonicalName, String methodName,
+                                       List<? extends VariableElement> parameterTypes) throws ProcessingException {
+        List<String> parameterTypeNames = createParameterTypeNames(parameterTypes);
+        RegisterMethodBean registerMethodBean = chooseMethodBean(methodName, parameterTypeNames);
+        if (registerMethodBean == null) {
+            registerMethodBean = createRegisterMethodBean(methodName, parameterTypeNames);
+            methodBeans.add(registerMethodBean);
         }
-        List<String>parameterTypeNames=createParameterTypeNames(parameterTypes);
-        RegisterMethodBean registerMethodBean=chooseMethodBean(methodName,parameterTypeNames);
-        if(registerMethodBean==null){
-            registerMethodBean=createRegisterMethodBean(methodName,parameterTypeNames);
-        }
-        registerMethodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName,serviceFieldName));
-        */
-        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(remoteBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
-        String serviceFieldName = remoteBindInfoMap.get(serviceCanonicalName);
-        methodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
+        registerMethodBean.addLocalUnRegisterInfo(serviceCanonicalName);
     }
 
-
-    public void addLocalGetInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
-        /*
-        String localInjectFieldName = localInjectInfoMap.get(serviceCanonicalName);
-        if (localInjectFieldName == null) {
-            throw new ProcessingException("No field whose type is " + serviceCanonicalName + " in " + registerClassName);
+    public void addRemoteUnRegisterInfo(String serviceCanonicalName, String methodName,
+                                        List<? extends VariableElement> parameterTypes) throws ProcessingException {
+        List<String> parameterTypeNames = createParameterTypeNames(parameterTypes);
+        RegisterMethodBean registerMethodBean = chooseMethodBean(methodName, parameterTypeNames);
+        if (registerMethodBean == null) {
+            registerMethodBean = createRegisterMethodBean(methodName, parameterTypeNames);
+            methodBeans.add(registerMethodBean);
         }
-        List<String>parameterTypeNames=createParameterTypeNames(parameterTypes);
-        RegisterMethodBean registerMethodBean=chooseMethodBean(methodName,parameterTypeNames);
-        if(registerMethodBean==null){
-            registerMethodBean=createRegisterMethodBean(methodName,parameterTypeNames);
-        }
-        registerMethodBean.addLocalGetInfo(new ServiceInfo(serviceCanonicalName,localInjectFieldName));
-        */
-        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(localInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
-        String localInjectFieldName = localInjectInfoMap.get(serviceCanonicalName);
-        methodBean.addLocalGetInfo(new ServiceInfo(serviceCanonicalName, localInjectFieldName));
-
-    }
-
-    public void addRemoteGetInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
-        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(remoteInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
-        String remoteInjectFieldName = remoteInjectInfoMap.get(serviceCanonicalName);
-        methodBean.addRemoteGetInfo(new ServiceInfo(serviceCanonicalName, remoteInjectFieldName));
+        registerMethodBean.addRemoteUnRegisterInfo(serviceCanonicalName);
     }
 
     private RegisterMethodBean initOrSetInfo4RegisterMethodBean(Map<String, String> fieldMap, String serviceCanonicalName,
@@ -150,6 +115,27 @@ public class RegisterClassBean implements Serializable {
         }
         return registerMethodBean;
         //registerMethodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
+    }
+
+
+    public void addRemoteRegisterInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(remoteBindInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String serviceFieldName = remoteBindInfoMap.get(serviceCanonicalName);
+        methodBean.addRemoteRegisterInfo(new ServiceInfo(serviceCanonicalName, serviceFieldName));
+    }
+
+
+    public void addLocalGetInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(localInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String localInjectFieldName = localInjectInfoMap.get(serviceCanonicalName);
+        methodBean.addLocalGetInfo(new ServiceInfo(serviceCanonicalName, localInjectFieldName));
+
+    }
+
+    public void addRemoteGetInfo(String serviceCanonicalName, String methodName, List<? extends VariableElement> parameterTypes) throws ProcessingException {
+        RegisterMethodBean methodBean = initOrSetInfo4RegisterMethodBean(remoteInjectInfoMap, serviceCanonicalName, methodName, parameterTypes);
+        String remoteInjectFieldName = remoteInjectInfoMap.get(serviceCanonicalName);
+        methodBean.addRemoteGetInfo(new ServiceInfo(serviceCanonicalName, remoteInjectFieldName));
     }
 
     private List<String> createParameterTypeNames(List<? extends VariableElement> parameterTypes) {

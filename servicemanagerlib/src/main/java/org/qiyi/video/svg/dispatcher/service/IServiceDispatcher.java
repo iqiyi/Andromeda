@@ -16,6 +16,7 @@ public interface IServiceDispatcher {
 
     void registerRemoteService(String serviceCanonicalName, String processName, IBinder binder) throws RemoteException;
 
-    void unregisterRemoteService(String serviceCanonicalName) throws RemoteException;
+    //void unregisterRemoteService(String serviceCanonicalName) throws RemoteException;
+    void removeBinderCache(String serviceCanonicalName);
 
 }

@@ -17,10 +17,11 @@ public class RegisterMethodBean implements Serializable {
     private List<ServiceInfo> localRegisterInfos;
     private List<ServiceInfo> localGetInfos;
     //名称为serviceCanonicalName
-    private List<String> localUnregisterInfos;
+    private List<String> localUnRegisterInfos;
 
     private List<ServiceInfo> remoteRegisterInfos;
     private List<ServiceInfo> remoteGetInfos;
+    private List<String> remoteUnRegisterInfos;
 
     public String getMethodName() {
         return methodName;
@@ -54,12 +55,20 @@ public class RegisterMethodBean implements Serializable {
         this.localGetInfos = localGetInfos;
     }
 
-    public List<String> getLocalUnregisterInfos() {
-        return localUnregisterInfos;
+    public List<String> getLocalUnRegisterInfos() {
+        return localUnRegisterInfos;
     }
 
-    public void setLocalUnregisterInfos(List<String> localUnregisterInfos) {
-        this.localUnregisterInfos = localUnregisterInfos;
+    public void setLocalUnRegisterInfos(List<String> localUnRegisterInfos) {
+        this.localUnRegisterInfos = localUnRegisterInfos;
+    }
+
+    public List<String> getRemoteUnRegisterInfos() {
+        return remoteUnRegisterInfos;
+    }
+
+    public void setRemoteUnRegisterInfos(List<String> remoteUnRegisterInfos) {
+        this.remoteUnRegisterInfos = remoteUnRegisterInfos;
     }
 
     public List<ServiceInfo> getRemoteRegisterInfos() {
@@ -93,10 +102,10 @@ public class RegisterMethodBean implements Serializable {
     }
 
     public void addLocalUnRegisterInfo(String serviceCanonicalName) {
-        if (null == localUnregisterInfos) {
-            localUnregisterInfos = new ArrayList<>();
+        if (null == localUnRegisterInfos) {
+            localUnRegisterInfos = new ArrayList<>();
         }
-        localUnregisterInfos.add(serviceCanonicalName);
+        localUnRegisterInfos.add(serviceCanonicalName);
     }
 
     public void addRemoteRegisterInfo(ServiceInfo serviceInfo) {
@@ -104,6 +113,13 @@ public class RegisterMethodBean implements Serializable {
             remoteRegisterInfos = new ArrayList<>();
         }
         remoteRegisterInfos.add(serviceInfo);
+    }
+
+    public void addRemoteUnRegisterInfo(String serviceCanonicalName) {
+        if (null == remoteUnRegisterInfos) {
+            remoteUnRegisterInfos = new ArrayList<>();
+        }
+        remoteUnRegisterInfos.add(serviceCanonicalName);
     }
 
     public void addRemoteGetInfo(ServiceInfo serviceInfo) {

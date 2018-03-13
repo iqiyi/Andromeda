@@ -12,10 +12,21 @@
         android:text="本地服务注册和使用"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/showLocalServiceByAnno"
+        android:text="使用注解完成本地服务注册和使用"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/showRemoteServiceBtn"
         android:text="远程服务注册和使用"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/showRemoteServiceByAnno"
+        android:text="使用注解完成远程服务注册和使用"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

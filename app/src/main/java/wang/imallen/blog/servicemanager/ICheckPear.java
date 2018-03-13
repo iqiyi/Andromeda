@@ -6,7 +6,7 @@ package wang.imallen.blog.servicemanager;
 
 public interface ICheckPear {
 
-    int getAppleCalories(int pearNum);
+    int getCalories(int pearNum);
 
     String getPearDesc(int pearType);
 

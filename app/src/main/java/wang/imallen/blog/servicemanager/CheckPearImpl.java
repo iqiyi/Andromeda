@@ -6,7 +6,7 @@ package wang.imallen.blog.servicemanager;
 
 public class CheckPearImpl implements ICheckPear {
     @Override
-    public int getAppleCalories(int pearNum) {
+    public int getCalories(int pearNum) {
         return pearNum * 50;
     }
 

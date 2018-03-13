@@ -8,6 +8,7 @@ import org.qiyi.video.starbridge_annotations.local.LRegister;
 import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 import org.qiyi.video.starbridge_annotations.remote.RBind;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
+import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
@@ -50,5 +51,11 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @RUnRegister(IBuyApple.class)
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
     }
 }
