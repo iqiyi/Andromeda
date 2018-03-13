@@ -17,8 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity" />
-        <activity android:name=".annotation.LocalServiceAnnotationDemo"></activity>
+        <activity android:name=".annotation.local.RegLocalServiceByAnnoActivity" />
+        <activity android:name=".annotation.local.UseLocalServiceByAnnoActivity" />
+        <activity android:name=".annotation.remote.RegRemoteServiceByAnnoActivity" />
+        <activity android:name=".annotation.remote.UseRemoteServiceByAnnoActivity"
+            android:process=":tea"
+            ></activity>
     </application>
 
 </manifest>

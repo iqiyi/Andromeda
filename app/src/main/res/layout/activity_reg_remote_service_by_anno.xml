@@ -8,7 +8,7 @@
 
     <Button
         android:id="@+id/goToUseBtn"
-        android:text="跳转到其他Activity中使用该服务"
+        android:text="跳转到其他进程的Activity中使用该服务"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

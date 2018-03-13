@@ -7,9 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import org.qiyi.video.starbridge_annotations.local.LBind;
-import org.qiyi.video.starbridge_annotations.local.LRegister;
-import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 import org.qiyi.video.svg.IPCCallback;
 import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.callback.BaseCallback;
@@ -17,55 +14,17 @@ import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.log.Logger;
 
-import wang.imallen.blog.applemodule.CheckAppleImpl;
 import wang.imallen.blog.applemodule.EventActivity;
 import wang.imallen.blog.applemodule.LocalServiceDemo;
 import wang.imallen.blog.applemodule.RemoteServiceDemo;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
-import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
-import wang.imallen.blog.servicemanager.annotation.LocalServiceAnnotationDemo;
+import wang.imallen.blog.servicemanager.annotation.local.RegLocalServiceByAnnoActivity;
+import wang.imallen.blog.servicemanager.annotation.remote.RegRemoteServiceByAnnoActivity;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
 
     private static final String TAG = "StarBridge";
-
-    /*
-    @RBind(IBuyApple.class)
-    private IBuyApple.Stub buyApple;
-
-    @RBind(IBuyCherry.class)
-    private IBuyCherry.Stub buyCherry;
-    */
-
-    /*
-    //为了测试重载方法
-    private class Apple {
-        //TODO 先规定不能用于内部类，如果用于内部类的话就编译报错!
-        @LRegister({ICheckApple.class, ICheckPear.class})
-        String getDesc(String userId) {
-            //checkPear.getPearDesc(20);
-            return "This is an apple";
-        }
-
-        @LRegister({ICheckApple.class, ICheckPear.class})
-        String getDesc() {
-            StarBridge.getInstance().registerLocalService(ICheckPear.class,checkPear);
-            return "Big Apple";
-        }
-
-        @LRegister(ICheckApple.class)
-        int getWeight(String userId) {
-            return 10;
-        }
-
-        @LRegister(ICheckApple.class)
-        int getWeight(String userId, int money) {
-            return 10 * money;
-        }
-
-    }
-    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         findViewById(R.id.showLocalServiceByAnno).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LocalServiceAnnotationDemo.class));
+                startActivity(new Intent(MainActivity.this, RegLocalServiceByAnnoActivity.class));
             }
         });
 
@@ -97,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         findViewById(R.id.showRemoteServiceByAnno).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(MainActivity.this,));
+                startActivity(new Intent(MainActivity.this, RegRemoteServiceByAnnoActivity.class));
             }
         });
 

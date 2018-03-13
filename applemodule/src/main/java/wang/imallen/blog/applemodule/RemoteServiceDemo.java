@@ -22,8 +22,6 @@ public class RemoteServiceDemo extends AppCompatActivity {
         setContentView(R.layout.activity_apple);
 
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
-
-            @RRegister(IBuyApple.class)
             @Override
             public void onClick(View v) {
                 StarBridge.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance());

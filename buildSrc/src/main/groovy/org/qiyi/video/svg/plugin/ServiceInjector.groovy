@@ -127,7 +127,7 @@ public class ServiceInjector {
     private void injectRemoteGetInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
         for (ServiceInfo serviceInfo : methodBean.getRemoteGetInfos()) {
             String getRemoteServiceCode = serviceInfo.getServiceFieldName() + "=" + serviceInfo.getServiceCanonicalName() +
-                    ".Stub.asInterface(" + STAR_BRIDGE_INSTANCE + ".getRemoteService(" + serviceInfo.getServiceCanonicalName() + ".class))"
+                    ".Stub.asInterface(" + STAR_BRIDGE_INSTANCE + ".getRemoteService(" + serviceInfo.getServiceCanonicalName() + ".class));"
             ctMethod.insertAfter(getRemoteServiceCode)
         }
     }
