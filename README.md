@@ -1,16 +1,33 @@
 # 项目简介
 
-StarBridge设计的目的是让组件间通信如同调用Java Interface一样简单。
-目前StarBridge支持本地服务的注册与使用，远程服务的注册与使用。
+StarBridge提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程调用。
 **之所以分成本地服务和远程服务这两种，是由于本地服务的接口可以传递各种类型的参数和返回值，而远程接口则受AIDL的限制，参数和返回值只能是基本类型或者实现了Parcelable接口的自定义类型。**
-即服务方只要注册了接口和实现，调用方就可通过StarBridge调用到。
-StarBridge的优势主要体现在以下几个方面:
-+ 同步调用，不需要bindService()的方法来获取对方的IBinder,只要服务提供方注册了服务，任何调用方都可以获取到，无需异步连接
+
+StarBridge的主要特色如下:
+
++ 由于StarBridge是在AIDL的基础上进行改造，所以在保证了互操作性的基础上，同时又使得任意两个模块间的IPC调用变得异常简单。优化点包括:
+    - 无需创建连接。传统的IPC方式，如果n个模块间需要两两通信，那么就需要创建C(n,2)个连接，而使用StarBridge, 不需要任何bindService()操作即可获取对方的IBinder
+    - 同步获取服务。抛弃了bindService()这种异步获取的方式，改造成了同步获取
+    - 生命周期自动管理(详情见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86))
+    
++ 透明依赖，提供注解的方式来注册和获取服务，无需显式依赖StarBridge的代码，而是在编译时注入代码，便于方案切换，特别是对于既要做插件又要做独立APK的业务很友好
+
 + 采用"接口+数据结构"的方式来实现组件间通信，这种方式相比协议的方式在于实现简单，使用方便，无需定义大量的java bean, 维护也更简单
-+ 透明依赖。如果使用注解的话，可以不需要显式依赖StarBridge的代码，而是在编译时插入代码，这样对于方案切换，以及既要做插件又要做独立APK的业务很友好
-+ 天然的互操作性(即可无缝切换AIDL)、生命周期自动管理(详情见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86))、接口的版本兼容性管理(详情见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3))
+
++ 支持IPC的Callback，并且支持跨进程的事件总线
+
++ 接口的版本兼容性管理，各个版本的接口变动会使得接口文件的deprecated越来越臃肿，难以维护，starBridge的“滚木移石”方案比较优雅的解决了此问题（详细见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3）)    
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
+
+StarBridge和其他组件间通信方案的对比如下:
+
+|       |    使用方便性     | 代码侵入性  |   互操作性    |  是否支持IPC   |  是否支持跨进程事件总线  |  是否支持页面跳转  |
+| :---: | :-------: | :----------: |:----------: |:----------: |:----------: |:----------: |
+| StarBridge |  好     |   较小     |    好    |    Yes    |   Yes    |   No     |
+| DDComponentForAndroid |  较差      |   较大     |    差    |   No     |   No    |   Yes     |
+| ARouter |  较好      |   较大     |    差    |   No     |   No    |    Yes    |
+
 
 # 接入方式
 ## 普通接入方式
@@ -136,8 +153,6 @@ StarBridge的优势主要体现在以下几个方面:
         void buyAppleOnNet(int userId,IPCCallback callback);
     }
 ```
-
-**至于具体的打包和暴露方式，目前还在实现中，Demo阶段先特殊处理。**
 
 而接口的实现如下:
 ```java
@@ -352,7 +367,9 @@ public class Event implements Parcelable {
 
 # TODO
 1.将各个Module中对外暴露的接口放在各Module一个特定的目录中，或者加上注解，从而在打包时将它们打到基线，解决接口暴露问题 
+
 2.事件总线需要支持粘性事件  
+
 3.事件总线需要支持三种threadMode回调
 
 # 技术支持
