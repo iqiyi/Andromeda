@@ -2,7 +2,7 @@
 
 StarBridge提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程调用。
 
-![StarBridge_arch](res/StarBridge_star_diagram.png)
+![StarBridge_arch](res/StarBridge_Module_arch.png)
 
 **注:之所以分成本地服务和远程服务这两种，是由于本地服务的接口可以传递各种类型的参数和返回值，而远程接口则受AIDL的限制，参数和返回值只能是基本类型或者实现了Parcelable接口的自定义类型。**
 
