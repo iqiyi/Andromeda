@@ -9,8 +9,8 @@ buildscript {
             'userName':'mcg-arch',
             'groupId':'org.qiyi.video.svg',
             'passWord':'123456',
-            'version_code':69,
-            'version_name':'0.6.9'
+            'version_code':70,
+            'version_name':'0.7.0'
     ]
 
     repositories {

@@ -1,1 +1,1 @@
-include ':app', ':moduleexportlib', ':applemodule', ':cherrymodule', ':servicemanagerlib', ':StarBridge-Annotations', ':StarBridge-Compiler', ':buildSrc'
+include ':app', ':moduleexportlib', ':applemodule', ':cherrymodule', ':servicemanagerlib', ':StarBridge-Annotations', ':StarBridge-Compiler', ':buildSrc', ':StarBridge-Plugin'
