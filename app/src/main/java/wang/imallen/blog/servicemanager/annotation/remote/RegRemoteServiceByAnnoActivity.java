@@ -9,7 +9,7 @@ import org.qiyi.video.starbridge_annotations.remote.RBind;
 import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
 
-import wang.imallen.blog.applemodule.BuyAppleImpl;
+import wang.imallen.blog.applemodule.service.BuyAppleImpl;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.servicemanager.R;
 

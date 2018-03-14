@@ -1,4 +1,4 @@
-package wang.imallen.blog.applemodule;
+package wang.imallen.blog.applemodule.service;
 
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 

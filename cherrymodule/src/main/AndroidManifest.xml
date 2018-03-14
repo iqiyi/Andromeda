@@ -1,2 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="wang.imallen.blog.cherrymodule" />
+    package="wang.imallen.blog.cherrymodule">
+
+    <application>
+        <activity android:name=".local.UseLocalServiceFromAppleModule" />
+        <activity android:name=".remote.UseRemoteServiceFromAppleModule" />
+        <activity android:name=".CherryActivity"></activity>
+    </application>
+
+</manifest>

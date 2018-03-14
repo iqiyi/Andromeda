@@ -1,4 +1,4 @@
-package wang.imallen.blog.applemodule;
+package wang.imallen.blog.applemodule.service;
 
 import android.os.Bundle;
 import android.os.RemoteException;

@@ -1,4 +1,4 @@
-package wang.imallen.blog.applemodule;
+package wang.imallen.blog.applemodule.event;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.log.Logger;
 
+import wang.imallen.blog.applemodule.R;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
 
 public class EventActivity extends AppCompatActivity implements EventListener {

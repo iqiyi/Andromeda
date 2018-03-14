@@ -6,6 +6,7 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.qiyi.video.svg.IPCCallback;
 import org.qiyi.video.svg.StarBridge;
@@ -14,9 +15,10 @@ import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.log.Logger;
 
-import wang.imallen.blog.applemodule.EventActivity;
-import wang.imallen.blog.applemodule.LocalServiceDemo;
-import wang.imallen.blog.applemodule.RemoteServiceDemo;
+import wang.imallen.blog.applemodule.event.EventActivity;
+import wang.imallen.blog.applemodule.local.LocalServiceDemo;
+import wang.imallen.blog.applemodule.remote.RemoteServiceDemo;
+import wang.imallen.blog.cherrymodule.CherryActivity;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
 import wang.imallen.blog.servicemanager.annotation.local.RegLocalServiceByAnnoActivity;
@@ -57,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, RegRemoteServiceByAnnoActivity.class));
+            }
+        });
+
+        findViewById(R.id.showServiceInOtherModule).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,CherryActivity.class));
             }
         });
 
@@ -102,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     @Override
     public void onNotify(Event event) {
         String name = event.getName();
+        Toast.makeText(this,"get event whose name is "+name,Toast.LENGTH_SHORT).show();
         Logger.d("MainActivity-->event name:" + name);
         if (event.getData() == null) {
             return;
