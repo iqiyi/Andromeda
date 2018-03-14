@@ -68,7 +68,7 @@ dependencies {
 
     //compile project(":ServiceAnnotation")
 
-    compile project(":servicemanagerlib")
+    compile project(':StarBridge-Lib')
 
     compileOnly 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'

@@ -9,7 +9,7 @@ import org.qiyi.video.starbridge_annotations.local.LBind;
 import org.qiyi.video.starbridge_annotations.local.LRegister;
 import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 
-import wang.imallen.blog.applemodule.CheckAppleImpl;
+import wang.imallen.blog.applemodule.service.CheckAppleImpl;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 import wang.imallen.blog.servicemanager.CheckPearImpl;
 import wang.imallen.blog.servicemanager.ICheckPear;

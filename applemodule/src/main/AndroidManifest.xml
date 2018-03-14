@@ -4,18 +4,17 @@
 
     <application>
         <activity
-            android:name=".RemoteServiceDemo"
+            android:name=".remote.RemoteServiceDemo"
             android:process=":apple" />
         <activity
-            android:name=".LocalServiceDemo"
-            android:process=":apple" />
+            android:name=".local.LocalServiceDemo"
+             />
         <activity
-            android:name=".BananaActivity"
+            android:name=".remote.BananaActivity"
             android:process=":banana" />
         <activity
-            android:name=".EventActivity"
+            android:name=".event.EventActivity"
             android:process=":apple" />
-        <activity android:name=".InjectDemoActivity"></activity>
     </application>
 
 </manifest>

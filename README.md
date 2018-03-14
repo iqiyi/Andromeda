@@ -19,7 +19,7 @@ StarBridge的主要特色如下:
 
 + 支持IPC的Callback，并且支持跨进程的事件总线
 
-+ 接口的版本兼容性管理，各个版本的接口变动会使得接口文件的deprecated越来越臃肿，难以维护，StarBridge的“滚木移石”方案比较优雅的解决了此问题（详细见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3）)    
++ 接口的版本兼容性管理，各个版本的接口变动会使得接口文件的deprecated越来越臃肿，难以维护，StarBridge的“滚木移石”方案比较优雅的解决了此问题(详细见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3))  
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
 

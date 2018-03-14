@@ -1,4 +1,4 @@
-package wang.imallen.blog.applemodule;
+package wang.imallen.blog.applemodule.remote;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,10 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.starbridge_annotations.remote.RRegister;
 import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.callback.BaseCallback;
 
+import wang.imallen.blog.applemodule.service.BuyAppleImpl;
+import wang.imallen.blog.applemodule.R;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 
 public class RemoteServiceDemo extends AppCompatActivity {

@@ -1,14 +1,14 @@
-package wang.imallen.blog.applemodule;
+package wang.imallen.blog.applemodule.local;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.starbridge_annotations.local.LRegister;
-import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 import org.qiyi.video.svg.StarBridge;
 
+import wang.imallen.blog.applemodule.service.CheckAppleImpl;
+import wang.imallen.blog.applemodule.R;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 
 public class LocalServiceDemo extends AppCompatActivity {
@@ -20,7 +20,6 @@ public class LocalServiceDemo extends AppCompatActivity {
 
         findViewById(R.id.registerLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            @LRegister(ICheckApple.class) //通过注解来完成注入
             public void onClick(View v) {
 
                 StarBridge.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
@@ -45,7 +44,6 @@ public class LocalServiceDemo extends AppCompatActivity {
 
         findViewById(R.id.unregisterLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            @LUnRegister(ICheckApple.class) //通过注解完成本地服务的注销操作
             public void onClick(View v) {
                 StarBridge.getInstance().unregisterLocalService(ICheckApple.class);
                 Toast.makeText(LocalServiceDemo.this, "just unregistered ICheckApple service", Toast.LENGTH_SHORT).show();

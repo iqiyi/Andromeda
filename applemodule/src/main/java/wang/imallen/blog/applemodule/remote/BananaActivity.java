@@ -1,4 +1,4 @@
-package wang.imallen.blog.applemodule;
+package wang.imallen.blog.applemodule.remote;
 
 import android.os.Bundle;
 import android.os.IBinder;
@@ -11,6 +11,7 @@ import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.callback.BaseCallback;
 import org.qiyi.video.svg.log.Logger;
 
+import wang.imallen.blog.applemodule.R;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 
 public class BananaActivity extends AppCompatActivity {
