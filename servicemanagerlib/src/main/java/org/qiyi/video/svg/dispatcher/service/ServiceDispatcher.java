@@ -13,8 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by wangallen on 2018/1/8.
  */
-//TODO 要将自己注册到主进程的ServiceManager中
-//TODO 这个是不是叫ServiceDispatcher, ServiceRegistryCenter或者RemoteServiceCenter更合适呢？那样每个进程就可以有一个RemoteServiceManager，从架构上会更清晰
 public class ServiceDispatcher implements IServiceDispatcher {
 
     private static final String TAG = "StarBridge";
@@ -36,7 +34,6 @@ public class ServiceDispatcher implements IServiceDispatcher {
         }
     }
 
-    //TODO 还要把binder与serviceName绑定在一起，才能找到对应的类调用asInterface()方法
     @Override
     public void registerRemoteService(final String serviceCanonicalName, String processName,
                                       IBinder binder) throws RemoteException {

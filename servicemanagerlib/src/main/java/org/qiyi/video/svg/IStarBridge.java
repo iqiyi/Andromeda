@@ -10,10 +10,8 @@ import org.qiyi.video.svg.event.EventListener;
 /**
  * Created by wangallen on 2018/1/8.
  */
-//TODO 后期要考虑一个Module下分很多个interfaces的情况，即一对多。因为可能一个Module也很复杂，需要几个不同的业务分别实现各自的接口
 public interface IStarBridge {
 
-    //TODO 这里是不是要将resiter改成add呢？不然容易跟下面的注册事件引起混淆!
     void registerLocalService(Class serviceClass, Object serviceImpl);
 
     void registerLocalService(String serviceCanonicalName, Object serviceImpl);

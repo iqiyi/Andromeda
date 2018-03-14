@@ -27,7 +27,6 @@ public class RemoteServiceTransfer {
     /**
      * 本地的Binder,需要给其他进程使用的,key为inteface的完整名称
      */
-    //TODO 这个还是改成让他们注册IBinder,这样子也能保持注册和取出来的是一样的东西
     private Map<String, IBinder> stubBinderCache = new ConcurrentHashMap<>();
 
     private Map<String, BinderBean> remoteBinderCache = new ConcurrentHashMap<>();
@@ -87,7 +86,7 @@ public class RemoteServiceTransfer {
     }
 
     public BinderBean getIBinderFromCache(Context context, String serviceCanonicalName) {
-        //TODO 如果是自己进程或者主进程，就不要进行bind操作了
+        //如果是自己进程或者主进程，就不要进行bind操作了
         if (stubBinderCache.get(serviceCanonicalName) != null) {
             return new BinderBean(stubBinderCache.get(serviceCanonicalName),
                     ProcessUtils.getProcessName(context));
@@ -105,7 +104,6 @@ public class RemoteServiceTransfer {
             if (null == binderBean) {
                 return null;
             }
-            //TODO 这里要处理linkToDeath的问题!
             try {
                 binderBean.getBinder().linkToDeath(new IBinder.DeathRecipient() {
                     @Override

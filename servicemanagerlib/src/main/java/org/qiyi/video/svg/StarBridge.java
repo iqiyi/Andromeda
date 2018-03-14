@@ -21,18 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //Step 1:实现全部接口对象在Application中注册
 //Step 2:实现全部接口对象在用户指定位置处注册
 
-/**
- * //TODO 初步构思
- * 1.利用注解@Local和@Remote分别标识本地服务和远程服务
- * 2.增加一个@XProvide注解(用来修饰static方法)，如果有这个注解，
- * 表示对象的生成不能直接new一个空的构造方法来完成，可能需要Context之类等其他的参数，
- * 反正就让业务开发自己提供对象就行了。如果某个接口实现没有@XProvide这个注解，就表示它可以通过new一个默认构造方法获取。
- * //TODO 但是现在有一个问题就是如果用户需要借助注入点的某些参数才能完成对象的初始化，特别是Local接口的实现，那这里就不好写了，而这种情况也是比较常见的吧!
- * <p>
- * 3.先利用注解解释器将相应的信息放到某个类的static信息中，然后利用gradle插件+javaassist在合适的位置插入代码
- * <p>
- * 4.如果javassit没有类似aspectj那种include和exclude的选项的话，就自己封装一个增强型的javassist
- */
 public class StarBridge implements IStarBridge {
 
     private static final String TAG = "StarBridge";
@@ -95,7 +83,6 @@ public class StarBridge implements IStarBridge {
         LocalServiceHub.getInstance().unregisterService(serivceCanonicalName);
     }
 
-    //TODO 这里最好也是让用户直接注册实现了接口的对象即可，然后我们从中取出IBinder
     @Override
     public <T extends IBinder> void registerRemoteService(Class serviceClass, T stubBinder) {
         if (null == serviceClass || null == stubBinder) {
@@ -168,8 +155,6 @@ public class StarBridge implements IStarBridge {
         }
         RemoteTransfer.getInstance().unbind(serviceCanonicalName);
     }
-
-    //TODO 如果同时对多个Event感兴趣呢？是不是就要注册多次?
 
     @Override
     public void subscribe(String name, EventListener listener) {
