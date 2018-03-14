@@ -7,8 +7,8 @@ StarBridge设计的目的是让组件间通信如同调用Java Interface一样�
 StarBridge的优势主要体现在以下几个方面:
 + 同步调用，不需要bindService()的方法来获取对方的IBinder,只要服务提供方注册了服务，任何调用方都可以获取到，无需异步连接
 + 采用"接口+数据结构"的方式来实现组件间通信，这种方式相比协议的方式在于实现简单，使用方便，无需定义大量的java bean, 维护也更简单
-+ 天然的互操作性，同步调用、生命周期自动管理、接口的版本兼容性管理
 + 透明依赖。如果使用注解的话，可以不需要显式依赖StarBridge的代码，而是在编译时插入代码，这样对于方案切换，以及既要做插件又要做独立APK的业务很友好
++ 天然的互操作性(即可无缝切换AIDL)、生命周期自动管理(详情见wiki)、接口的版本兼容性管理
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
 
@@ -60,10 +60,8 @@ StarBridge的优势主要体现在以下几个方面:
 ## 本地服务的注册与使用
 ### 本地接口定义与实现
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
-+ 接口需要就是要暴露出去，使其对项目中的所有模块都可见。
-**至于具体的打包方式，目前还在实现中，在Demo阶段先特殊处理。**
-+ 接口的实现最好采用单例模式，否则后面的实现类会将全面的替换，从而可能出现
-
++ 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如放在baselib或者basecore中
++ 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到StarBridge,不过需要注意的是，同一时间StarBridge中只会有一个实现
 ### 本地服务注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
 ```java
@@ -101,7 +99,7 @@ StarBridge的优势主要体现在以下几个方面:
     }
 ```
 注意这里**checkApple也可以在其他方法中赋值，只要保证在onStart()结束之前赋值就可以，因为代码会插入到onStart()方法的末尾**。
-详细情况可参考demo中的RegLocalServiceByAnnoActivity这个示例。
+详细情况可参考demo中的[RegLocalServiceByAnnoActivity](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/blob/master/app/src/main/java/wang/imallen/blog/servicemanager/annotation/local/RegLocalServiceByAnnoActivity.java)这个示例。
 
 ### 本地服务使用
 注册完之后，与服务提供方同进程的任何模块都可以调用该服务,获取服务的方式与注册对应，也有两种方式，一种是通过接口的class获取,如下:
@@ -120,7 +118,7 @@ StarBridge的优势主要体现在以下几个方面:
 
 ### 使用注解注入本地服务
 注入本地服务使用到的注解是@LInject和@LGet,其中前者用于修饰要被赋值的成员，后者用于修饰方法。
-使用方法很简单，请查看UseLocalServiceByAnnoActivity这个示例即可。
+使用方法很简单，请参考[UseLocalServiceByAnnoActivity](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/blob/master/app/src/main/java/wang/imallen/blog/servicemanager/annotation/local/UseLocalServiceByAnnoActivity.java)这个示例即可。
 
 ### 本地接口的Callback问题
 如果是耗时操作，由本地接口自己定义Callback接口，调用方在调用接口时传入Callback对象即可。
@@ -192,7 +190,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 ```
 
 ### 使用注解对远程服务进行注册
-使用方式与本地服务的注册类似，不过是用@RBind,@RRegister代替@LBind,@LRegister,请查看RegRemoteServiceByAnnoActivity这个示例。
+使用方式与本地服务的注册类似，不过是用@RBind,@RRegister代替@LBind,@LRegister,请参考[RegRemoteServiceByAnnoActivity](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/blob/master/app/src/main/java/wang/imallen/blog/servicemanager/annotation/remote/RegRemoteServiceByAnnoActivity.java)这个示例。
 
 ### 远程服务的使用
 由于跨进程只能传递IBinder,所以只能获取到远程服务的IBinder之后，再调用XX.Stub.asInterface()获取到它的代理,如下:
@@ -213,10 +211,10 @@ public class BuyAppleImpl extends IBuyApple.Stub {
                 }
          }
 ```
-值得注意的是，**远程服务其实既可在其他进程中调用，也可以在同进程中被调用，当在同一进程时，虽然调用方式一样，但其实会自动降级为进程内普通的接口调用，这个不需要开发者做额外的处理.**
+值得注意的是，**远程服务其实既可在其他进程中调用，也可以在同进程中被调用，当在同一进程时，虽然调用方式一样，但其实会自动降级为进程内普通的接口调用，这个binder会自动处理.**
 
 ### 使用注解来注入远程服务
-与使用注解来注入本地服务类似，只不过是用@RInject和@RGet来替换@LInject和@LGet,详细使用请参考UseRemoteServiceByAnnoActivity这个示例。
+与使用注解来注入本地服务类似，只不过是用@RInject和@RGet来替换@LInject和@LGet,详细使用请参考[UseRemoteServiceByAnnoActivity](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/blob/master/app/src/main/java/wang/imallen/blog/servicemanager/annotation/remote/UseRemoteServiceByAnnoActivity.java)这个示例。
 
 ### 远程服务的Callback问题
 考虑到远程服务也可能有耗时操作，所以需要支持远程调用的Callback功能。
@@ -330,10 +328,9 @@ public class Event implements Parcelable {
 
 # 已知问题
 
-# TODO
-1.做成透明依赖，最好是让使用者不需要写额外的代码  
-2.事件总线需要支持粘性事件  
-3.事件总线需要支持三种threadMode回调
+# TODO  
+1.事件总线需要支持粘性事件  
+2.事件总线需要支持三种threadMode回调
 
 # 技术支持
 
