@@ -1,8 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
 
-def lib_version="0.6.3"
-
 android {
     compileSdkVersion 26
 
@@ -27,7 +25,7 @@ android {
 
     ext{
         JAR_NAME='svglib'
-        JAR_VERSION="$lib_version"
+        JAR_VERSION=maven_config.version_name
         JAR_DEST_DIR='build/outputs'
         ORIGINAL_JAR_PATH='build/intermediates/bundles/release/classes.jar'
     }

@@ -5,11 +5,11 @@ apply plugin: 'maven'
 uploadArchives{
     repositories.mavenDeployer{
         repository(url:'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'){
-            authentication(userName:'mcg-arch',password:'123456')
+            authentication(userName:maven_config.userName,password:maven_config.passWord)
         }
         pom.groupId='org.qiyi.video.svg'
         pom.artifactId='plugin'
-        pom.version='0.7.0'
+        pom.version=maven_config.version_name
     }
 }
 
