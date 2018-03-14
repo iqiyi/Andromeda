@@ -1,7 +1,10 @@
 # 项目简介
 
 StarBridge提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程调用。
-**之所以分成本地服务和远程服务这两种，是由于本地服务的接口可以传递各种类型的参数和返回值，而远程接口则受AIDL的限制，参数和返回值只能是基本类型或者实现了Parcelable接口的自定义类型。**
+
+![StarBridge_arch](res/StarBridge_star_diagram.png)
+
+**注:之所以分成本地服务和远程服务这两种，是由于本地服务的接口可以传递各种类型的参数和返回值，而远程接口则受AIDL的限制，参数和返回值只能是基本类型或者实现了Parcelable接口的自定义类型。**
 
 StarBridge的主要特色如下:
 
@@ -16,7 +19,7 @@ StarBridge的主要特色如下:
 
 + 支持IPC的Callback，并且支持跨进程的事件总线
 
-+ 接口的版本兼容性管理，各个版本的接口变动会使得接口文件的deprecated越来越臃肿，难以维护，starBridge的“滚木移石”方案比较优雅的解决了此问题（详细见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3）)    
++ 接口的版本兼容性管理，各个版本的接口变动会使得接口文件的deprecated越来越臃肿，难以维护，StarBridge的“滚木移石”方案比较优雅的解决了此问题（详细见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3）)    
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
 
@@ -76,7 +79,7 @@ StarBridge和其他组件间通信方案的对比如下:
 ## 本地服务的注册与使用
 ### 本地接口定义与实现
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
-+ 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如放在baselib或者basecore中
++ 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如对于爱奇艺基线来说，可放在basecore中
 + 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到StarBridge,不过需要注意的是，同一时间StarBridge中只会有一个实现
 
 ### 本地服务注册
@@ -131,7 +134,7 @@ StarBridge和其他组件间通信方案的对比如下:
 ```java
     ICheckApple checkApple = (ICheckApple) StarBridge.getInstance().getLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple");
 ```
-具体使用，可以察看applemodule中LocalServiceDemo这个Activity。如果还有不懂的，可以在热聊中联系**王龙海**进行询问。
+具体使用，可以察看applemodule中[LocalServiceDemo](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/blob/master/applemodule/src/main/java/wang/imallen/blog/applemodule/LocalServiceDemo.java)这个Activity。
 
 ### 使用注解注入本地服务
 注入本地服务使用到的注解是@LInject和@LGet,其中前者用于修饰要被赋值的成员，后者用于修饰方法。
@@ -143,7 +146,7 @@ StarBridge和其他组件间通信方案的对比如下:
 ## 远程服务的注册与使用
 远程服务的注册与使用略微麻烦一点，因为需要像实现AIDL Service那样定义aidl接口。
 ### 远程接口的定义与实现
-定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块,类似的，也是放在baselib或者basecore中，以暴露给其他模块使用。比如定义一个购买苹果的服务接口:
+定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块, 类似的，也是放在basecore中，以暴露给其他模块使用。比如定义一个购买苹果的服务接口:
 ```aidl
     package wang.imallen.blog.moduleexportlib.apple;
     import org.qiyi.video.svg.IPCCallback;
@@ -306,7 +309,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 ```
 **第二种方式也是我们推荐的使用方式!**
 
-详情可察看applemodule中的BananaActivity,如果还有疑问，欢迎联系**王龙海**进行讨论。
+详情可察看applemodule中的[BananaActivity](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/blob/master/applemodule/src/main/java/wang/imallen/blog/applemodule/BananaActivity.java).
 
 ### 生命周期自动管理的问题
 对于IPC,为了提高对方进程的优先极，在使用StarBridge.getRemoteService()时会进行bindService()操作。
