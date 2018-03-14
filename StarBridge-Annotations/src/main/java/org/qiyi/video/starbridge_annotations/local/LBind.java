@@ -12,6 +12,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 public @interface LBind {
-    //TODO 这样看的话，好像@Local这个注解都没必要了
     Class<?> value() default Object.class;
 }

@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by wangallen on 2018/1/9.
  */
-//TODO 注意:所有startService()的地方都要加上try...catch,因为有些手机在后台如果startService()会抛出异常,比如Oppo
 public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServiceTransfer, IEventTransfer {
 
     private static RemoteTransfer sInstance;
@@ -44,7 +43,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     public static void init(Context context) {
         getInstance().setContext(context);
 
-        //TODO 如果是主进程就可以直接调用ServiceDispatcher
+        //如果是主进程就可以直接调用ServiceDispatcher
         getInstance().sendRegisterInfo();
     }
 
@@ -178,8 +177,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     private BinderBean getIBinder(String serviceName) {
         Logger.d("RemoteTransfer-->getIBinder()");
         //KP 首先检查是否就在本地!这非常重要，否则有可能导致死锁!
-
-        //TODO bindAction看来还是要放到RemoteServiceTransfer中
         BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceName);
         if (cacheBinderBean != null) {
             return cacheBinderBean;

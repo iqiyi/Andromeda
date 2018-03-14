@@ -1,7 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
-//TODO 为什么这里用不了maven_config?
 uploadArchives{
     repositories.mavenDeployer{
         repository(url:'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'){

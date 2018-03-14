@@ -63,11 +63,6 @@ public class BridgeProcessor extends AbstractProcessor {
     boolean isFirst = true;
     private Gson gson;
 
-    //最后根据这个数据生成一个配置文件，放在这个配置文件的static域中即可
-    //TODO 应该是List<Entry<String,LocalServiceBean>>这样的更合适？因为一个服务有可能在多个地方注册!
-    //TODO 另外，是不是还要考虑在一个类中，一个服务的对象有可能在多个方法中注册？
-    //private Map<String, LocalServiceBean> localServiceBeanMap = new HashMap<>();
-    //考虑到一个服务可能在多个类中注册，所以value是List<LocalServiceBean>, key为serviceCanonicalName, value为List<LocalServiceBean>
     private Map<String, List<LocalServiceBean>> localServiceBeanMap = new HashMap<>();
 
     /**

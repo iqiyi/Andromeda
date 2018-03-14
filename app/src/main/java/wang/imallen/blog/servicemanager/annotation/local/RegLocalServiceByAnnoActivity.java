@@ -27,8 +27,6 @@ public class RegLocalServiceByAnnoActivity extends AppCompatActivity {
     @LBind
     private ICheckPear checkPear;
 
-    //TODO 是不是采用两个Fragment来举例更好呢？就是在一个Fragment中进行注册，然后在另一个Fragment中就能使用了。
-    //TODO 确实要这样，写一个实现了此UI的基类即可!
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

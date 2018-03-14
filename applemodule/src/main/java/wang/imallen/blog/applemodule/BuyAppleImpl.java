@@ -11,7 +11,6 @@ import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 /**
  * Created by wangallen on 2018/1/18.
  */
-//TODO
 public class BuyAppleImpl extends IBuyApple.Stub {
 
     private static BuyAppleImpl instance;

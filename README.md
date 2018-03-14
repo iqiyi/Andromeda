@@ -8,7 +8,7 @@ StarBridge的优势主要体现在以下几个方面:
 + 同步调用，不需要bindService()的方法来获取对方的IBinder,只要服务提供方注册了服务，任何调用方都可以获取到，无需异步连接
 + 采用"接口+数据结构"的方式来实现组件间通信，这种方式相比协议的方式在于实现简单，使用方便，无需定义大量的java bean, 维护也更简单
 + 透明依赖。如果使用注解的话，可以不需要显式依赖StarBridge的代码，而是在编译时插入代码，这样对于方案切换，以及既要做插件又要做独立APK的业务很友好
-+ 天然的互操作性(即可无缝切换AIDL)、生命周期自动管理(详情见wiki)、接口的版本兼容性管理
++ 天然的互操作性(即可无缝切换AIDL)、生命周期自动管理(详情见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86))、接口的版本兼容性管理(详情见[wiki](http://gitlab.qiyi.domain/wanglonghai/ServiceManager/wikis/%E6%8E%A5%E5%8F%A3%E5%85%BC%E5%AE%B9%E6%80%A7%E7%AE%A1%E7%90%86---%E6%BB%9A%E6%9C%A8%E7%A7%BB%E7%9F%B3))
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
 
@@ -47,7 +47,6 @@ StarBridge的优势主要体现在以下几个方面:
    apply plugin: 'org.qiyi.apple.plugin'
 ```
 
-
 # 使用方式
 ## 初始化
 最好是在自己进程的Application中进行初始化(每个进程都有自己的StarBridge对象)，代码如下:
@@ -62,6 +61,7 @@ StarBridge的优势主要体现在以下几个方面:
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
 + 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如放在baselib或者basecore中
 + 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到StarBridge,不过需要注意的是，同一时间StarBridge中只会有一个实现
+
 ### 本地服务注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
 ```java
@@ -78,7 +78,7 @@ StarBridge的优势主要体现在以下几个方面:
 **但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上StarBridge只需要保证有一个唯一的key与该服务对应即可).
 
 ### 使用注解进行本地接口注册
-仍然以ICheckApple这个掊口及其实现为例，使用接口的话，为了与接口的具体实现和赋值解耦，所以在类中(比如RegLocalServiceByAnnoActivity类)需要先声明一个成员,并且加上@LBind这个注解:
+仍然以ICheckApple这个掊口及其实现为例，使用接口的话，为了与接口的具体实现和赋值解耦，需要在类中(比如RegLocalServiceByAnnoActivity类)先声明一个成员,并且加上@LBind这个注解:
 ```java
     @LBind(ICheckApple.class)
     private ICheckApple checkApple;
@@ -126,7 +126,7 @@ StarBridge的优势主要体现在以下几个方面:
 ## 远程服务的注册与使用
 远程服务的注册与使用略微麻烦一点，因为需要像实现AIDL Service那样定义aidl接口。
 ### 远程接口的定义与实现
-定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块。比如定义一个购买苹果的服务接口:
+定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块,类似的，也是放在baselib或者basecore中，以暴露给其他模块使用。比如定义一个购买苹果的服务接口:
 ```aidl
     package wang.imallen.blog.moduleexportlib.apple;
     import org.qiyi.video.svg.IPCCallback;
@@ -293,6 +293,25 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 
 详情可察看applemodule中的BananaActivity,如果还有疑问，欢迎联系**王龙海**进行讨论。
 
+### 生命周期自动管理的问题
+对于IPC,为了提高对方进程的优先极，在使用StarBridge.getRemoteService()时会进行bindService()操作。
+既然进行了bind操作，那自然要进行unbind操作以释放连接了，目前有如下两种方式。
++ 对于实现了LifecycleOwner接口的，可以调用如下接口获取服务，然后StarBridge就会在onDestroy()时释放连接:
+  ```java
+     IBinder getRemoteService(LifecycleOwner owner, Class serviceClass);
+     IBinder getRemoteService(LifecycleOwner owner, String serviceCanonicalName); 
+  ```
++ 对于没有实现LifecycleOwner接口的调用方，只能使用如下接口:
+    ```java
+       IBinder getRemoteService(Class serviceClass);
+       IBinder getRemoteService(String serviceCanonicalName);
+    ```
+  需要注意的是此时仍然会进行bindService()操作，所以之后要主动调用StarBridge的unbind()操作，而且使用了几个远程接口，就要进行几次unbind()操作，因为不同的远程服务可能对应不同的进程。
+  ```java
+     void unbind(Class serviceClass); 
+     void unbind(String canonicalName);
+  ```
+
 ## 事件订阅与发布
 ### 事件定义:Event
 Event的定义如下:
@@ -328,9 +347,10 @@ public class Event implements Parcelable {
 
 # 已知问题
 
-# TODO  
-1.事件总线需要支持粘性事件  
-2.事件总线需要支持三种threadMode回调
+# TODO
+1.将各个Module中对外暴露的接口放在各Module一个特定的目录中，或者加上注解，从而在打包时将它们打到基线，解决接口暴露问题 
+2.事件总线需要支持粘性事件  
+3.事件总线需要支持三种threadMode回调
 
 # 技术支持
 

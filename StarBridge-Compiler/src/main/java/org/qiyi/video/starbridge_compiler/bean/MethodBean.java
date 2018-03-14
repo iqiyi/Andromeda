@@ -9,7 +9,6 @@ import javax.lang.model.element.VariableElement;
 /**
  * Created by wangallen on 2018/2/12.
  */
-//TODO 考虑干脆把LocalServiceBean中的serviceImplField和serviceCanonicalName这两个属性也放到MethodBean中，这样一来逻辑也简单多了。
 public class MethodBean implements Serializable {
 
     private String methodName;
