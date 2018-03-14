@@ -297,20 +297,23 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 对于IPC,为了提高对方进程的优先极，在使用StarBridge.getRemoteService()时会进行bindService()操作。
 既然进行了bind操作，那自然要进行unbind操作以释放连接了，目前有如下两种方式。
 + 对于实现了LifecycleOwner接口的，可以调用如下接口获取服务，然后StarBridge就会在onDestroy()时释放连接:
-  ```java
+
+```java
      IBinder getRemoteService(LifecycleOwner owner, Class serviceClass);
      IBinder getRemoteService(LifecycleOwner owner, String serviceCanonicalName); 
-  ```
+```
 + 对于没有实现LifecycleOwner接口的调用方，只能使用如下接口:
-    ```java
+
+```java
        IBinder getRemoteService(Class serviceClass);
        IBinder getRemoteService(String serviceCanonicalName);
-    ```
+```
   需要注意的是此时仍然会进行bindService()操作，所以之后要主动调用StarBridge的unbind()操作，而且使用了几个远程接口，就要进行几次unbind()操作，因为不同的远程服务可能对应不同的进程。
-  ```java
+  
+```java
      void unbind(Class serviceClass); 
      void unbind(String canonicalName);
-  ```
+```
 
 ## 事件订阅与发布
 ### 事件定义:Event
