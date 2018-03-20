@@ -22,11 +22,11 @@ public class Dispatcher extends IDispatcher.Stub {
 
     public static Dispatcher sInstance;
 
-    public static Dispatcher getInstance(Context context) {
+    public static Dispatcher getInstance() {
         if (null == sInstance) {
             synchronized (Dispatcher.class) {
                 if (null == sInstance) {
-                    sInstance = new Dispatcher(context);
+                    sInstance = new Dispatcher();
                 }
             }
         }
@@ -37,7 +37,7 @@ public class Dispatcher extends IDispatcher.Stub {
 
     private IEventDispatcher eventDispatcher;
 
-    private Dispatcher(Context context) {
+    private Dispatcher() {
         serviceDispatcher = new ServiceDispatcher();
         eventDispatcher = new EventDispatcher();
     }

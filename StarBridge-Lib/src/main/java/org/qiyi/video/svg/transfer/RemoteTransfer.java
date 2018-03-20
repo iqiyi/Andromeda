@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -17,7 +18,9 @@ import org.qiyi.video.svg.IDispatcher;
 import org.qiyi.video.svg.IRemoteTransfer;
 import org.qiyi.video.svg.bean.BinderBean;
 import org.qiyi.video.svg.config.Constants;
+import org.qiyi.video.svg.cursor.DispatcherCursor;
 import org.qiyi.video.svg.dispatcher.Dispatcher;
+import org.qiyi.video.svg.dispatcher.DispatcherProvider;
 import org.qiyi.video.svg.dispatcher.DispatcherService;
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
@@ -26,6 +29,7 @@ import org.qiyi.video.svg.transfer.event.EventTransfer;
 import org.qiyi.video.svg.transfer.event.IEventTransfer;
 import org.qiyi.video.svg.transfer.service.IRemoteServiceTransfer;
 import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
+import org.qiyi.video.svg.utils.IOUtils;
 import org.qiyi.video.svg.utils.MatchStubServiceHelper;
 import org.qiyi.video.svg.utils.ProcessUtils;
 import org.qiyi.video.svg.utils.ServiceUtils;
@@ -79,10 +83,10 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     //让ServiceDispatcher注册到当前进程
     public void sendRegisterInfo() {
         if (ProcessUtils.isMainProcess(context)) {
-            //KP 如果是主进程就走捷径,不然直接杀进程时会导致crash
-            dispatcherProxy = Dispatcher.getInstance(context);
+            //如果是主进程就走捷径,不然直接杀进程时会导致crash
+            dispatcherProxy = Dispatcher.getInstance();
             //但是这样的话还是有问题，因为没有把自己注册进去,所以还要直接注册
-            Dispatcher.getInstance(context).registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
+            Dispatcher.getInstance().registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
             return;
         }
 
@@ -97,11 +101,9 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
     }
 
-    //TODO 是在这里传context好呢?还是在初始化时传context更好?
     @Override
     public IBinder getRemoteService(String serviceName) {
         Logger.d("RemoteTransfer-->getRemoteService,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        //TODO 这里就不只要获取IBinder,还要获取到对方的processName,这样才能进行bind操作
         BinderBean binderBean = getIBinder(serviceName);
         if (null == binderBean) {
             return null;
@@ -120,7 +122,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     private Map<String, ServiceConnection> connectionCache = new ConcurrentHashMap<>();
 
-    //TODO 是让当前进程去bind呢?还是只让主进程去bind?要考虑到当前进程可能是在插件进程，同时对方可能是主进程这种情况？
     private void bindAction(String serviceName, String serverProcessName) {
         //如果是主进程或者跟当前进程在同一个进程，MatchStubServiceHelper.matchIntent()就会返回null
         Intent intent = MatchStubServiceHelper.matchIntent(context, serviceName, serverProcessName);
@@ -168,7 +169,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     }
     */
 
-    //TODO 这个是不是应该为unbind(String serviceCanonicalName);
     @Override
     public void unbind(String serviceCanonicalName) {
         unbindAction(serviceCanonicalName);
@@ -176,14 +176,22 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     private BinderBean getIBinder(String serviceName) {
         Logger.d("RemoteTransfer-->getIBinder()");
-        //KP 首先检查是否就在本地!这非常重要，否则有可能导致死锁!
+        // 首先检查是否就在本地!这非常重要，否则有可能导致死锁!
         BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceName);
         if (cacheBinderBean != null) {
             return cacheBinderBean;
         }
         Logger.d("RemoteTransfer-->getIBinder(),start to wait");
-        //TODO 这部分逻辑是不是要先去掉呢?
+
         synchronized (lock) {
+
+            if(null==dispatcherProxy){
+                IBinder dispatcherBinder = getIBinderFromProvider();
+                if (null != dispatcherBinder) {
+                    dispatcherProxy = Dispatcher.Stub.asInterface(dispatcherBinder);
+                }
+            }
+
             if (null == dispatcherProxy) {
                 sendRegisterInfo();
                 try {
@@ -194,11 +202,28 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             }
         }
         Logger.d("RemoteTransfer-->getIBinder(),end of wait");
+        if (serviceTransfer == null) {
+            return null;
+        }
         return serviceTransfer.getAndSaveIBinder(serviceName, dispatcherProxy);
     }
 
+    private IBinder getIBinderFromProvider() {
+        Logger.d("RemoteTransfer-->getIBinderFromProvider()");
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(DispatcherProvider.URI, DispatcherProvider.PROJECTION_MAIN,
+                    null, null, null);
+            if (cursor == null) {
+                return null;
+            }
+            return DispatcherCursor.stripBinder(cursor);
+        } finally {
+            IOUtils.closeQuietly(cursor);
+        }
+    }
+
     //注意这个和registerRemoteService的区别，这里其实只是register本进程中有IPC能力的接口,它的名字其实叫registerStubService更合适
-    //TODO 考虑还是在每个进程的Application中进行初始化，这样有两个目的，一个是获取Context,就不用后面每次调用都传递Context;另外一个是通过startService让ServiceDispatcher反向注册到当前进程
     @Override
     public void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
         serviceTransfer.registerStubService(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);
@@ -237,6 +262,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     @Override
     public void registerDispatcher(IBinder dispatcherBinder) throws RemoteException {
         Logger.d("RemoteTransfer-->registerDispatcher");
+        //一般从发出注册信息到这里回调就6ms左右，所以绝大部分时候走的都是这个逻辑。
         dispatcherBinder.linkToDeath(new IBinder.DeathRecipient() {
             @Override
             public void binderDied() {

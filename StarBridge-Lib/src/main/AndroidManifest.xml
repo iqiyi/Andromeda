@@ -70,6 +70,12 @@
             android:exported="true"
             android:process=":downloader"/>
 
+        <provider
+            android:authorities="org.qiyi.video.svg.dispatcher"
+            android:exported="false"
+            android:name="org.qiyi.video.svg.dispatcher.DispatcherProvider"
+            />
+
 
     </application>
 

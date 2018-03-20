@@ -19,7 +19,6 @@ public class CommuStubService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        //TODO 返回null和返回有实际含义的binder,会不会造成oom_adj值不一样？
         return new ICommuStub.Stub() {
             @Override
             public void commu(Bundle args) throws RemoteException {

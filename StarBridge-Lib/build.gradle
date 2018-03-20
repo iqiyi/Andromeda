@@ -72,7 +72,6 @@ uploadArchives{
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //TODO 这个后面要移除，现在只是临时应对
     //compileOnly project(":moduleexportlib")
 
     //TODO 为什么使用1.1.0版本就不行？

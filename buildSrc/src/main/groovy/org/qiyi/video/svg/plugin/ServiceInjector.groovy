@@ -73,7 +73,6 @@ public class ServiceInjector {
                 String classNameTemp = filePath.replace(path, "")
                         .replace("\\", ".")
                         .replace("/", ".")
-                //TODO 这里有个问题，如果是内部类，比如wang.imallen.blog.servicemanager.MainActivity$Apple，不应该是wang.imallen.blog.serviceManager.MainActivity.Apple
                 if (classNameTemp.endsWith(".class")) {
                     String className = classNameTemp.substring(1, classNameTemp.length() - 6)
 
@@ -138,7 +137,6 @@ public class ServiceInjector {
         }
     }
 
-    //TODO ?为什么对于LocalServiceAnnotationDemo中的onResume()方法会插入失败呢? 是因为还没引入ICheckPear这个类吗？应该不是，因为在之前没有加入unregister相关的代码插入时，是没有这个错误的。
     private void injectLocalRegisterInfo(CtMethod ctMethod, RegisterMethodBean methodBean) {
         for (ServiceInfo serviceInfo : methodBean.getLocalRegisterInfos()) {
             String registerLocalServiceCode = STAR_BRIDGE_INSTANCE + ".registerLocalService(" + serviceInfo.getServiceCanonicalName() +

@@ -73,9 +73,8 @@ public class ServiceInjector {
                 String classNameTemp = filePath.replace(path, "")
                         .replace("\\", ".")
                         .replace("/", ".")
-                //TODO 这里有个问题，如果是内部类，比如wang.imallen.blog.servicemanager.MainActivity$Apple，不应该是wang.imallen.blog.serviceManager.MainActivity.Apple
+                //这里有个问题，如果是内部类，比如wang.imallen.blog.servicemanager.MainActivity$Apple，不应该是wang.imallen.blog.serviceManager.MainActivity.Apple
                 if (classNameTemp.endsWith(".class")) {
-                    //TODO 这是全路径类名还是简单类名?
                     String className = classNameTemp.substring(1, classNameTemp.length() - 6)
 
                     if (registerClassBeanMap.get(className) != null) {
