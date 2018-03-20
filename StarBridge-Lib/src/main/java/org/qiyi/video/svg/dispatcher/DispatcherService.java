@@ -28,8 +28,7 @@ public class DispatcherService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         Logger.d("DispatcherService-->onStartCommand,action:" + intent.getAction());
-        //TODO 其实这里应该叫REGISTER_SERVICE_ACTION更合适
-        //TODO 另外，注册操作是不是可以放到子线程中呢？否则可能会影响主线程!
+        //TODO 注册操作是不是可以放到子线程中呢？否则可能会影响主线程!
         if (Constants.DISPATCH_REGISTER_SERVICE_ACTION.equals(intent.getAction())) {
             registerRemoteService(intent);
         } else if (Constants.DISPATCH_UNREGISTER_SERVICE_ACTION.equals(intent.getAction())) {
@@ -48,7 +47,7 @@ public class DispatcherService extends Service {
         registerAndReverseRegister(pid, remoteTransferBinder);
         Event event = intent.getParcelableExtra(Constants.KEY_EVENT);
         try {
-            Dispatcher.getInstance(this).publish(event);
+            Dispatcher.getInstance().publish(event);
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }
@@ -64,12 +63,12 @@ public class DispatcherService extends Service {
         Logger.d("DispatcherService-->registerAndReverseRegister,pid=" + pid);
         IRemoteTransfer remoteTransfer = IRemoteTransfer.Stub.asInterface(transterBinder);
 
-        Dispatcher.getInstance(this).registerRemoteTransfer(pid, transterBinder);
+        Dispatcher.getInstance().registerRemoteTransfer(pid, transterBinder);
 
         if (remoteTransfer != null) {
             Logger.d("now register to RemoteTransfer");
             try {
-                remoteTransfer.registerDispatcher(Dispatcher.getInstance(this).asBinder());
+                remoteTransfer.registerDispatcher(Dispatcher.getInstance().asBinder());
             } catch (RemoteException ex) {
                 ex.printStackTrace();
             }
@@ -90,7 +89,7 @@ public class DispatcherService extends Service {
                 //注意:RemoteTransfer.sendRegisterInfo()时，serviceCanonicalName为null,这是正常的，此时主要目的是reigsterAndReverseRegister()
                 Logger.e("service canonical name is null");
             } else {
-                Dispatcher.getInstance(this).registerRemoteService(serviceCanonicalName,
+                Dispatcher.getInstance().registerRemoteService(serviceCanonicalName,
                         processName, businessWrapper.getBinder());
             }
         } catch (RemoteException ex) {
@@ -104,7 +103,7 @@ public class DispatcherService extends Service {
     private void unregisterRemoteService(Intent intent) {
         String serviceCanonicalName = intent.getStringExtra(Constants.KEY_SERVICE_NAME);
         try {
-            Dispatcher.getInstance(this).unregisterRemoteService(serviceCanonicalName);
+            Dispatcher.getInstance().unregisterRemoteService(serviceCanonicalName);
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }

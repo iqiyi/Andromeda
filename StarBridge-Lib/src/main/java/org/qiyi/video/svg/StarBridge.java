@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by wangallen on 2018/1/8.
  */
 //TODO 可以考虑学习ArchComponents那样，把ServiceRouter的初始化放在ContentProvider中，而且设置multiprocess="true"的话，只需要一个ContentProvider. 这样就不需要用户来进行初始化了，可以使这个库更方便使用!
-//注意:这个ServiceManager可能会存在于很多进程中，不要以为只有主进程才有
+//注意:这个StarBridge可能会存在于很多进程中，不要以为只有主进程才有
 //Step 1:实现全部接口对象在Application中注册
 //Step 2:实现全部接口对象在用户指定位置处注册
 
@@ -59,6 +59,8 @@ public class StarBridge implements IStarBridge {
         LocalServiceHub.getInstance().registerService(serviceClass.getCanonicalName(), serviceImpl);
     }
 
+    //考虑到混淆，直接写类的完整路径名容易导致两边不一致，所以不推荐使用这种方式!
+    @Deprecated
     @Override
     public void registerLocalService(String serviceCanonicalName, Object serviceImpl) {
         if (TextUtils.isEmpty(serviceCanonicalName) || null == serviceImpl) {
@@ -75,6 +77,8 @@ public class StarBridge implements IStarBridge {
         LocalServiceHub.getInstance().unregisterService(serviceClass.getCanonicalName());
     }
 
+    //考虑到混淆，不推荐使用这种方式!
+    @Deprecated
     @Override
     public void unregisterLocalService(String serivceCanonicalName) {
         if (TextUtils.isEmpty(serivceCanonicalName)) {
@@ -91,6 +95,8 @@ public class StarBridge implements IStarBridge {
         RemoteTransfer.getInstance().registerStubService(serviceClass.getCanonicalName(), stubBinder);
     }
 
+    //考虑到混淆，不推荐使用这种方式
+    @Deprecated
     @Override
     public <T extends IBinder> void registerRemoteService(String serviceCanonicalName, T stubBinder) {
         if (TextUtils.isEmpty(serviceCanonicalName) || null == stubBinder) {
@@ -107,6 +113,7 @@ public class StarBridge implements IStarBridge {
         RemoteTransfer.getInstance().unregisterStubService(serviceClass.getCanonicalName());
     }
 
+    @Deprecated
     @Override
     public void unregisterRemoteService(String serviceCanonicalName) {
         if (TextUtils.isEmpty(serviceCanonicalName)) {
@@ -131,6 +138,7 @@ public class StarBridge implements IStarBridge {
         return RemoteTransfer.getInstance().getRemoteService(serviceClass.getCanonicalName());
     }
 
+    @Deprecated
     @Override
     public <T> T getLocalService(String serviceCanonicalName) {
         if (TextUtils.isEmpty(serviceCanonicalName)) {
@@ -139,7 +147,7 @@ public class StarBridge implements IStarBridge {
         return (T) LocalServiceHub.getInstance().getLocalService(serviceCanonicalName);
     }
 
-    //TODO 考虑是否直接返回Proxy对象呢？采用反射的方式，不然使用起来太不方便了!
+    @Deprecated
     @Override
     public IBinder getRemoteService(String serviceCanonicalName) {
         if (TextUtils.isEmpty(serviceCanonicalName)) {
@@ -148,6 +156,15 @@ public class StarBridge implements IStarBridge {
         return RemoteTransfer.getInstance().getRemoteService(serviceCanonicalName);
     }
 
+    @Override
+    public void unbind(Class<?> serviceClass) {
+        if (null == serviceClass) {
+            return;
+        }
+        RemoteTransfer.getInstance().unbind(serviceClass.getCanonicalName());
+    }
+
+    @Deprecated
     @Override
     public void unbind(String serviceCanonicalName) {
         if (TextUtils.isEmpty(serviceCanonicalName)) {

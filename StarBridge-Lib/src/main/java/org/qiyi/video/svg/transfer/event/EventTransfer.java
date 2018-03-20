@@ -42,7 +42,6 @@ public class EventTransfer {
     }
 
     public void unsubscribeEvent(EventListener listener) {
-        //TODO 直接遍历的话，效率会不会有点低?
         for (Map.Entry<String, List<WeakReference<EventListener>>> entry : eventListeners.entrySet()) {
             List<WeakReference<EventListener>> listeners = entry.getValue();
             for (WeakReference<EventListener> weakRef : listeners) {

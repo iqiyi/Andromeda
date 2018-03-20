@@ -233,7 +233,6 @@ public class BridgeProcessor extends AbstractProcessor {
         }
 
         String fileName = "local_service_register_info.json";
-        //TODO 然后是不是要生成json文件保存起来？到gradle插件时再使用
         saveLocalServiceInfo(fileName);
 
         return true;
@@ -260,8 +259,6 @@ public class BridgeProcessor extends AbstractProcessor {
             FileOutputStream fos = new FileOutputStream(file, false);
             writer = new BufferedWriter(new OutputStreamWriter(fos));
 
-            //TODO 但是一次性转换为字符串然后再写入，容易出现OOM吧？所以第二期需要优化，使用okio或者逐条记录写入。
-            //TODO 不能这样写入，需要以list的方式写入，然后再以list的方式读出
             for (Map.Entry<String, RegisterClassBean> entry : registerClassBeanMap.entrySet()) {
                 writer.write(gson.toJson(entry.getValue()));
                 writer.write("\n");

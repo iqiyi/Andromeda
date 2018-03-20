@@ -38,7 +38,6 @@ public interface IStarBridge {
 
     void unregisterRemoteService(String serviceCanonicalName);
 
-    //TODO 那对于这种什么都不传递的，是不是只能调用ApplicationContext去bind了呢？
     IBinder getRemoteService(Class serviceClass);
 
     //有了LifecycleOwner之后就可以利用LifecycleOwner.getLifecycle()来获取LifecycleRegistry,然后调用LifecycleRegistry.addListener()即可增加监听器
@@ -50,8 +49,8 @@ public interface IStarBridge {
 
     //IBinder getRemoteService(LifecycleOwner owner, String serviceCanonicalName);
 
-    //TODO 要传递什么参数呢？Activity还是什么? 还是说什么都不用传？最好是什么都不用传，就是bind时使用ApplicationContext, unbind时也使用ApplicationContext，这样就
-    //TODO 其实最好就是有一个unbind()接口，调用一次就可以把当前类中用到过的所有服务都unbind掉
+    void unbind(Class<?> serviceClass);
+
     void unbind(String canonicalName);
 
     void subscribe(String name, EventListener listener);

@@ -42,7 +42,6 @@ public class StarBridgeTransform extends Transform {
 
         //step1:将所有类的路径加入到ClassPool中
         ClassPool classPool = new ClassPool()
-        //TODO 是不是只需要将bootClasspath[0]加入就可以呢
         project.android.bootClasspath.each {
             classPool.appendClassPath((String) it.absolutePath)
         }

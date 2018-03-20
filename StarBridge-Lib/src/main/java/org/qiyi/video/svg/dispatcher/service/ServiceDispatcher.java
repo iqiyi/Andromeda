@@ -27,7 +27,6 @@ public class ServiceDispatcher implements IServiceDispatcher {
         Log.d(TAG, "ServiceDispatcher-->getTargetBinder,serivceName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         BinderBean bean = remoteBinderCache.get(serviceCanonicalName);
         if (null == bean) {
-            //TODO 这里是不是要在出现这种情况时通过startService()来启动进程?
             return null;
         } else {
             return bean;
@@ -47,9 +46,9 @@ public class ServiceDispatcher implements IServiceDispatcher {
                 }
             }, 0);
             remoteBinderCache.put(serviceCanonicalName, new BinderBean(binder, processName));
-            Log.d(TAG, "binder is not null");
+            Logger.d("ServiceDispatcher-->registerRemoteService(),binder is not null");
         } else {
-            Log.d(TAG, "binder is null");
+            Log.d(TAG, "ServiceDispatcher-->registerRemoteService(),binder is null");
         }
     }
 

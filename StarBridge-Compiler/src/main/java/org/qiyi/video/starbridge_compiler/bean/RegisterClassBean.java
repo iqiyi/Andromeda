@@ -58,7 +58,6 @@ public class RegisterClassBean implements Serializable {
         localInjectInfoMap.put(serviceCanonicalName, injectFieldName);
     }
 
-    //TODO 这其实是目前的方案还不是很完美，所以一个类中同一个类型的注入field只能有一个!
     public void addRemoteBindField(String serviceCanonicalName, String serviceFieldName) throws ProcessingException {
         if (remoteBindInfoMap.get(serviceCanonicalName) != null) {
             throw new ProcessingException("Only one field whose type is " + serviceCanonicalName + " is allowed in a class!");
