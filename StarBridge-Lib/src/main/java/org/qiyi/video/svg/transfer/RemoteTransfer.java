@@ -122,7 +122,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     private Map<String, ServiceConnection> connectionCache = new ConcurrentHashMap<>();
 
-    private void bindAction(String serviceName, String serverProcessName) {
+    private synchronized void bindAction(String serviceName, String serverProcessName) {
         //如果是主进程或者跟当前进程在同一个进程，MatchStubServiceHelper.matchIntent()就会返回null
         Intent intent = MatchStubServiceHelper.matchIntent(context, serviceName, serverProcessName);
         if (null == intent) {
@@ -170,7 +170,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     */
 
     @Override
-    public void unbind(String serviceCanonicalName) {
+    public synchronized void unbind(String serviceCanonicalName) {
         unbindAction(serviceCanonicalName);
     }
 
@@ -225,7 +225,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     //注意这个和registerRemoteService的区别，这里其实只是register本进程中有IPC能力的接口,它的名字其实叫registerStubService更合适
     @Override
-    public void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
+    public synchronized void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
         serviceTransfer.registerStubService(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);
     }
 
@@ -236,7 +236,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
      * @param serviceCanonicalName
      */
     @Override
-    public void unregisterStubService(String serviceCanonicalName) {
+    public synchronized void unregisterStubService(String serviceCanonicalName) {
         serviceTransfer.unregisterStubService(serviceCanonicalName, context, dispatcherProxy);
     }
 
@@ -253,7 +253,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     }
 
     @Override
-    public void publish(Event event) {
+    public synchronized void publish(Event event) {
         eventTransfer.publish(event, dispatcherProxy, this, context);
     }
 
