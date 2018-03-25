@@ -18,7 +18,8 @@
             android:enabled="true"
             android:exported="true"/>
 
-        <service
+
+        <!--service
             android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService0"
             android:enabled="true"
             android:exported="true"
@@ -68,7 +69,8 @@
             android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService7"
             android:enabled="true"
             android:exported="true"
-            android:process=":downloader"/>
+            android:process=":downloader"/-->
+
 
         <provider
             android:authorities="org.qiyi.video.svg.dispatcher"

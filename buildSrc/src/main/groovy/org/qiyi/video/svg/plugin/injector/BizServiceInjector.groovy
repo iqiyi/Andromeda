@@ -1,4 +1,4 @@
-package org.qiyi.video.svg.plugin
+package org.qiyi.video.svg.plugin.injector
 
 import com.google.gson.Gson
 import javassist.ClassPool
@@ -9,7 +9,7 @@ import org.qiyi.video.svg.plugin.bean.RegisterClassBean
 import org.qiyi.video.svg.plugin.bean.RegisterMethodBean
 import org.qiyi.video.svg.plugin.bean.ServiceInfo
 
-public class ServiceInjector {
+public class BizServiceInjector {
 
     private static final String STAR_BRIDGE_INSTANCE = "org.qiyi.video.svg.StarBridge.getInstance()"
 
@@ -22,7 +22,7 @@ public class ServiceInjector {
     private File buildDir
     private Map<String, CtClass> paramClassCache = new HashMap<>()
 
-    public ServiceInjector(Project project, ClassPool pool) {
+    public BizServiceInjector(Project project, ClassPool pool) {
         this.buildDir = project.buildDir
         this.pool = pool
         readRegisterClassBeanInfo("local_service_register_info.json")
@@ -61,7 +61,16 @@ public class ServiceInjector {
 
     }
 
-    void injectRegisterAndGetInfo(String path, Project project) {
+    /*
+    @Override
+    void injectServiceCode(String className, String path) {
+        if (registerClassBeanMap.get(className) != null) {
+            injectRegisterInfoForOneClass(className, registerClassBeanMap.get(className), path)
+        }
+    }
+    */
+
+    void injectRegisterAndGetInfo(String path) {
         File dir = new File(path)
         if (dir.isDirectory()) {
 
@@ -75,7 +84,6 @@ public class ServiceInjector {
                         .replace("/", ".")
                 if (classNameTemp.endsWith(".class")) {
                     String className = classNameTemp.substring(1, classNameTemp.length() - 6)
-
                     if (registerClassBeanMap.get(className) != null) {
                         injectRegisterInfoForOneClass(className, registerClassBeanMap.get(className), path)
                     }
@@ -84,6 +92,7 @@ public class ServiceInjector {
 
         }
     }
+
 
     private void injectRegisterInfoForOneClass(String className,
                                                RegisterClassBean registerClassBean, String path) {
@@ -96,7 +105,7 @@ public class ServiceInjector {
         }
         for (RegisterMethodBean methodBean : registerClassBean.getMethodBeans()) {
 
-            CtMethod ctMethod = createCtMethod(ctClass, methodBean);
+            CtMethod ctMethod = createCtMethod(ctClass, methodBean)
             //插入注册本地服务的代码
             injectLocalRegisterInfo(ctMethod, methodBean)
             //插入注册远程服务的代码

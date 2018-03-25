@@ -5,7 +5,7 @@
     <application>
         <activity
             android:name=".remote.RemoteServiceDemo"
-            android:process=":apple" />
+            android:process="com.android.apple" />
         <activity
             android:name=".local.LocalServiceDemo"
              />
