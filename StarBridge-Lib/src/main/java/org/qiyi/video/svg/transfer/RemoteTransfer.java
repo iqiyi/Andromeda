@@ -30,9 +30,9 @@ import org.qiyi.video.svg.transfer.event.IEventTransfer;
 import org.qiyi.video.svg.transfer.service.IRemoteServiceTransfer;
 import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
 import org.qiyi.video.svg.utils.IOUtils;
-import org.qiyi.video.svg.utils.StubServiceMatcher;
 import org.qiyi.video.svg.utils.ProcessUtils;
 import org.qiyi.video.svg.utils.ServiceUtils;
+import org.qiyi.video.svg.utils.StubServiceMatcher;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,7 +111,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         bindAction(serviceName, binderBean.getProcessName());
         return binderBean.getBinder();
     }
-
+    //TODO 实际上这样的缓存是不是有点问题，考虑到进程对进程，那connectionCache的key是不是应该为serverProcessName更合适呢？
     private void unbindAction(String serviceName) {
         ServiceConnection connection = connectionCache.get(serviceName);
         if (connection == null) {
@@ -169,6 +169,10 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     }
     */
 
+    //TODO 这里，其实由于ServiceConnection是我们自己创建的，不会有Activity或Fragment中成员的操作，所以不存在内存泄露问题;
+    //TODO 另一方面，用的是Application Context,所以其实这里即使不进行unbind()也不要紧的，顶多就是让Service所在进程的oom_adj值高一点，但是并不会导致内存泄露问题。
+    //TODO 可以考虑采用这样一个策略，即如果绑定到新的Service,那么就unbind掉之前的ServiceConnection;
+    //TODO 另外一种策略就是每新增一个ServiceConnection,就添加一个Monitor,然后比如30分钟内没有被使用就unbind掉
     @Override
     public synchronized void unbind(String serviceCanonicalName) {
         unbindAction(serviceCanonicalName);
@@ -188,10 +192,12 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             if (null == dispatcherProxy) {
                 IBinder dispatcherBinder = getIBinderFromProvider();
                 if (null != dispatcherBinder) {
-                    dispatcherProxy = Dispatcher.Stub.asInterface(dispatcherBinder);
+                    dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
+                    registerCurrentTransfer();
                 }
             }
 
+            //停靠等待的这种情况是可以不用注册的，因为说明sendRegisterInfo()成功了
             if (null == dispatcherProxy) {
                 sendRegisterInfo();
                 try {
@@ -202,10 +208,18 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             }
         }
         Logger.d("RemoteTransfer-->getIBinder(),end of wait");
-        if (serviceTransfer == null) {
+        if (serviceTransfer == null||dispatcherProxy==null) {
             return null;
         }
         return serviceTransfer.getAndSaveIBinder(serviceName, dispatcherProxy);
+    }
+
+    private void registerCurrentTransfer(){
+        try {
+            dispatcherProxy.registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private IBinder getIBinderFromProvider() {

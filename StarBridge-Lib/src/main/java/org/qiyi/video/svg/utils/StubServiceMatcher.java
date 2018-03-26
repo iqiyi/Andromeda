@@ -53,8 +53,8 @@ public class StubServiceMatcher {
      * hashMap.put(":test3", CommuStubService8.class);
      * hashMap.put(":test2", CommuStubService9.class);
      * hashMap.put(":test1", CommuStubService10.class);
-     * if(matchedServices.get($1)!=null)return matchedServices.get($1)
-     *
+     * if(matchedServices.get($1)!=null)return matchedServices.get($1);
+     *return null;
      * @param proName
      * @return
      */
