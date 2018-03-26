@@ -193,14 +193,11 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
                 IBinder dispatcherBinder = getIBinderFromProvider();
                 if (null != dispatcherBinder) {
                     dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
-                    try {
-                        dispatcherProxy.registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
-                    } catch (RemoteException ex) {
-                        ex.printStackTrace();
-                    }
+                    registerCurrentTransfer();
                 }
             }
 
+            //停靠等待的这种情况是可以不用注册的，因为说明sendRegisterInfo()成功了
             if (null == dispatcherProxy) {
                 sendRegisterInfo();
                 try {
@@ -211,10 +208,18 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             }
         }
         Logger.d("RemoteTransfer-->getIBinder(),end of wait");
-        if (serviceTransfer == null) {
+        if (serviceTransfer == null||dispatcherProxy==null) {
             return null;
         }
         return serviceTransfer.getAndSaveIBinder(serviceName, dispatcherProxy);
+    }
+
+    private void registerCurrentTransfer(){
+        try {
+            dispatcherProxy.registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private IBinder getIBinderFromProvider() {
