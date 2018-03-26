@@ -20,9 +20,24 @@
         <activity android:name=".annotation.local.RegLocalServiceByAnnoActivity" />
         <activity android:name=".annotation.local.UseLocalServiceByAnnoActivity" />
         <activity android:name=".annotation.remote.RegRemoteServiceByAnnoActivity" />
-        <activity android:name=".annotation.remote.UseRemoteServiceByAnnoActivity"
-            android:process=":tea"
+        <activity
+            android:name=".annotation.remote.UseRemoteServiceByAnnoActivity"
+            android:process=":tea" />
+        <activity android:name=".test.TestActivity1"
+            android:process=":test1"
             ></activity>
+        <activity android:name=".test.TestActivity1$TestActivity2"
+            android:process=":test2"/>
+        <activity android:name=".test.TestActivity1$TestActivity3"
+            android:process=":test3"/>
+        <activity android:name=".test.TestActivity1$TestActivity4"
+            android:process=":test4"/>
+        <activity android:name=".test.TestActivity1$TestActivity5"
+            android:process="com.android.test5"/>
+        <activity android:name=".test.TestActivity1$TestActivity6"
+            android:process="com.android.test6"/>
+
+
     </application>
 
 </manifest>

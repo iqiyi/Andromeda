@@ -30,7 +30,7 @@ import org.qiyi.video.svg.transfer.event.IEventTransfer;
 import org.qiyi.video.svg.transfer.service.IRemoteServiceTransfer;
 import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
 import org.qiyi.video.svg.utils.IOUtils;
-import org.qiyi.video.svg.utils.MatchStubServiceHelper;
+import org.qiyi.video.svg.utils.StubServiceMatcher;
 import org.qiyi.video.svg.utils.ProcessUtils;
 import org.qiyi.video.svg.utils.ServiceUtils;
 
@@ -123,8 +123,8 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     private Map<String, ServiceConnection> connectionCache = new ConcurrentHashMap<>();
 
     private synchronized void bindAction(String serviceName, String serverProcessName) {
-        //如果是主进程或者跟当前进程在同一个进程，MatchStubServiceHelper.matchIntent()就会返回null
-        Intent intent = MatchStubServiceHelper.matchIntent(context, serviceName, serverProcessName);
+        //如果是主进程或者跟当前进程在同一个进程，StubServiceMatcher.matchIntent()就会返回null
+        Intent intent = StubServiceMatcher.matchIntent(context, serverProcessName);
         if (null == intent) {
             return;
         }
@@ -185,7 +185,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
         synchronized (lock) {
 
-            if(null==dispatcherProxy){
+            if (null == dispatcherProxy) {
                 IBinder dispatcherBinder = getIBinderFromProvider();
                 if (null != dispatcherBinder) {
                     dispatcherProxy = Dispatcher.Stub.asInterface(dispatcherBinder);

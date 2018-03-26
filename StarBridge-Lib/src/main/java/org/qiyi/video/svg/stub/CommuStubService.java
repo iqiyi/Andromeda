@@ -76,5 +76,8 @@ public class CommuStubService extends Service {
     public static class CommuStubService13 extends CommuStubService {
     }
 
+    public static class CommuStubService14 extends CommuStubService {
+    }
+
 
 }

@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
-//apply plugin: org.qiyi.video.svg.plugin.StarBridgePlugin
-apply plugin: 'org.qiyi.svg.plugin'
+apply plugin: org.qiyi.video.svg.plugin.StarBridgePlugin
+//apply plugin: 'org.qiyi.svg.plugin'
 
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "wang.imallen.blog.servicemanager"
+        applicationId "wang.imallen.blog." +
+                "" +
+                "servicemanager"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1
@@ -19,7 +21,6 @@ android {
         }
     }
 }
-
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

@@ -15,6 +15,7 @@ class ClassAppender {
             it.jarInputs.each {
                 classPool.insertClassPath(it.file.absolutePath)
             }
+
         }
     }
 
