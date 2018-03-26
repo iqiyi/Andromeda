@@ -2,6 +2,7 @@ package org.qiyi.video.svg.dispatcher;
 
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import org.qiyi.video.svg.IDispatcher;
 import org.qiyi.video.svg.bean.BinderBean;
@@ -39,13 +40,15 @@ public class Dispatcher extends IDispatcher.Stub {
         eventDispatcher = new EventDispatcher();
     }
 
-    //给同进程的DispatcherService调用的,因而没必要写进接口里
+    //给同进程的DispatcherService调用的和远程调用
+    @Override
     public synchronized void registerRemoteTransfer(int pid, IBinder transferBinder) {
         if (pid < 0) {
             return;
         }
         eventDispatcher.registerRemoteTransfer(pid, transferBinder);
     }
+
 
     @Override
     public synchronized BinderBean getTargetBinder(String serviceCanonicalName) throws RemoteException {

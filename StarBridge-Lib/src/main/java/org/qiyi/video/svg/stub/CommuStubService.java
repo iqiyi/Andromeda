@@ -31,7 +31,9 @@ public class CommuStubService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand,pid:" + android.os.Process.myPid() + ",action:" + intent.getAction() + ",serviceName:" + intent.getStringExtra(Constants.KEY_SERVICE_NAME));
 
-        return super.onStartCommand(intent, flags, startId);
+        //这样可以使Service所在进程的保活效果好一点
+        return Service.START_STICKY;
+        //return super.onStartCommand(intent, flags, startId);
     }
 
     public static class CommuStubService0 extends CommuStubService {

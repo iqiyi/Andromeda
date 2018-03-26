@@ -11,6 +11,8 @@ interface IDispatcher {
    //这个uri其实就是Target Service的action
    IBinder fetchTargetBinder(String uri);
 
+   void registerRemoteTransfer(int pid,IBinder remoteTransferBinder);
+
    void registerRemoteService(String serviceCanonicalName,String processName,IBinder binder);
 
    void unregisterRemoteService(String serviceCanonicalName);

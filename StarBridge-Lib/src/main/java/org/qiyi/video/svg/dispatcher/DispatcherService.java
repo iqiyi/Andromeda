@@ -95,7 +95,9 @@ public class DispatcherService extends Service {
         } catch (RemoteException ex) {
             ex.printStackTrace();
         } finally {
-            registerAndReverseRegister(pid, wrapper.getBinder());
+            if (wrapper != null) {
+                registerAndReverseRegister(pid, wrapper.getBinder());
+            }
         }
 
     }
