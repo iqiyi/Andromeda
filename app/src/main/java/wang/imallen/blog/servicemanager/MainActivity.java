@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         findViewById(R.id.showServiceInOtherModule).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,CherryActivity.class));
+                startActivity(new Intent(MainActivity.this, CherryActivity.class));
             }
         });
 
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     @Override
     public void onNotify(Event event) {
         String name = event.getName();
-        Toast.makeText(this,"get event whose name is "+name,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "get event whose name is " + name, Toast.LENGTH_SHORT).show();
         Logger.d("MainActivity-->event name:" + name);
         if (event.getData() == null) {
             return;
@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity implements EventListener {
 
     //使用方式一:只要实现BaseCallback这个抽象类即可，在主线程回调
     private void useBuyAppleService() {
-        IBuyApple buyApple = IBuyApple.Stub.asInterface(StarBridge.getInstance().getRemoteService(IBuyApple.class));
+        //IBuyApple buyApple = IBuyApple.Stub.asInterface(StarBridge.getInstance().getRemoteService(IBuyApple.class));
+        IBuyApple buyApple = IBuyApple.Stub.asInterface(StarBridge.with(this).getRemoteService(IBuyApple.class));
         try {
             //buyApple.buyApple(10, new MyCallback());
             buyApple.buyAppleOnNet(10, new BaseCallback() {

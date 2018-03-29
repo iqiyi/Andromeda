@@ -44,6 +44,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     private static RemoteTransfer sInstance;
 
+    //TODO 这样做有个弊端，就是没做到懒加载
     public static void init(Context context) {
         getInstance().setContext(context);
 
@@ -102,6 +103,16 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     }
 
     @Override
+    public BinderBean getRemoteServiceBean(String serviceCanonicalName) {
+        Logger.d("RemoteTransfer-->getRemoteServiceBean,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+        return getIBinder(serviceCanonicalName);
+        //bindAction(serviceName, binderBean.getProcessName());
+        //return binderBean.getBinder();
+    }
+
+
+    /*
+    @Override
     public IBinder getRemoteService(String serviceName) {
         Logger.d("RemoteTransfer-->getRemoteService,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         BinderBean binderBean = getIBinder(serviceName);
@@ -111,6 +122,9 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         bindAction(serviceName, binderBean.getProcessName());
         return binderBean.getBinder();
     }
+    */
+
+
     //TODO 实际上这样的缓存是不是有点问题，考虑到进程对进程，那connectionCache的key是不是应该为serverProcessName更合适呢？
     private void unbindAction(String serviceName) {
         ServiceConnection connection = connectionCache.get(serviceName);
