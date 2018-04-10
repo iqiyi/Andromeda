@@ -11,6 +11,7 @@ import org.qiyi.video.svg.IRemoteTransfer;
 import org.qiyi.video.svg.config.Constants;
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.log.Logger;
+import org.qiyi.video.svg.utils.ProcessUtils;
 
 public class DispatcherService extends Service {
     public DispatcherService() {
@@ -60,7 +61,7 @@ public class DispatcherService extends Service {
      * @param transterBinder
      */
     private void registerAndReverseRegister(int pid, IBinder transterBinder) {
-        Logger.d("DispatcherService-->registerAndReverseRegister,pid=" + pid);
+        Logger.d("DispatcherService-->registerAndReverseRegister,pid=" + pid + ",processName:" + ProcessUtils.getProcessName(pid));
         IRemoteTransfer remoteTransfer = IRemoteTransfer.Stub.asInterface(transterBinder);
 
         Dispatcher.getInstance().registerRemoteTransfer(pid, transterBinder);

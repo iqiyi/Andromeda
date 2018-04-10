@@ -5,10 +5,8 @@ package org.qiyi.video.svg.transfer;
 //import android.arch.lifecycle.LifecycleOwner;
 //import android.arch.lifecycle.OnLifecycleEvent;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -32,10 +30,6 @@ import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
 import org.qiyi.video.svg.utils.IOUtils;
 import org.qiyi.video.svg.utils.ProcessUtils;
 import org.qiyi.video.svg.utils.ServiceUtils;
-import org.qiyi.video.svg.utils.StubServiceMatcher;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by wangallen on 2018/1/9.
@@ -83,6 +77,8 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     //让ServiceDispatcher注册到当前进程
     public void sendRegisterInfo() {
+
+        /*
         if (ProcessUtils.isMainProcess(context)) {
             //如果是主进程就走捷径,不然直接杀进程时会导致crash
             dispatcherProxy = Dispatcher.getInstance();
@@ -90,7 +86,9 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             Dispatcher.getInstance().registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
             return;
         }
+        */
 
+        //TODO 如果是同一个进程的话怎么办，会不会出现死锁？
         if (dispatcherProxy == null) {
             //后面考虑还是采用"has-a"的方式会更好
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
@@ -106,59 +104,8 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     public BinderBean getRemoteServiceBean(String serviceCanonicalName) {
         Logger.d("RemoteTransfer-->getRemoteServiceBean,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         return getIBinder(serviceCanonicalName);
-        //bindAction(serviceName, binderBean.getProcessName());
-        //return binderBean.getBinder();
     }
 
-
-    /*
-    @Override
-    public IBinder getRemoteService(String serviceName) {
-        Logger.d("RemoteTransfer-->getRemoteService,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        BinderBean binderBean = getIBinder(serviceName);
-        if (null == binderBean) {
-            return null;
-        }
-        bindAction(serviceName, binderBean.getProcessName());
-        return binderBean.getBinder();
-    }
-    */
-
-
-    //TODO 实际上这样的缓存是不是有点问题，考虑到进程对进程，那connectionCache的key是不是应该为serverProcessName更合适呢？
-    private void unbindAction(String serviceName) {
-        ServiceConnection connection = connectionCache.get(serviceName);
-        if (connection == null) {
-            return;
-        }
-        context.unbindService(connection);
-    }
-
-    private Map<String, ServiceConnection> connectionCache = new ConcurrentHashMap<>();
-
-    private synchronized void bindAction(String serviceName, String serverProcessName) {
-        //如果是主进程或者跟当前进程在同一个进程，StubServiceMatcher.matchIntent()就会返回null
-        Intent intent = StubServiceMatcher.matchIntent(context, serverProcessName);
-        if (null == intent) {
-            return;
-        }
-        ServiceConnection connection = connectionCache.get(serviceName);
-        if (null == connection) {
-            connection = new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName name, IBinder service) {
-                    Logger.d("onServiceConnected");
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName name) {
-                    Logger.d("onServiceDisconnected");
-                }
-            };
-            connectionCache.put(serviceName, connection);
-        }
-        context.bindService(intent, connection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
-    }
     /*
     @Override
     public IBinder getRemoteService(final LifecycleOwner owner, final String serviceCanonicalName) {
@@ -182,15 +129,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         return binderBean.getBinder();
     }
     */
-
-    //TODO 这里，其实由于ServiceConnection是我们自己创建的，不会有Activity或Fragment中成员的操作，所以不存在内存泄露问题;
-    //TODO 另一方面，用的是Application Context,所以其实这里即使不进行unbind()也不要紧的，顶多就是让Service所在进程的oom_adj值高一点，但是并不会导致内存泄露问题。
-    //TODO 可以考虑采用这样一个策略，即如果绑定到新的Service,那么就unbind掉之前的ServiceConnection;
-    //TODO 另外一种策略就是每新增一个ServiceConnection,就添加一个Monitor,然后比如30分钟内没有被使用就unbind掉
-    @Override
-    public synchronized void unbind(String serviceCanonicalName) {
-        unbindAction(serviceCanonicalName);
-    }
 
     private BinderBean getIBinder(String serviceName) {
         Logger.d("RemoteTransfer-->getIBinder()");
@@ -222,13 +160,13 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             }
         }
         Logger.d("RemoteTransfer-->getIBinder(),end of wait");
-        if (serviceTransfer == null||dispatcherProxy==null) {
+        if (serviceTransfer == null || dispatcherProxy == null) {
             return null;
         }
         return serviceTransfer.getAndSaveIBinder(serviceName, dispatcherProxy);
     }
 
-    private void registerCurrentTransfer(){
+    private void registerCurrentTransfer() {
         try {
             dispatcherProxy.registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
         } catch (RemoteException ex) {
@@ -240,6 +178,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         Logger.d("RemoteTransfer-->getIBinderFromProvider()");
         Cursor cursor = null;
         try {
+            //TODO query()方法也是有使用stableProvider()的风险，从而存在导致主进程被杀死的风险，所以只能作为备用方案使用。实际上最好都是把它作为第二个备用方案比较好，第一个备用方案就用线程等待好了。
             cursor = context.getContentResolver().query(DispatcherProvider.URI, DispatcherProvider.PROJECTION_MAIN,
                     null, null, null);
             if (cursor == null) {

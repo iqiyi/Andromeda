@@ -48,8 +48,10 @@ public class ConnectionManager {
 
     //这里不能按照serviceCanonicalName来区分，而是要按照target service来划分，如果targetService一样，那就没必要再绑定
     public String bindAction(Context context, String serverProcessName) {
+        Logger.d("ConnectionManager-->bindAction,serverProcessName:" + serverProcessName);
         Intent intent = StubServiceMatcher.matchIntent(context, serverProcessName);
         if (null == intent) {
+            Logger.d("match intent is null");
             return null;
         }
         //TODO 要考虑一下getCommuStubServiceName()会不会耗时太多
@@ -69,6 +71,7 @@ public class ConnectionManager {
             };
             bean = new ConnectionBean(connection);
             connectionCache.put(commuStubServiceName, bean);
+            Logger.d("really start to bind");
             context.bindService(intent, connection, Context.BIND_AUTO_CREATE | Context.BIND_IMPORTANT);
         } else {
             bean.increaseRef();
@@ -77,13 +80,16 @@ public class ConnectionManager {
     }
 
     public synchronized void unbindAction(Context context, Set<String> commuStubServiceNames) {
+        Logger.d("ConnectionManager-->unbindAction");
         for (String stubServiceName : commuStubServiceNames) {
+            Logger.d("unbindAction, stubServiceName:" + stubServiceName);
             ConnectionBean bean = connectionCache.get(stubServiceName);
             if (bean == null) {
                 return;
             }
             bean.decreaseRef();
             if (bean.getRefCount() < 1) {
+                Logger.d("really unbind " + stubServiceName);
                 context.unbindService(bean.getServiceConnection());
             }
         }

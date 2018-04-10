@@ -6,16 +6,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
 
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
 import org.qiyi.video.svg.local.LocalServiceHub;
+import org.qiyi.video.svg.remote.ConnectionManager;
 import org.qiyi.video.svg.remote.IRemoteManager;
 import org.qiyi.video.svg.remote.RemoteManagerRetriever;
 import org.qiyi.video.svg.transfer.RemoteTransfer;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -33,13 +37,15 @@ public class StarBridge {
 
     private static StarBridge sInstance;
 
+    private static Context appContext;
+
     private static AtomicBoolean initFlag = new AtomicBoolean(false);
 
     public static void init(Context context) {
         if (initFlag.get() || context == null) {
             return;
         }
-
+        appContext = context.getApplicationContext();
         RemoteTransfer.init(context.getApplicationContext());
         initFlag.set(true);
     }
@@ -141,11 +147,15 @@ public class StarBridge {
 
 
     public static IRemoteManager with(android.app.Fragment fragment) {
-        return getRetriever().get(fragment.getActivity());
+        return getRetriever().get(fragment);
     }
 
     public static IRemoteManager with(Fragment fragment) {
         return getRetriever().get(fragment);
+    }
+
+    public static IRemoteManager with(FragmentActivity fragmentActivity) {
+        return getRetriever().get(fragmentActivity);
     }
 
     public static IRemoteManager with(Activity activity) {
@@ -156,7 +166,7 @@ public class StarBridge {
         return getRetriever().get(context);
     }
 
-    public static IRemoteManager with(View view){
+    public static IRemoteManager with(View view) {
         return getRetriever().get(view);
     }
 
@@ -196,10 +206,7 @@ public class StarBridge {
 
     //TODO 这两个是放在StarBridge中还是RemoteManager中还需要再讨论一下
     public static void unbind(Class<?> serviceClass) {
-        if (null == serviceClass) {
-            return;
-        }
-        RemoteTransfer.getInstance().unbind(serviceClass.getCanonicalName());
+        unbind(serviceClass.getCanonicalName());
     }
 
     @Deprecated
@@ -207,7 +214,9 @@ public class StarBridge {
         if (TextUtils.isEmpty(serviceCanonicalName)) {
             return;
         }
-        RemoteTransfer.getInstance().unbind(serviceCanonicalName);
+        Set<String> serviceNames = new HashSet<>();
+        serviceNames.add(serviceCanonicalName);
+        ConnectionManager.getInstance().unbindAction(appContext, serviceNames);
     }
 
     //TODO 这个是否也需要与生命周期关联起来呢？然后比如在onDestroy()时自动unsubscribe()掉。感觉最好还是要!

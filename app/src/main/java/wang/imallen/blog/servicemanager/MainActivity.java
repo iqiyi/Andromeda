@@ -23,6 +23,7 @@ import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
 import wang.imallen.blog.servicemanager.annotation.local.RegLocalServiceByAnnoActivity;
 import wang.imallen.blog.servicemanager.annotation.remote.RegRemoteServiceByAnnoActivity;
+import wang.imallen.blog.servicemanager.lifecycle.LifecycleTestActivity;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
 
@@ -98,6 +99,14 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             public void onClick(View v) {
                 //取消订阅
                 StarBridge.getInstance().unsubscribe(MainActivity.this);
+            }
+        });
+
+
+        findViewById(R.id.lifecycleTestBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, LifecycleTestActivity.class));
             }
         });
 

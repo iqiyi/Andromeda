@@ -16,56 +16,80 @@ public class StubServiceGenerator implements IServiceGenerator {
     def static final TRUE = 'true'
     def static final STUB_SERVICE = 'org.qiyi.video.svg.stub.CommuStubService$CommuStubService'
 
-    private Map<String,String>matchedServices=new HashMap<>()
+    private Map<String, String> matchedServices = new HashMap<>()
 
     @Override
     public void injectStubServiceToManifest(Project project) {
 
+        println "injectStubServiceToManifest"
+
+        //TODO 要找到别的办法来获取Manifest文件
         def android = project.extensions.getByType(AppExtension)
+
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
-                output.processManifest.doLast {
+
+                //injectManifestFile(output.processManifest.manifestOutputDirectory)
+
+                output.processManifest.doLast {  //TODO 注意:Instant run时processManifest有可能不执行
+
+                    println "processManifest-->doLast"
+
+                    println "manifestOutputDirectory:"+output.processManifest.manifestOutputDirectory.absolutePath
+
+                    //output.getProcessManifest().manifestOutputDirectory
                     output.processManifest.outputs.files.each { File file ->
-                        def manifestFile = null
                         //在gradle plugin 3.0.0之前，file是文件，且文件名为AndroidManifest.xml
                         //在gradle plugin 3.0.0之后，file是目录，且不包含AndroidManifest.xml，需要自己拼接
                         //除了目录和AndroidManifest.xml之外，还可能会包含manifest-merger-debug-report.txt等不相干的文件，过滤它
                         if ((file.name.equalsIgnoreCase("AndroidManifest.xml") && !file.isDirectory()) || file.isDirectory()) {
                             if (file.isDirectory()) {
                                 //3.0.0之后，自己拼接AndroidManifest.xml
-                                manifestFile = new File(file, "AndroidManifest.xml")
+                                injectManifestFile(new File(file,"AndroidManifest.xml"))
                             } else {
                                 //3.0.0之前，直接使用
-                                manifestFile = file
-                            }
-
-                            //检测文件是否存在
-                            if (manifestFile != null && manifestFile.exists()) {
-
-                                println "manifest: ${manifestFile}"
-
-                                String serviceManifest = addServiceTag(manifestFile.absolutePath)
-
-                                println "serviceManifest:$serviceManifest"
-
-                                String newManifestContent = manifestFile.getText("UTF-8")
-                                int index = newManifestContent.lastIndexOf("</application>")
-                                newManifestContent = newManifestContent.substring(0, index) + serviceManifest + newManifestContent.substring(index)
-                                manifestFile.write(newManifestContent, 'UTF-8')
-
+                                injectManifestFile(file)
                             }
                         }
                     }
                 }
+
             }
         }
     }
+
+    //TODO 这样的话会不会每次都往其中加入相应的CommuStubService?
+    private void injectManifestFile(File manifestFile) {
+
+        println "injectManifestFile"
+
+        //def manifestFile = new File(manifestDir, "AndroidManifest.xml")
+
+        //检测文件是否存在
+        if (manifestFile != null && manifestFile.exists()) {
+
+            println "manifest: ${manifestFile}"
+
+            String serviceManifest = addServiceTag(manifestFile.absolutePath)
+
+            println "serviceManifest:$serviceManifest"
+
+            String newManifestContent = manifestFile.getText("UTF-8")
+            int index = newManifestContent.lastIndexOf("</application>")
+            newManifestContent = newManifestContent.substring(0, index) + serviceManifest + newManifestContent.substring(index)
+            manifestFile.write(newManifestContent, 'UTF-8')
+
+        } else {
+            println "Attention!manifest file may not exist!"
+        }
+    }
+
 
     @Override
     Map<String, String> getMatchServices() {
         return matchedServices
     }
-//注意:闭包中只能调用static方法
+     //注意:闭包中只能调用static方法
     private String addServiceTag(String manifestPath) {
         IManifestParser manifestParser = new ManifestParser()
         Set<String> customProcessNames = manifestParser.getCustomProcessNames(manifestPath)
@@ -78,7 +102,7 @@ public class StubServiceGenerator implements IServiceGenerator {
             int index = 0
             customProcessNames.each {
 
-                String serviceName="${STUB_SERVICE}" + index.toString()
+                String serviceName = "${STUB_SERVICE}" + index.toString()
 
                 service("${NAME}": serviceName,
                         "${ENABLED}": "${TRUE}",
@@ -86,7 +110,7 @@ public class StubServiceGenerator implements IServiceGenerator {
                         "${PROCESS}": it
                 )
 
-                matchedServices.put(it,serviceName)
+                matchedServices.put(it, serviceName)
 
                 ++index
             }

@@ -49,6 +49,7 @@ public class SupportRemoteManagerFragment extends Fragment {
      * @param parentFragmentHint
      */
     public void setParentFragmentHint(Fragment parentFragmentHint) {
+        Logger.d("SupportRemoteManagerFragment-->setParentFragmentHint()");
         this.parentFragmentHint = parentFragmentHint;
         if (parentFragmentHint != null && parentFragmentHint.getActivity() != null) {
             registerFragmentWithRoot(parentFragmentHint.getActivity());
@@ -56,9 +57,10 @@ public class SupportRemoteManagerFragment extends Fragment {
     }
 
     private void registerFragmentWithRoot(FragmentActivity activity) {
+        Logger.d("SupportRemoteManagerFragment-->registerFragmentWithRoot()");
         unregisterFragmentWithRoot();
         rootRequestManagerFragment = StarBridge.getInstance().getRemoteManagerRetriever().getSupportRemoteManagerFragment(activity);
-        if (!this.equals(rootRequestManagerFragment)) {
+        if (!equals(rootRequestManagerFragment)) {
             rootRequestManagerFragment.addChildRemoteManagerFragment(this);
         }
     }

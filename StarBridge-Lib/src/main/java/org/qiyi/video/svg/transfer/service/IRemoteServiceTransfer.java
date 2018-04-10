@@ -17,8 +17,6 @@ public interface IRemoteServiceTransfer {
     //IBinder getRemoteService(String serviceCanonicalName);
     BinderBean getRemoteServiceBean(String serviceCanonicalName);
 
-    void unbind(String serviceCanonicalName);
-
     //其实是registerStubService
     void registerStubService(String serviceCanonicalName, IBinder stubBinder);
 

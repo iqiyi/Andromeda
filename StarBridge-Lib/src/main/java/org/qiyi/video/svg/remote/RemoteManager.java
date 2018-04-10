@@ -61,6 +61,7 @@ public class RemoteManager implements IRemoteManager, LifecycleListener {
     //TODO 还是要在这里调用onStart()比较好，因为Fragment或者Activity进行onStart()时，不一定要获取远程服务，此时
     @Override
     public synchronized IBinder getRemoteService(String serviceCanonicalName) {
+        Logger.d(this.toString() + "-->getRemoteService,serviceName:" + serviceCanonicalName);
         if (TextUtils.isEmpty(serviceCanonicalName)) {
             return null;
         }
@@ -72,19 +73,18 @@ public class RemoteManager implements IRemoteManager, LifecycleListener {
 
     @Override
     public void onStart() {
-        Logger.d("RemoteManager-->onStart()");
-
+        Logger.d(this.toString() + "-->onStart()");
     }
 
     @Override
     public void onStop() {
-        Logger.d("RemoteManager-->onStart()");
+        Logger.d(this.toString() + "-->onStop()");
     }
 
     @Override
     public void onDestroy() {
         //TODO unbindAction
-        Logger.d("RemoteManager-->onDestroy()");
+        Logger.d(this.toString() + "-->onDestroy()");
         ConnectionManager.getInstance().unbindAction(appContext, commuStubServiceNames);
     }
 }

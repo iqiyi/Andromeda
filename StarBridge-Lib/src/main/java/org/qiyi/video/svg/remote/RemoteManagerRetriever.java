@@ -178,7 +178,6 @@ public class RemoteManagerRetriever implements IRemoteManagerRetriever, Handler.
         }
     }
 
-    //TODO 这里涉及到一个问题，就是在子线程中，如果用户传递activity,我们是要当主线程那样处理，还是说。。。
     @Override
     public IRemoteManager get(Activity activity) {
         if (Utils.isOnBackgroundThread()) {

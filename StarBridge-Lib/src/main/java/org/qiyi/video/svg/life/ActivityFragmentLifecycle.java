@@ -1,5 +1,6 @@
 package org.qiyi.video.svg.life;
 
+import org.qiyi.video.svg.log.Logger;
 import org.qiyi.video.svg.utils.CollectionUtils;
 
 import java.util.Collections;
@@ -19,6 +20,7 @@ public class ActivityFragmentLifecycle implements Lifecycle {
 
     @Override
     public void addListener(LifecycleListener listener) {
+        Logger.d(this.toString() + "-->addListener,isDestroyed:" + isDestroyed + ",isStarted:" + isStarted);
         lifecycleListeners.add(listener);
 
         if (isDestroyed) {
@@ -26,6 +28,7 @@ public class ActivityFragmentLifecycle implements Lifecycle {
         } else if (isStarted) {
             listener.onStart();
         } else {
+            //TODO 这个判断好像会有点问题吧?这会导致在刚添加时就调用一次onStop()
             listener.onStop();
         }
     }
@@ -36,6 +39,7 @@ public class ActivityFragmentLifecycle implements Lifecycle {
     }
 
     public void onStart() {
+        Logger.d(this.toString() + "-->onStart()");
         isStarted = true;
         for (LifecycleListener listener : CollectionUtils.getSnapshot(lifecycleListeners)) {
             listener.onStart();
@@ -43,6 +47,7 @@ public class ActivityFragmentLifecycle implements Lifecycle {
     }
 
     public void onStop() {
+        Logger.d(this.toString() + "-->onStop()");
         isStarted = false;
         for (LifecycleListener listener : CollectionUtils.getSnapshot(lifecycleListeners)) {
             listener.onStop();
@@ -50,6 +55,7 @@ public class ActivityFragmentLifecycle implements Lifecycle {
     }
 
     public void onDestroy() {
+        Logger.d(this.toString() + "-->onDestroy()");
         isDestroyed = true;
         for (LifecycleListener listener : CollectionUtils.getSnapshot(lifecycleListeners)) {
             listener.onDestroy();

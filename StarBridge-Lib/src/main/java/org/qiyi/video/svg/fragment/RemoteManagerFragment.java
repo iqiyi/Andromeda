@@ -50,6 +50,7 @@ public class RemoteManagerFragment extends Fragment {
      * @param parentFragmentHint
      */
     public void setParentFragmentHint(Fragment parentFragmentHint) {
+        Logger.d(this.toString() + "-->setParentFragmentHint()");
         this.parentFragmentHint = parentFragmentHint;
         if (parentFragmentHint != null && parentFragmentHint.getActivity() != null) {
             registerFragmentWithRoot(parentFragmentHint.getActivity());
@@ -57,9 +58,11 @@ public class RemoteManagerFragment extends Fragment {
     }
 
     private void registerFragmentWithRoot(Activity activity) {
+        Logger.d(this.toString() + "-->registerFragmentWithRoot()");
         unregisterFragmentWithRoot();
+        //TODO 这里是不是要先判断一下rootRemoteManagerFragment是否为空呢?
         rootRemoteManagerFragment = StarBridge.getInstance().getRemoteManagerRetriever().getRemoteManagerFragment(activity);
-        if (!this.equals(rootRemoteManagerFragment)) {
+        if (!equals(rootRemoteManagerFragment)) {
             rootRemoteManagerFragment.addChildRemoteManagerFragment(this);
         }
     }
