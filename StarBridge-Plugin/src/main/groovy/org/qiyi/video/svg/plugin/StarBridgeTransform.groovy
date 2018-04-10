@@ -6,15 +6,22 @@ import javassist.ClassPool
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+import org.qiyi.video.svg.plugin.injector.BizServiceInjector
+import org.qiyi.video.svg.plugin.injector.StubServiceMatchInjector
 
 public class StarBridgeTransform extends Transform {
 
     private Project project
-    //private OldServiceInjector serviceInject
-    private ServiceInjector serviceInjector
 
-    public StarBridgeTransform(Project project) {
+    private BizServiceInjector bizServiceInjector
+
+    private StubServiceMatchInjector stubServiceMatchInjector
+
+    private Map<String, String> matchedServices
+
+    public StarBridgeTransform(Project project, Map<String, String> matchedServices) {
         this.project = project
+        this.matchedServices = matchedServices
     }
 
     @Override
@@ -46,10 +53,12 @@ public class StarBridgeTransform extends Transform {
             classPool.appendClassPath((String) it.absolutePath)
         }
 
+        //TODO 这里有优化的空间,实际上只要将我们需要的类加进去即可
         ClassAppender.appendAllClasses(transformInvocation.getInputs(), classPool)
 
-        this.serviceInjector = new ServiceInjector(project, classPool)
+        this.bizServiceInjector = new BizServiceInjector(project, classPool)
 
+        this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, matchedServices)
         //遍历input
         transformInvocation.inputs.each { TransformInput input ->
 
@@ -57,9 +66,9 @@ public class StarBridgeTransform extends Transform {
 
             //遍历文件夹
             input.directoryInputs.each { DirectoryInput directoryInput ->
-                //注入代码
-                //serviceInject.injectRegisterInfo(directoryInput.file.absolutePath, project)
-                serviceInjector.injectRegisterAndGetInfo(directoryInput.file.absolutePath, project)
+
+                //TODO 其实这样做不够，还需要对JarInput进行处理才完全，因为实际上jar包中也完全可能含有注解的!
+                //bizServiceInjector.injectRegisterAndGetInfo(directoryInput.file.absolutePath)
 
                 //获取output目录
                 def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,
@@ -75,6 +84,8 @@ public class StarBridgeTransform extends Transform {
                 def jarName = jarInput.name
                 println("jar=" + jarInput.file.getAbsolutePath())
 
+                stubServiceMatchInjector.injectMatchCode(jarInput)
+
                 def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
                 if (jarName.endsWith(".jar")) {
                     jarName = jarName.substring(0, jarName.length() - 4)
@@ -84,5 +95,8 @@ public class StarBridgeTransform extends Transform {
                 FileUtils.copyFile(jarInput.file, dest)
             }
         }
+
+
     }
+
 }

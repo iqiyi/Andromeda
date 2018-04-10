@@ -44,7 +44,8 @@
         <activity android:name=".lifecycle.LifecycleTestActivity" />
         <activity android:name=".lifecycle.frag.SupportFragActivity" />
         <activity android:name=".lifecycle.frag.FragActivity" />
-        <activity android:name=".lifecycle.ViewTestActivity"></activity>
+        <activity android:name=".lifecycle.ViewTestActivity" />
+        <activity android:name=".lifecycle.ViewPagerActivity"></activity>
     </application>
 
 </manifest>

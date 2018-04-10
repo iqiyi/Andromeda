@@ -38,7 +38,7 @@ public class LifecycleTestActivity extends AppCompatActivity {
         findViewById(R.id.viewPagerTestBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(LifecycleTestActivity.this, ViewPagerActivity.class));
             }
         });
 
@@ -69,7 +69,6 @@ public class LifecycleTestActivity extends AppCompatActivity {
                 startActivity(new Intent(LifecycleTestActivity.this, ViewTestActivity.class));
             }
         });
-
     }
 
     private void useBuyAppleService() {

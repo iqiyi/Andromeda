@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: org.qiyi.video.svg.plugin.StarBridgePlugin
-//apply plugin: 'org.qiyi.svg.plugin'
+//apply plugin: org.qiyi.video.svg.plugin.StarBridgePlugin
+apply plugin: 'org.qiyi.svg.plugin'
 
 android {
     compileSdkVersion 26
@@ -32,6 +32,9 @@ dependencies {
     annotationProcessor project(":StarBridge-Compiler")
 
     implementation 'com.android.support:design:26.0.2'
+
+    //implementation 'org.qiyi.video.svg:plugin:0.7.4'
+    //implementation project(":StarBridge-Plugin")
 
     implementation 'com.android.support:appcompat-v7:26.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
