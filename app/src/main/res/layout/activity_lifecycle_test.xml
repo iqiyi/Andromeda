@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="wang.imallen.blog.servicemanager.MainActivity">
+
+    <Button
+        android:id="@+id/fragmentTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="android.app.Fragment测试"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/supportFragmentTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="support v4 Fragment测试"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/viewPagerTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ViewPager中Fragment测试"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/fragmentActivityTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FragmentActivity测试"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/activityTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Activity测试"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/contextTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Context测试"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/viewTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View测试"
+        android:textAllCaps="false" />
+
+
+</LinearLayout>

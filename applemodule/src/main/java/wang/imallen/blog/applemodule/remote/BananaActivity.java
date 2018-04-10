@@ -38,7 +38,8 @@ public class BananaActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleInShop() {
-        IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder=StarBridge.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(this, "buyAppleBinder is null! May be the service has been cancelled!", Toast.LENGTH_SHORT).show();
             return;
@@ -56,7 +57,8 @@ public class BananaActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleOnNet() {
-        IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder=StarBridge.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(this, "buyAppleBinder is null! May be the service has been cancelled!", Toast.LENGTH_SHORT).show();
             return;

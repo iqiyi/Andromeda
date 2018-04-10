@@ -61,5 +61,10 @@
         android:layout_height="wrap_content"
         android:text="取消事件订阅" />
 
+    <Button
+        android:id="@+id/lifecycleTestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="生命周期测试" />
 
 </LinearLayout>

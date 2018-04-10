@@ -11,8 +11,8 @@ import android.widget.Toast;
 import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.callback.BaseCallback;
 
-import wang.imallen.blog.applemodule.service.BuyAppleImpl;
 import wang.imallen.blog.applemodule.R;
+import wang.imallen.blog.applemodule.service.BuyAppleImpl;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 
 public class RemoteServiceDemo extends AppCompatActivity {
@@ -60,7 +60,8 @@ public class RemoteServiceDemo extends AppCompatActivity {
      * 2.远程服务既可以在本进程使用也可在其他进程中使用，当在本进程使用时会
      */
     private void useRemoteServiceInSameProcess() {
-        IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder = StarBridge.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(RemoteServiceDemo.this, "buyAppleBinder is null! May be the service has been cancelled!", Toast.LENGTH_SHORT).show();
             return;

@@ -3,6 +3,8 @@ package org.qiyi.video.svg.utils;
 import android.content.Context;
 import android.content.Intent;
 
+import org.qiyi.video.svg.log.Logger;
+
 /**
  * Created by wangallen on 2018/1/30.
  */
@@ -26,17 +28,21 @@ public class StubServiceMatcher {
             return null;
         }
 
-        String resultProName = currentProName;
-        if (currentProName.startsWith(context.getPackageName())) {
-            int index = currentProName.lastIndexOf(":");
-            resultProName = currentProName.substring(index);
+        String resultProName = serverProcessName;
+        if (resultProName.startsWith(context.getPackageName())) {
+            int index = resultProName.lastIndexOf(":");
+            //要考虑到有些进程名称不包含":"
+            if (index > 0) {
+                resultProName = resultProName.substring(index);
+            }
         }
-
-        Class targetServiceClass = getTargetService(resultProName);
-        if (null != targetServiceClass) {
-            return new Intent(context, targetServiceClass);
+        Logger.d("StubServiceMatcher-->matchIntent(),resultProName:" + resultProName);
+        Object targetObj = getTargetService(resultProName);
+        if (null == targetObj) {
+            return null;
         }
-        return null;
+        Class targetServiceClass = (Class) targetObj;
+        return new Intent(context, targetServiceClass);
     }
 
     /**
@@ -54,11 +60,13 @@ public class StubServiceMatcher {
      * hashMap.put(":test2", CommuStubService9.class);
      * hashMap.put(":test1", CommuStubService10.class);
      * if(matchedServices.get($1)!=null)return matchedServices.get($1);
-     *return null;
+     * return null;
+     *
      * @param proName
      * @return
      */
-    private static Class getTargetService(String proName) {
+    //由于javassist不支持泛型，故不能返回Class,只能返回Object
+    private static Object getTargetService(String proName) {
 
         return null;
     }

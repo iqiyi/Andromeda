@@ -50,7 +50,8 @@ public class CherryActivity extends AppCompatActivity {
     }
 
     private void useRemoteService(){
-        IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder=StarBridge.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(this, "buyAppleBinder is null! Maybe the service has not been registered or been cancelled!", Toast.LENGTH_SHORT).show();
             return;

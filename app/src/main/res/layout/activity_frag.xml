@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="wang.imallen.blog.servicemanager.lifecycle.frag.SupportFragActivity">
+
+    <Button
+        android:id="@+id/showSupportFragBtn"
+        android:text="显示CustomSupportFragment"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/useRemoteServiceBtn"
+        android:text="在FragmentActivity中使用远程服务"
+        android:textAllCaps="false"
+        android:layout_below="@id/showSupportFragBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/darker_gray"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"/>
+
+    <!--fragment
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:name="wang.imallen.blog.servicemanager.lifecycle.frag.CustomSupportFragment"
+        android:id="@+id/customFragment"/-->
+
+
+</RelativeLayout>

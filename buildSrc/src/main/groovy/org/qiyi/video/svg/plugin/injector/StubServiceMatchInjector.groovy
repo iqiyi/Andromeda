@@ -45,6 +45,9 @@ public class StubServiceMatchInjector {
             while (enumeration.hasMoreElements()) {
                 JarEntry jarEntry = (JarEntry) enumeration.nextElement()
                 String entryName = jarEntry.getName()
+
+                //println "jarEntryName:"+entryName
+
                 if (entryName.endsWith(STUB_SERVICE_MATCHER_CLASS)) {
                     prepareInjectMatchCode(filePath)
                     found = true
@@ -56,6 +59,10 @@ public class StubServiceMatchInjector {
     }
 
     private void prepareInjectMatchCode(String filePath) {
+
+        //filePath是类似../ServiceManager/StarBridge-Lib/build/intermediates/intermediate-jars/debug/classes.jar这样的路径
+        println "StubServiceMatchInjector-->prepareInjectMatchCode,filePath:"+filePath
+
         File jarFile = new File(filePath)
         String jarDir = jarFile.getParent() + File.separator + jarFile.getName().replace('.jar', '')
 

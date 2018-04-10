@@ -15,7 +15,8 @@ public class StarBridgePlugin implements Plugin<Project> {
 
         def android = project.extensions.getByType(AppExtension)
 
-        //TODO 这里这样getName()是否会有问题?
+        //project.rootDir
+
         stubServiceGenerator.injectStubServiceToManifest(project)
 
         //注册一个Transform

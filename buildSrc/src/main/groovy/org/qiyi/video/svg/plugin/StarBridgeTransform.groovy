@@ -68,7 +68,7 @@ public class StarBridgeTransform extends Transform {
             input.directoryInputs.each { DirectoryInput directoryInput ->
 
                 //TODO 其实这样做不够，还需要对JarInput进行处理才完全，因为实际上jar包中也完全可能含有注解的!
-                bizServiceInjector.injectRegisterAndGetInfo(directoryInput.file.absolutePath)
+                //bizServiceInjector.injectRegisterAndGetInfo(directoryInput.file.absolutePath)
 
                 //获取output目录
                 def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,
