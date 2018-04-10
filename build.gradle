@@ -7,16 +7,18 @@ buildscript {
             'userName':'mcg-arch',
             'groupId':'org.qiyi.video.svg',
             'passWord':'123456',
-            'version_code':73,
-            'version_name':'0.7.3'
+            'version_code':74,
+            'version_name':'0.7.4'
     ]
 
     repositories {
         google()
         jcenter()
+        maven { url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'org.qiyi.video.svg:plugin:0.7.4'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

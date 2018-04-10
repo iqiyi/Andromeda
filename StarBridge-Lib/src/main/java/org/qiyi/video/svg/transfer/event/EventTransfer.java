@@ -75,7 +75,9 @@ public class EventTransfer {
     public void notify(Event event) {
         Logger.d("EventTransfer-->notify,pid:" + android.os.Process.myPid() + ",event.name:" + event.getName());
         List<WeakReference<EventListener>> listeners = eventListeners.get(event.getName());
-
+        if (listeners == null) {
+            return;
+        }
         for (int i = listeners.size() - 1; i >= 0; --i) {
             WeakReference<EventListener> listenerRef = listeners.get(i);
             if (listenerRef.get() == null) {

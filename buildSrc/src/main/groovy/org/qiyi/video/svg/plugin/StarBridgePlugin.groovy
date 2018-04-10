@@ -24,7 +24,7 @@ public class StarBridgePlugin implements Plugin<Project> {
 
         android.registerTransform(classTransform)
 
-        System.out.println("-------------end of StarBridgeTransform-----------------")
+        System.out.println("-------------end of buildSrc StarBridgeTransform-----------------")
     }
 
 
