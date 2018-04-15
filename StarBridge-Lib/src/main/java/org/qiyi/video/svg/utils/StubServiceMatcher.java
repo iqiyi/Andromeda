@@ -27,7 +27,6 @@ public class StubServiceMatcher {
         if (null == currentProName || currentProName.equals(serverProcessName)) {
             return null;
         }
-
         String resultProName = serverProcessName;
         if (resultProName.startsWith(context.getPackageName())) {
             int index = resultProName.lastIndexOf(":");

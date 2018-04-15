@@ -24,6 +24,12 @@ public class DispatcherService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        Logger.d("DispatcherService-->onCreate(),currentProcess:" + ProcessUtils.getProcessName(android.os.Process.myPid()));
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
             return super.onStartCommand(intent, flags, startId);
@@ -37,7 +43,6 @@ public class DispatcherService extends Service {
         } else if (Constants.DISPATCH_EVENT_ACTION.equals(intent.getAction())) {
             publishEvent(intent);
         }
-
         return super.onStartCommand(intent, flags, startId);
     }
 

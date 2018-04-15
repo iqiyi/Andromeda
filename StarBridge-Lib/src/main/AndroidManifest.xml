@@ -16,66 +16,15 @@
         <service
             android:name="org.qiyi.video.svg.dispatcher.DispatcherService"
             android:enabled="true"
-            android:exported="true"/>
-
-
-        <!--service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService0"
-            android:enabled="true"
             android:exported="true"
-            android:process=":apple">
-            <intent-filter>
-                <action android:name="qiyi.apple.process.stub" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService1"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":webview">
-        </service>
-
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService2"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":pushservice"/>
-
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService3"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":bdservice_v1"/>
-
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService4"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":silk"/>
-
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService5"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":plugin1"/>
-
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService6"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":plugin2"/>
-        <service
-            android:name="org.qiyi.video.svg.stub.CommuStubService$CommuStubService7"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":downloader"/-->
-
+            android:process=":downloader"
+            />
 
         <provider
             android:authorities="org.qiyi.video.svg.dispatcher"
             android:exported="false"
             android:name="org.qiyi.video.svg.dispatcher.DispatcherProvider"
+            android:process=":downloader"
             />
 
 

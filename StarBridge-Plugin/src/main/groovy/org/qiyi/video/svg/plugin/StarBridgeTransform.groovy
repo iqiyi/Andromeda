@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 import org.qiyi.video.svg.plugin.injector.BizServiceInjector
 import org.qiyi.video.svg.plugin.injector.StubServiceMatchInjector
+import org.qiyi.video.svg.plugin.service.IServiceGenerator
 
 public class StarBridgeTransform extends Transform {
 
@@ -17,11 +18,11 @@ public class StarBridgeTransform extends Transform {
 
     private StubServiceMatchInjector stubServiceMatchInjector
 
-    private Map<String, String> matchedServices
+    private IServiceGenerator serviceGenerator
 
-    public StarBridgeTransform(Project project, Map<String, String> matchedServices) {
+    public StarBridgeTransform(Project project, IServiceGenerator serviceGenerator) {
         this.project = project
-        this.matchedServices = matchedServices
+        this.serviceGenerator=serviceGenerator
     }
 
     @Override
@@ -58,7 +59,7 @@ public class StarBridgeTransform extends Transform {
 
         this.bizServiceInjector = new BizServiceInjector(project, classPool)
 
-        this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, matchedServices)
+        this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, serviceGenerator,project.rootDir.absolutePath)
         //遍历input
         transformInvocation.inputs.each { TransformInput input ->
 
