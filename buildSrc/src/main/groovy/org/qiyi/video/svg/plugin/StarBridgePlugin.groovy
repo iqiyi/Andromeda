@@ -15,16 +15,22 @@ public class StarBridgePlugin implements Plugin<Project> {
 
         def android = project.extensions.getByType(AppExtension)
 
-        //project.rootDir
+        printAllTasks(project)
 
         stubServiceGenerator.injectStubServiceToManifest(project)
 
         //注册一个Transform
-        def classTransform = new StarBridgeTransform(project,stubServiceGenerator.getMatchServices())
+        def classTransform = new StarBridgeTransform(project,stubServiceGenerator)
 
         android.registerTransform(classTransform)
 
         System.out.println("-------------end of buildSrc StarBridgeTransform-----------------")
+    }
+
+    private void printAllTasks(Project project){
+        project.tasks.each{closure->
+            println "task name:"+closure.name
+        }
     }
 
 

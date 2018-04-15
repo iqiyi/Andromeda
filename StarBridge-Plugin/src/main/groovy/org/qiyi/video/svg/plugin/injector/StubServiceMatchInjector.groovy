@@ -5,6 +5,8 @@ import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtMethod
 import org.apache.commons.io.FileUtils
+import org.qiyi.video.svg.plugin.service.IServiceGenerator
+import org.qiyi.video.svg.plugin.service.StubServiceGenerator
 import org.qiyi.video.svg.plugin.utils.JarUtils
 
 import java.util.jar.JarEntry
@@ -20,13 +22,41 @@ public class StubServiceMatchInjector {
     private static final String GET_TARGET_SERVICE = "getTargetService"
 
     private ClassPool classPool
-    private Map<String, String> matchedServices
+    private String rootDirPath
 
+    private IServiceGenerator serviceGenerator
+
+    private Map<String,String>matchedServices
     private boolean found = false
 
-    public StubServiceMatchInjector(ClassPool classPool, Map<String, String> matchedServices) {
+    public StubServiceMatchInjector(ClassPool classPool, IServiceGenerator serviceGenerator, String rootDirPath) {
         this.classPool = classPool
-        this.matchedServices = matchedServices
+        this.serviceGenerator=serviceGenerator
+        this.rootDirPath=rootDirPath
+    }
+
+    private void readMatchedServices(String dirPath, String fileName) {
+        println "readMatchedServices()"
+        File dir = new File(dirPath)
+        if (!dir.exists()) {
+            return
+        }
+        File matchFile = new File(dir, fileName)
+        if (!matchFile.exists()) {
+            return
+        }
+        BufferedInputStream ism = matchFile.newInputStream()
+        BufferedReader reader = new BufferedReader(new InputStreamReader(ism))
+        String content
+        while ((content = reader.readLine()) != null) {
+            String[] matchKeyValues = content.split(",")
+            if (matchKeyValues != null) {
+                println "read key:"+matchKeyValues[0]+",value:"+matchKeyValues[1]
+                matchedServices.put(matchKeyValues[0], matchKeyValues[1])
+            }
+        }
+        reader.close()
+        ism.close()
     }
 
     public void injectMatchCode(JarInput jarInput) {
@@ -61,7 +91,7 @@ public class StubServiceMatchInjector {
     private void prepareInjectMatchCode(String filePath) {
 
         //filePath是类似../ServiceManager/StarBridge-Lib/build/intermediates/intermediate-jars/debug/classes.jar这样的路径
-        println "StubServiceMatchInjector-->prepareInjectMatchCode,filePath:"+filePath
+        println "StubServiceMatchInjector-->prepareInjectMatchCode,filePath:" + filePath
 
         File jarFile = new File(filePath)
         String jarDir = jarFile.getParent() + File.separator + jarFile.getName().replace('.jar', '')
@@ -89,10 +119,22 @@ public class StubServiceMatchInjector {
         FileUtils.deleteDirectory(new File(jarDir))
 
     }
+
+    private void fetchServiceInfo(){
+        matchedServices=serviceGenerator.getMatchServices()
+        if (matchedServices == null) {
+            this.matchedServices=new HashMap<>()
+            readMatchedServices(rootDirPath + File.separator + StubServiceGenerator.MATCH_DIR, StubServiceGenerator.MATCH_FILE_NAME)
+        }
+    }
+
     //这个className含有.class,而实际上要获取CtClass的话只需要前面那部分，即"org.qiyi.video.svg.utils.StubServiceMatcher"而不是"org.qiyi.video.svg.utils.StubServiceMatcher.class"
     private void doInjectMatchCode(String path) {
+        //首先获取服务信息
+        fetchServiceInfo()
+
         CtClass ctClass = classPool.getCtClass(STUB_SERVICE_MATCHER)
-        if(ctClass.isFrozen()){
+        if (ctClass.isFrozen()) {
             ctClass.defrost()
         }
         CtMethod[] ctMethods = ctClass.getDeclaredMethods()

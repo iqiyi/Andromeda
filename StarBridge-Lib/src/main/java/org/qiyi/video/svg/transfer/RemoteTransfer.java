@@ -78,17 +78,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     //让ServiceDispatcher注册到当前进程
     public void sendRegisterInfo() {
 
-        /*
-        if (ProcessUtils.isMainProcess(context)) {
-            //如果是主进程就走捷径,不然直接杀进程时会导致crash
-            dispatcherProxy = Dispatcher.getInstance();
-            //但是这样的话还是有问题，因为没有把自己注册进去,所以还要直接注册
-            Dispatcher.getInstance().registerRemoteTransfer(android.os.Process.myPid(), this.asBinder());
-            return;
-        }
-        */
-
-        //TODO 如果是同一个进程的话怎么办，会不会出现死锁？
         if (dispatcherProxy == null) {
             //后面考虑还是采用"has-a"的方式会更好
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
@@ -105,30 +94,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         Logger.d("RemoteTransfer-->getRemoteServiceBean,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         return getIBinder(serviceCanonicalName);
     }
-
-    /*
-    @Override
-    public IBinder getRemoteService(final LifecycleOwner owner, final String serviceCanonicalName) {
-        BinderBean binderBean = getIBinder(serviceCanonicalName);
-        if (owner != null) {
-            bindAction(serviceCanonicalName, binderBean.getProcessName());
-            //TODO 那什么时候remove掉呢?
-            owner.getLifecycle().addObserver(new LifecycleObserver() {
-                @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-                public void onStop() {
-                    unbindAction(serviceCanonicalName);
-                    owner.getLifecycle().removeObserver(this);
-                }
-                //TODO 这部分后面要移除!
-                @Override
-                public void onStateChange() {
-
-                }
-            });
-        }
-        return binderBean.getBinder();
-    }
-    */
 
     private BinderBean getIBinder(String serviceName) {
         Logger.d("RemoteTransfer-->getIBinder()");
