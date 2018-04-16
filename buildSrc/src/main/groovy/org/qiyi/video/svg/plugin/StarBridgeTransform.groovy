@@ -96,8 +96,6 @@ public class StarBridgeTransform extends Transform {
                 FileUtils.copyFile(jarInput.file, dest)
             }
         }
-
-
     }
 
 }

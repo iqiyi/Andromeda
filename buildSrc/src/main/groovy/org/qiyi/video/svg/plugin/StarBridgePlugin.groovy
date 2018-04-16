@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.qiyi.video.svg.plugin.service.IServiceGenerator
 import org.qiyi.video.svg.plugin.service.StubServiceGenerator
+import org.qiyi.video.svg.plugin.extension.DispatcherExtension
 
 public class StarBridgePlugin implements Plugin<Project> {
 
@@ -13,9 +14,9 @@ public class StarBridgePlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
 
-        def android = project.extensions.getByType(AppExtension)
+        project.extensions.create("dispatcher",DispatcherExtension)
 
-        printAllTasks(project)
+        def android = project.extensions.getByType(AppExtension)
 
         stubServiceGenerator.injectStubServiceToManifest(project)
 
@@ -26,13 +27,6 @@ public class StarBridgePlugin implements Plugin<Project> {
 
         System.out.println("-------------end of buildSrc StarBridgeTransform-----------------")
     }
-
-    private void printAllTasks(Project project){
-        project.tasks.each{closure->
-            println "task name:"+closure.name
-        }
-    }
-
 
 }
 

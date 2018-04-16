@@ -4,9 +4,8 @@ com.android.apple,org.qiyi.video.svg.stub.CommuStubService$CommuStubService2
 :test4,org.qiyi.video.svg.stub.CommuStubService$CommuStubService3
 com.android.test5,org.qiyi.video.svg.stub.CommuStubService$CommuStubService4
 :apple,org.qiyi.video.svg.stub.CommuStubService$CommuStubService5
-:downloader,org.qiyi.video.svg.stub.CommuStubService$CommuStubService6
-:tea,org.qiyi.video.svg.stub.CommuStubService$CommuStubService7
-com.android.test6,org.qiyi.video.svg.stub.CommuStubService$CommuStubService8
-:test3,org.qiyi.video.svg.stub.CommuStubService$CommuStubService9
-:test2,org.qiyi.video.svg.stub.CommuStubService$CommuStubService10
-:test1,org.qiyi.video.svg.stub.CommuStubService$CommuStubService11
+:tea,org.qiyi.video.svg.stub.CommuStubService$CommuStubService6
+com.android.test6,org.qiyi.video.svg.stub.CommuStubService$CommuStubService7
+:test3,org.qiyi.video.svg.stub.CommuStubService$CommuStubService8
+:test2,org.qiyi.video.svg.stub.CommuStubService$CommuStubService9
+:test1,org.qiyi.video.svg.stub.CommuStubService$CommuStubService10
