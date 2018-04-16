@@ -3,6 +3,7 @@ package org.qiyi.video.svg.plugin.service
 import com.android.build.gradle.AppExtension
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
+import org.qiyi.video.svg.plugin.extension.DispatcherExtension
 import org.qiyi.video.svg.plugin.manifest.IManifestParser
 import org.qiyi.video.svg.plugin.manifest.ManifestParser
 
@@ -16,23 +17,34 @@ public class StubServiceGenerator implements IServiceGenerator {
     def static final TRUE = 'true'
     def static final STUB_SERVICE = 'org.qiyi.video.svg.stub.CommuStubService$CommuStubService'
 
+    def static final AUTHORITIES="android:authorities"
+    def static final DISPATCHER_AUTHORITY="org.qiyi.video.svg.dispatcher"
+
+    def static final DISPATCHER_SERVICE='org.qiyi.video.svg.dispatcher.DispatcherService'
+    def static final DISPTACHER_PROVIDER='org.qiyi.video.svg.dispatcher.DispatcherProvider'
+
     def public static final MATCH_DIR = "StarBridgeMatch"
     def public static final MATCH_FILE_NAME = "match_stub.txt"
 
     private Map<String, String> matchedServices
 
     private String rootDirPath
+    //private String dispatcherProcess
+    def dispatcher
 
     @Override
     public void injectStubServiceToManifest(Project project) {
 
         println "injectStubServiceToManifest"
+
+        //this.dispatcherProcess=dispatcherProcess
+
         println "rootDir:" + project.rootDir.absolutePath
         rootDirPath = project.rootDir.absolutePath
 
         //TODO 要找到别的办法来获取Manifest文件
         def android = project.extensions.getByType(AppExtension)
-
+        this.dispatcher=project.extensions.getByType(DispatcherExtension)
 
         project.afterEvaluate {
             android.applicationVariants.all { variant ->
@@ -81,7 +93,7 @@ public class StubServiceGenerator implements IServiceGenerator {
 
             println "manifest: ${manifestFile}"
 
-            String serviceManifest = addServiceTag(manifestFile.absolutePath)
+            String serviceManifest = addServiceItem(manifestFile.absolutePath)
 
             println "serviceManifest:$serviceManifest"
 
@@ -104,7 +116,7 @@ public class StubServiceGenerator implements IServiceGenerator {
         return matchedServices
     }
     //注意:闭包中只能调用static方法
-    private String addServiceTag(String manifestPath) {
+    private String addServiceItem(String manifestPath) {
         IManifestParser manifestParser = new ManifestParser()
         Set<String> customProcessNames = manifestParser.getCustomProcessNames(manifestPath)
 
@@ -131,6 +143,40 @@ public class StubServiceGenerator implements IServiceGenerator {
 
                 ++index
             }
+
+            //之后，写入DispatcherService和DispatcherProvider
+            def dispatcherProcess=dispatcher.process
+            println "dispatcher.process:"+dispatcher.process
+            if(dispatcherProcess!=null&&dispatcherProcess.length()>0){
+                service("${NAME}":DISPATCHER_SERVICE,
+                        "${ENABLED}":"${TRUE}",
+                        "${EXPORTED}":"${FALSE}",
+                        "${PROCESS}":dispatcherProcess
+                )
+
+                provider(
+                        "${AUTHORITIES}":DISPATCHER_AUTHORITY,
+                        "${EXPORTED}":"${FALSE}",
+                        "${NAME}":DISPTACHER_PROVIDER,
+                        "${ENABLED}":"${TRUE}",
+                        "${PROCESS}":dispatcherProcess
+                )
+
+            }else{
+                service("${NAME}":DISPATCHER_SERVICE,
+                        "${ENABLED}":"${TRUE}",
+                        "${EXPORTED}":"${FALSE}"
+                )
+
+                provider(
+                        "${AUTHORITIES}":DISPATCHER_AUTHORITY,
+                        "${EXPORTED}":"${FALSE}",
+                        "${NAME}":DISPTACHER_PROVIDER,
+                        "${ENABLED}":"${TRUE}"
+                )
+
+            }
+
 
         }
 

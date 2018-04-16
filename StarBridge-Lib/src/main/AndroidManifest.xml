@@ -13,19 +13,19 @@
             </intent-filter>
         </service>
 
-        <service
+        <!--service
             android:name="org.qiyi.video.svg.dispatcher.DispatcherService"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:process=":downloader"
-            />
+            /-->
 
-        <provider
+        <!--provider
             android:authorities="org.qiyi.video.svg.dispatcher"
             android:exported="false"
             android:name="org.qiyi.video.svg.dispatcher.DispatcherProvider"
             android:process=":downloader"
-            />
+            /-->
 
 
     </application>
