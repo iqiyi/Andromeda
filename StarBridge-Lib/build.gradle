@@ -46,16 +46,6 @@ android {
 
 }
 
-/* //上传到本地maven
-uploadArchives{
-    repositories.mavenDeployer{
-        repository(url:LOCAL_REPO_URL)
-        pom.groupId=GROUP_ID
-        pom.artifactId=ARTIFACTID
-        pom.version="$lib_version"
-    }
-}
-*/
 
 uploadArchives{
     repositories.mavenDeployer{
@@ -93,3 +83,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+apply from: 'upload.gradle'

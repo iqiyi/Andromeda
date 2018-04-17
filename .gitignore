@@ -45,6 +45,7 @@ signing.properties
 module/
 captures/
 
+*.pub
 
 freeline/
 freeline.py

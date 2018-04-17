@@ -40,17 +40,4 @@ repositories{
     google()
 }
 
-
-/*
-uploadArchives{
-    repositories.mavenDeployer{
-        repository(url:LOCAL_REPO_URL)
-        pom.groupId=GROUP_ID
-        pom.artifactId=ARTIFACT_ID
-        pom.version=VERSION
-    }
-}
-*/
-
-//sourceCompatibility = "1.8"
-//targetCompatibility = "1.8"
+apply from: 'upload.gradle'
