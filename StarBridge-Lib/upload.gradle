@@ -1,0 +1,29 @@
+apply plugin: 'com.novoda.bintray-release'
+
+def libDesc='A lightweight library to make Android IPC convenient'
+def libLicense='BSD 3-Clause'
+
+publish{
+    repoName="starbridge"
+    userOrg='allenwang'
+    groupId='org.qiyi.video.svg'
+    artifactId='core'
+    publishVersion=maven_config.version_name
+    desc="$libDesc"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

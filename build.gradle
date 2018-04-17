@@ -19,6 +19,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'org.qiyi.video.svg:plugin:0.9.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.novoda:bintray-release:0.8.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -34,9 +37,19 @@ allprojects {
         maven { url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'}
     }
 
+    tasks.withType(Javadoc) {
+        options{ encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+    }
+
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-//compileDebugJavaWithJavac的编译参数-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005
+
+subprojects{pro->
+    println "project name:"+pro.name
+}
