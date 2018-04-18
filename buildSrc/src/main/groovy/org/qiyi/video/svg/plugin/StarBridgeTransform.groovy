@@ -6,7 +6,6 @@ import javassist.ClassPool
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
-import org.qiyi.video.svg.plugin.injector.BizServiceInjector
 import org.qiyi.video.svg.plugin.injector.StubServiceMatchInjector
 import org.qiyi.video.svg.plugin.service.IServiceGenerator
 
@@ -14,15 +13,13 @@ public class StarBridgeTransform extends Transform {
 
     private Project project
 
-    private BizServiceInjector bizServiceInjector
-
     private StubServiceMatchInjector stubServiceMatchInjector
 
     private IServiceGenerator serviceGenerator
 
     public StarBridgeTransform(Project project, IServiceGenerator serviceGenerator) {
         this.project = project
-        this.serviceGenerator=serviceGenerator
+        this.serviceGenerator = serviceGenerator
     }
 
     @Override
@@ -57,9 +54,7 @@ public class StarBridgeTransform extends Transform {
         //TODO 这里有优化的空间,实际上只要将我们需要的类加进去即可
         ClassAppender.appendAllClasses(transformInvocation.getInputs(), classPool)
 
-        this.bizServiceInjector = new BizServiceInjector(project, classPool)
-
-        this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, serviceGenerator,project.rootDir.absolutePath)
+        this.stubServiceMatchInjector = new StubServiceMatchInjector(classPool, serviceGenerator, project.rootDir.absolutePath)
         //遍历input
         transformInvocation.inputs.each { TransformInput input ->
 

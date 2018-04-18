@@ -8,7 +8,6 @@ import org.qiyi.video.svg.log.Logger;
 /**
  * Created by wangallen on 2018/1/30.
  */
-//TODO 这部分代码要改成自动生成，而且它要与Manifest文件的编辑相对应
 public class StubServiceMatcher {
 
     /**

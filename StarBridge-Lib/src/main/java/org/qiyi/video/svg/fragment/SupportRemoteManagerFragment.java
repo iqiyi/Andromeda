@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import org.qiyi.video.svg.StarBridge;
-import org.qiyi.video.svg.life.ActivityFragmentLifecycle;
+import org.qiyi.video.svg.life.ActivityFragLifecycle;
 import org.qiyi.video.svg.log.Logger;
 import org.qiyi.video.svg.remote.IRemoteManager;
 import org.qiyi.video.svg.remote.IRemoteManagerTreeNode;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class SupportRemoteManagerFragment extends Fragment {
 
-    private final ActivityFragmentLifecycle lifecycle;
+    private final ActivityFragLifecycle lifecycle;
 
     private SupportRemoteManagerFragment rootRequestManagerFragment;
 
@@ -34,11 +34,11 @@ public class SupportRemoteManagerFragment extends Fragment {
     private final IRemoteManagerTreeNode remoteManagerTreeNode = new SupportFragTreeNode();
 
     public SupportRemoteManagerFragment() {
-        this(new ActivityFragmentLifecycle());
+        this(new ActivityFragLifecycle());
     }
 
     @SuppressLint("ValidFragment")
-    public SupportRemoteManagerFragment(ActivityFragmentLifecycle lifecycle) {
+    public SupportRemoteManagerFragment(ActivityFragLifecycle lifecycle) {
         this.lifecycle = lifecycle;
     }
 
@@ -151,7 +151,7 @@ public class SupportRemoteManagerFragment extends Fragment {
         unregisterFragmentWithRoot();
     }
 
-    public ActivityFragmentLifecycle getLifecycle() {
+    public ActivityFragLifecycle getLifecycle() {
         return lifecycle;
     }
 

@@ -11,7 +11,7 @@ import java.util.WeakHashMap;
  * Created by wangallen on 2018/3/27.
  */
 
-public class ActivityFragmentLifecycle implements Lifecycle {
+public class ActivityFragLifecycle implements Lifecycle {
 
     private final Set<LifecycleListener> lifecycleListeners = Collections.newSetFromMap(new WeakHashMap<LifecycleListener, Boolean>());
 
