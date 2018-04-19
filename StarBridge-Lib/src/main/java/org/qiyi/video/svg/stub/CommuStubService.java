@@ -33,7 +33,6 @@ public class CommuStubService extends Service {
 
         //这样可以使Service所在进程的保活效果好一点
         return Service.START_STICKY;
-        //return super.onStartCommand(intent, flags, startId);
     }
 
     public static class CommuStubService0 extends CommuStubService {

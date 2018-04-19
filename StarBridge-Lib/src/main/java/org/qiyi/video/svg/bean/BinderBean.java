@@ -1,6 +1,5 @@
 package org.qiyi.video.svg.bean;
 
-import android.os.Binder;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;

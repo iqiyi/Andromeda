@@ -4,6 +4,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.backup.EmergencyHandler;
+import org.qiyi.video.svg.backup.IEmergencyHandler;
 import org.qiyi.video.svg.bean.BinderBean;
 import org.qiyi.video.svg.log.Logger;
 
@@ -17,7 +20,10 @@ public class ServiceDispatcher implements IServiceDispatcher {
 
     private static final String TAG = "StarBridge";
 
+    private IEmergencyHandler emergencyHandler;
+
     public ServiceDispatcher() {
+        emergencyHandler = new EmergencyHandler();
     }
 
     private Map<String, BinderBean> remoteBinderCache = new ConcurrentHashMap<>();
@@ -42,7 +48,10 @@ public class ServiceDispatcher implements IServiceDispatcher {
                 @Override
                 public void binderDied() {
                     Logger.d("ServiceDispatcher-->binderDied,serviceCanonicalName:" + serviceCanonicalName);
-                    remoteBinderCache.remove(serviceCanonicalName);
+                    BinderBean bean = remoteBinderCache.remove(serviceCanonicalName);
+                    if (bean != null) {
+                        emergencyHandler.handleBinderDied(StarBridge.getAppContext(), bean.getProcessName());
+                    }
                 }
             }, 0);
             remoteBinderCache.put(serviceCanonicalName, new BinderBean(binder, processName));

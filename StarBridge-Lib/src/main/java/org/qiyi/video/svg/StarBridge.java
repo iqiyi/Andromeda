@@ -67,6 +67,10 @@ public class StarBridge {
         this.remoteManagerRetriever = new RemoteManagerRetriever();
     }
 
+    public static Context getAppContext(){
+        return appContext;
+    }
+
     public static void registerLocalService(Class serviceClass, Object serviceImpl) {
         if (null == serviceClass || null == serviceImpl) {
             return;
