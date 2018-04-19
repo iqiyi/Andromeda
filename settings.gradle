@@ -1,1 +1,1 @@
-include ':app', ':moduleexportlib', ':applemodule', ':cherrymodule', ':Andromeda-Lib', ':Andromeda-Annotations', ':Andromeda-Compiler', ':buildSrc', ':Andromeda-Plugin'
+include ':app', ':moduleexportlib', ':applemodule', ':cherrymodule', ':Andromeda-Lib', ':buildSrc', ':Andromeda-Plugin'

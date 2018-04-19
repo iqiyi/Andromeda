@@ -33,9 +33,6 @@ dependencies {
     api project(":applemodule")
     api project(":cherrymodule")
 
-    implementation project(":Andromeda-Annotations")
-    annotationProcessor project(":Andromeda-Compiler")
-
     implementation 'com.android.support:design:26.0.2'
 
     //implementation 'org.qiyi.video.svg:plugin:0.7.4'

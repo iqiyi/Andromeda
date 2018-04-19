@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.starbridge_annotations.local.LGet;
-import org.qiyi.video.starbridge_annotations.local.LInject;
-
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 import wang.imallen.blog.servicemanager.ICheckPear;
 import wang.imallen.blog.servicemanager.R;
@@ -17,14 +14,11 @@ import wang.imallen.blog.servicemanager.R;
  */
 public class UseLocalServiceByAnnoActivity extends AppCompatActivity {
 
-    @LInject
     private ICheckApple checkAppleService;
 
-    @LInject
     private ICheckPear checkPearService;
 
 
-    @LGet({ICheckApple.class,ICheckPear.class})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import org.qiyi.video.starbridge_annotations.remote.RBind;
-import org.qiyi.video.starbridge_annotations.remote.RRegister;
-import org.qiyi.video.starbridge_annotations.remote.RUnRegister;
 
 import wang.imallen.blog.applemodule.service.BuyAppleImpl;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
@@ -18,7 +15,6 @@ import wang.imallen.blog.servicemanager.R;
  */
 public class RegRemoteServiceByAnnoActivity extends AppCompatActivity {
 
-    @RBind
     private IBuyApple buyApple;
 
     @Override
@@ -38,14 +34,12 @@ public class RegRemoteServiceByAnnoActivity extends AppCompatActivity {
     }
 
     //在这里会通过代码插入完成远程服务的注册
-    @RRegister(IBuyApple.class)
     @Override
     protected void onStart() {
         super.onStart();
     }
 
     //注意:这里只是为了使用注解注销远程服务的用法，实际中要谨慎使用注销操作，因为可能导致服务使用方出错
-    @RUnRegister(IBuyApple.class)
     @Override
     protected void onDestroy() {
         super.onDestroy();

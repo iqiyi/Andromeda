@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import org.qiyi.video.starbridge_annotations.local.LBind;
-import org.qiyi.video.starbridge_annotations.local.LRegister;
-import org.qiyi.video.starbridge_annotations.local.LUnRegister;
 
 import wang.imallen.blog.applemodule.service.CheckAppleImpl;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
@@ -20,11 +17,8 @@ import wang.imallen.blog.servicemanager.R;
  */
 public class RegLocalServiceByAnnoActivity extends AppCompatActivity {
 
-
-    @LBind(ICheckApple.class)
     private ICheckApple checkApple;
 
-    @LBind
     private ICheckPear checkPear;
 
     @Override
@@ -42,14 +36,12 @@ public class RegLocalServiceByAnnoActivity extends AppCompatActivity {
 
     }
 
-    @LRegister(ICheckApple.class)
     @Override
     protected void onStart() {
         super.onStart();
         checkApple = CheckAppleImpl.getInstance();
     }
 
-    @LRegister(ICheckPear.class)
     @Override
     protected void onResume() {
         super.onResume();
@@ -60,7 +52,6 @@ public class RegLocalServiceByAnnoActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    @LUnRegister({ICheckApple.class, ICheckPear.class})
     @Override
     protected void onDestroy() {
         super.onDestroy();

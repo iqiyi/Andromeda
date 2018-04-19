@@ -23,7 +23,7 @@ public class StubServiceGenerator implements IServiceGenerator {
     def static final DISPATCHER_SERVICE='org.qiyi.video.svg.dispatcher.DispatcherService'
     def static final DISPTACHER_PROVIDER='org.qiyi.video.svg.dispatcher.DispatcherProvider'
 
-    def public static final MATCH_DIR = "AndroMatch"
+    def public static final MATCH_DIR = "build"
     def public static final MATCH_FILE_NAME = "match_stub.txt"
 
     private Map<String, String> matchedServices

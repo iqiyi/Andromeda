@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.starbridge_annotations.remote.RGet;
-import org.qiyi.video.starbridge_annotations.remote.RInject;
 import org.qiyi.video.svg.callback.BaseCallback;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
@@ -18,10 +16,8 @@ import wang.imallen.blog.servicemanager.R;
  */
 public class UseRemoteServiceByAnnoActivity extends AppCompatActivity {
 
-    @RInject
     private IBuyApple buyAppleService;
 
-    @RGet(IBuyApple.class)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
