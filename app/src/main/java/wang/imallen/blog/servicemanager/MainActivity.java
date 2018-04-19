@@ -8,8 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.IPCCallback;
-import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.callback.BaseCallback;
 import org.qiyi.video.svg.event.Event;
 import org.qiyi.video.svg.event.EventListener;
@@ -27,7 +27,7 @@ import wang.imallen.blog.servicemanager.lifecycle.LifecycleTestActivity;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
 
-    private static final String TAG = "StarBridge";
+    private static final String TAG = "Andromeda";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 //订阅事件
-                StarBridge.getInstance().subscribe(EventConstants.APPLE_EVENT, MainActivity.this);
+                Andromeda.getInstance().subscribe(EventConstants.APPLE_EVENT, MainActivity.this);
             }
         });
 
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("Result", "gave u five apples!");
-                StarBridge.getInstance().publish(new Event(EventConstants.APPLE_EVENT, bundle));
+                Andromeda.getInstance().publish(new Event(EventConstants.APPLE_EVENT, bundle));
             }
         });
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 //取消订阅
-                StarBridge.getInstance().unsubscribe(MainActivity.this);
+                Andromeda.getInstance().unsubscribe(MainActivity.this);
             }
         });
 
@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements EventListener {
 
     //使用方式一:只要实现BaseCallback这个抽象类即可，在主线程回调
     private void useBuyAppleService() {
-        //IBuyApple buyApple = IBuyApple.Stub.asInterface(StarBridge.getInstance().getRemoteService(IBuyApple.class));
-        IBuyApple buyApple = IBuyApple.Stub.asInterface(StarBridge.with(this).getRemoteService(IBuyApple.class));
+        //IBuyApple buyApple = IBuyApple.Stub.asInterface(Andromeda.getInstance().getRemoteService(IBuyApple.class));
+        IBuyApple buyApple = IBuyApple.Stub.asInterface(Andromeda.with(this).getRemoteService(IBuyApple.class));
         try {
             //buyApple.buyApple(10, new MyCallback());
             buyApple.buyAppleOnNet(10, new BaseCallback() {

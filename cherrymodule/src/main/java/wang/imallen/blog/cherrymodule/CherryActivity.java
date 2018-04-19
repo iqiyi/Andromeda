@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.callback.BaseCallback;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
@@ -38,7 +38,7 @@ public class CherryActivity extends AppCompatActivity {
     }
 
     private void useLocalService(){
-        ICheckApple checkApple = StarBridge.getInstance().getLocalService(ICheckApple.class);
+        ICheckApple checkApple = Andromeda.getInstance().getLocalService(ICheckApple.class);
         if (checkApple != null) {
             int calories = checkApple.getAppleCalories(3);
             String desc = checkApple.getAppleDescription(2);
@@ -50,8 +50,8 @@ public class CherryActivity extends AppCompatActivity {
     }
 
     private void useRemoteService(){
-        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
-        IBinder buyAppleBinder=StarBridge.with(this).getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = Andromeda.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder= Andromeda.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(this, "buyAppleBinder is null! Maybe the service has not been registered or been cancelled!", Toast.LENGTH_SHORT).show();
             return;

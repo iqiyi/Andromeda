@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.servicemanager.R;
@@ -26,7 +26,7 @@ public class ViewTestActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleService() {
-        IBinder binder = StarBridge.with(textView).getRemoteService(IBuyApple.class);
+        IBinder binder = Andromeda.with(textView).getRemoteService(IBuyApple.class);
         if (binder == null) {
             return;
         }

@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.callback.BaseCallback;
 import org.qiyi.video.svg.log.Logger;
 
@@ -38,8 +38,8 @@ public class BananaActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleInShop() {
-        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
-        IBinder buyAppleBinder=StarBridge.with(this).getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = Andromeda.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder= Andromeda.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(this, "buyAppleBinder is null! May be the service has been cancelled!", Toast.LENGTH_SHORT).show();
             return;
@@ -57,8 +57,8 @@ public class BananaActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleOnNet() {
-        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
-        IBinder buyAppleBinder=StarBridge.with(this).getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = Andromeda.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder= Andromeda.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(this, "buyAppleBinder is null! May be the service has been cancelled!", Toast.LENGTH_SHORT).show();
             return;

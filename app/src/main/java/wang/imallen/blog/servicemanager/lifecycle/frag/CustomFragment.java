@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.log.Logger;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
@@ -54,7 +54,7 @@ public class CustomFragment extends Fragment {
     }
 
     private void useBuyAppleService() {
-        IBinder binder = StarBridge.with(this).getRemoteService(IBuyApple.class);
+        IBinder binder = Andromeda.with(this).getRemoteService(IBuyApple.class);
         if (binder == null) {
             return;
         }

@@ -2,8 +2,6 @@ package wang.imallen.blog.servicemanager.lifecycle.frag;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,10 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import org.qiyi.video.svg.StarBridge;
 import org.qiyi.video.svg.log.Logger;
 
-import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.servicemanager.R;
 
 /**

@@ -1,1 +1,1 @@
-include ':app', ':moduleexportlib', ':applemodule', ':cherrymodule', ':StarBridge-Lib', ':StarBridge-Annotations', ':StarBridge-Compiler', ':buildSrc', ':StarBridge-Plugin'
+include ':app', ':moduleexportlib', ':applemodule', ':cherrymodule', ':Andromeda-Lib', ':Andromeda-Annotations', ':Andromeda-Compiler', ':buildSrc', ':Andromeda-Plugin'

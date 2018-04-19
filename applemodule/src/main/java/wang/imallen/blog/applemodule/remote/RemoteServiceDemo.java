@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.callback.BaseCallback;
 
 import wang.imallen.blog.applemodule.R;
@@ -25,7 +25,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StarBridge.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance());
+                Andromeda.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance());
                 Toast.makeText(RemoteServiceDemo.this, "just registered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });
@@ -40,7 +40,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.unregisterRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StarBridge.getInstance().unregisterRemoteService(IBuyApple.class);
+                Andromeda.getInstance().unregisterRemoteService(IBuyApple.class);
                 Toast.makeText(RemoteServiceDemo.this, "just unregistered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });
@@ -60,8 +60,8 @@ public class RemoteServiceDemo extends AppCompatActivity {
      * 2.远程服务既可以在本进程使用也可在其他进程中使用，当在本进程使用时会
      */
     private void useRemoteServiceInSameProcess() {
-        //IBinder buyAppleBinder = StarBridge.getInstance().getRemoteService(IBuyApple.class);
-        IBinder buyAppleBinder = StarBridge.with(this).getRemoteService(IBuyApple.class);
+        //IBinder buyAppleBinder = Andromeda.getInstance().getRemoteService(IBuyApple.class);
+        IBinder buyAppleBinder = Andromeda.with(this).getRemoteService(IBuyApple.class);
         if (null == buyAppleBinder) {
             Toast.makeText(RemoteServiceDemo.this, "buyAppleBinder is null! May be the service has been cancelled!", Toast.LENGTH_SHORT).show();
             return;

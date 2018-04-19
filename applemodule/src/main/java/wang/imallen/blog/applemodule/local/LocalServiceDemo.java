@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 
 import wang.imallen.blog.applemodule.service.CheckAppleImpl;
 import wang.imallen.blog.applemodule.R;
@@ -22,7 +22,7 @@ public class LocalServiceDemo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                StarBridge.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
+                Andromeda.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
                 Toast.makeText(LocalServiceDemo.this, "registered ICheckApple service", Toast.LENGTH_SHORT).show();
             }
         });
@@ -30,7 +30,7 @@ public class LocalServiceDemo extends AppCompatActivity {
         findViewById(R.id.useLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ICheckApple checkApple = StarBridge.getInstance().getLocalService(ICheckApple.class);
+                ICheckApple checkApple = Andromeda.getInstance().getLocalService(ICheckApple.class);
                 if (checkApple != null) {
                     int calories = checkApple.getAppleCalories(3);
                     String desc = checkApple.getAppleDescription(2);
@@ -45,7 +45,7 @@ public class LocalServiceDemo extends AppCompatActivity {
         findViewById(R.id.unregisterLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StarBridge.getInstance().unregisterLocalService(ICheckApple.class);
+                Andromeda.getInstance().unregisterLocalService(ICheckApple.class);
                 Toast.makeText(LocalServiceDemo.this, "just unregistered ICheckApple service", Toast.LENGTH_SHORT).show();
             }
         });

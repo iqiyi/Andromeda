@@ -6,7 +6,7 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import org.qiyi.video.svg.StarBridge;
+import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.log.Logger;
 
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
@@ -36,7 +36,7 @@ public class SupportFragActivity extends AppCompatActivity {
     }
 
     private void useBuyAppleService() {
-        IBinder binder = StarBridge.with(this).getRemoteService(IBuyApple.class);
+        IBinder binder = Andromeda.with(this).getRemoteService(IBuyApple.class);
         if (binder == null) {
             return;
         }

@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import org.qiyi.video.starbridge_annotations.local.LGet;
 import org.qiyi.video.starbridge_annotations.local.LInject;
-import org.qiyi.video.svg.StarBridge;
 
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 import wang.imallen.blog.servicemanager.ICheckPear;
