@@ -3,10 +3,10 @@
 buildscript {
 
     ext.maven_config=[
-            'nexus_repo_url':'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch',
-            'userName':'mcg-arch',
-            'groupId':'org.qiyi.video.svg',
-            'passWord':'123456',
+            'nexus_repo_url':NEXUS_REPO_URL,
+            'userName':USER_NAME,
+            'groupId':GROUP_ID,
+            'passWord':PASS_WORD,
             'version_code':93,
             'version_name':'0.9.3'
     ]

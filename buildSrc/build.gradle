@@ -1,18 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
-uploadArchives{
-    repositories.mavenDeployer{
-        repository(url:'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'){
-            authentication(userName:'mcg-arch',password:'123456')
-        }
-        pom.groupId='org.qiyi.video.svg'
-        pom.artifactId='plugin'
-        pom.version='0.7.0'
-    }
-}
-
-
 dependencies {
 
     //build tools
@@ -39,18 +27,3 @@ repositories{
     jcenter()
     google()
 }
-
-
-/*
-uploadArchives{
-    repositories.mavenDeployer{
-        repository(url:LOCAL_REPO_URL)
-        pom.groupId=GROUP_ID
-        pom.artifactId=ARTIFACT_ID
-        pom.version=VERSION
-    }
-}
-*/
-
-//sourceCompatibility = "1.8"
-//targetCompatibility = "1.8"

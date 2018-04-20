@@ -6,22 +6,11 @@ import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
  * Created by wangallen on 2018/1/18.
  */
 
-public class CheckAppleImpl implements ICheckApple {
+public class CheckApple implements ICheckApple {
 
-    private static CheckAppleImpl instance;
+    private static CheckApple instance;
 
-    public static CheckAppleImpl getInstance() {
-        if (null == instance) {
-            synchronized (CheckAppleImpl.class) {
-                if (null == instance) {
-                    instance = new CheckAppleImpl();
-                }
-            }
-        }
-        return instance;
-    }
-
-    private CheckAppleImpl() {
+    public CheckApple() {
     }
 
     @Override
