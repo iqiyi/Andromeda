@@ -50,7 +50,8 @@ Andromeda和其他组件间通信方案的对比如下:
 # 使用方式
 ## 为Dispatcher配置进程
 由于Dispatcher负责管理所有进程信息，所以它应该运行在存活时间最长的进程中。
-Dispatcher默认运行在主进程中。但是考虑到在有些App中，主进程不一定是存活时间最长的(比如音乐播放App中往往是播放进程的存活时间最长),
+如果不进行配置，Dispatcher默认运行在主进程中。
+但是考虑到在有些App中，主进程不一定是存活时间最长的(比如音乐播放App中往往是播放进程的存活时间最长),
 所以出现这种情况时开发者应该在application module的build.gradle中为Dispatcher配置进程名，如下:
 ```groovy
     dispatcher{

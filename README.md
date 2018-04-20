@@ -50,7 +50,7 @@ apply gradle plugin in application Module:
 # How to use
 ## Dispatcher config
 **Dispatcher should always in the process that live longest cause it manager all process infos!.**
-Default process of Dispatcher is main process. 
+Default process of Dispatcher is main process if not configed. 
 Considering some process may live longer than main process in some apps(such as music app), developers should
  config process name for Dispatcher in this case. Just as follows in build.gradle of application module:
 ```groovy
