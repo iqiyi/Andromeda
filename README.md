@@ -1,7 +1,7 @@
 # Andromeda
 ![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
-![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-0.9.3-brightgreen.svg)
-![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-0.9.3-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.0.0-brightgreen.svg)
+![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.0.0-brightgreen.svg)
 
 Andromeda提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程接口调用。
 
