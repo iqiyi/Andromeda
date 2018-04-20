@@ -60,7 +60,7 @@ Andromeda和其他组件间通信方案的对比如下:
 ### 本地接口定义与实现
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
 + 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如可以放在一个公共的module中
-+ 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到StarBridge,不过需要注意的是，同一时间StarBridge中只会有一个实现
++ 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到Andromeda,不过需要注意的是，同一时间Andromeda中只会有一个实现
 
 ### 本地服务注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
@@ -73,9 +73,9 @@ Andromeda和其他组件间通信方案的对比如下:
 ```
 其中ICheckApple.class为接口，虽然也可以采用下面这种方式注册:
 ```java
-    StarBridge.registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
+    Andromeda.registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
 ```
-**但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上StarBridge只需要保证有一个唯一的key与该服务对应即可).
+**但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上Andromeda只需要保证有一个唯一的key与该服务对应即可).
 
 ### 本地服务使用
 注册完之后，与服务提供方同进程的任何模块都可以调用该服务,获取服务的方式与注册对应，也有两种方式，一种是通过接口的class获取,如下:
