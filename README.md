@@ -21,7 +21,7 @@ Andromeda provides communication among modules for both local and remote service
  
 + Event bus for all processes is supported
 
-**Anno: service here means interface and it's implementation instead of component Service. **
+**Anno: service here means interface and it's implementation instead of component Service.**
 
 Comparsion between other communication solutions and Andromeda:
 
@@ -253,9 +253,9 @@ BananaActivity shows details of how to use it.
 To enhence server process's priority, Andromeda will do bindService() when Andromeda.with().getRemoteService() in accordance with Fragment/Activity's lifecycle.
 As a result, unbind action is need when Fragment/Activity destroyed.
 There are 2 cases now:
-+ For who use with Fragment/Activity and in main thread, Andromeda will do unbind() action automatically
++ For those who obtain remote service with Fragment/Activity and in main thread, Andromeda will do unbind() action automatically
 
-+ For those not use with Fragment/Activity or in work thread, unbind() action should be invoked by developers:
++ For those who obtain not with Fragment/Activity or in work thread, unbind() action should be invoked by developers:
 
 ```java
     public static void unbind(Class<?> serviceClass);
@@ -291,6 +291,8 @@ Publishing event is as simple as follows:
     bundle.putString("Result", "gave u five apples!");
     Andromeda.publish(new Event(EventConstants.APPLE_EVENT, bundle));
 ```
+After published, all listeners in any processes could receive the event.
+
 MainActivity shows details of how to subscribe and publish event.
 
 # License
