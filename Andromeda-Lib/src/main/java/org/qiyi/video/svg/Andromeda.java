@@ -1,6 +1,28 @@
+/*
+* Copyright (c) 2018-present, iQIYI, Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+*        1. Redistributions of source code must retain the above copyright notice,
+*        this list of conditions and the following disclaimer.
+*
+*        2. Redistributions in binary form must reproduce the above copyright notice,
+*        this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+*
+*        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived
+*        from this software without specific prior written permission.
+*
+*        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+*        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+*        IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+*        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+*        OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+*        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+*        EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*/
 package org.qiyi.video.svg;
-
-//import android.arch.lifecycle.LifecycleOwner;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,12 +47,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Created by wangallen on 2018/1/8.
  */
-//TODO 可以考虑学习ArchComponents那样，把ServiceRouter的初始化放在ContentProvider中，而且设置multiprocess="true"的话，只需要一个ContentProvider. 这样就不需要用户来进行初始化了，可以使这个库更方便使用!
-//注意:这个StarBridge可能会存在于很多进程中，不要以为只有主进程才有
-//Step 1:实现全部接口对象在Application中注册
-//Step 2:实现全部接口对象在用户指定位置处注册
-
-//TODO 为了使用更简便，要写成static方法，这样用户就不用写StarBridge.getInstance().xx()了,只要写StarBridge.xx()即可。
 public class Andromeda {
 
     private static final String TAG = "Andromeda";
@@ -180,8 +196,6 @@ public class Andromeda {
     }
 
 
-    //////////////////start of non-static methods////////////////////////////
-
     public RemoteManagerRetriever getRemoteManagerRetriever() {
         return remoteManagerRetriever;
     }
@@ -189,26 +203,6 @@ public class Andromeda {
 
     ////////////////end of non-static methods/////////////////////////////
 
-    /*
-    @Override
-    public IBinder getRemoteService(Class serviceClass) {
-        if (null == serviceClass) {
-            return null;
-        }
-        return RemoteTransfer.getInstance().getRemoteService(serviceClass.getCanonicalName());
-    }
-
-    @Deprecated
-    public IBinder getRemoteService(String serviceCanonicalName) {
-        if (TextUtils.isEmpty(serviceCanonicalName)) {
-            return null;
-        }
-        return RemoteTransfer.getInstance().getRemoteService(serviceCanonicalName);
-    }
-    */
-
-
-    //TODO 这两个是放在StarBridge中还是RemoteManager中还需要再讨论一下
     public static void unbind(Class<?> serviceClass) {
         unbind(serviceClass.getCanonicalName());
     }
@@ -234,10 +228,6 @@ public class Andromeda {
         ConnectionManager.getInstance().unbindAction(appContext, serviceNames);
     }
 
-
-    //TODO 这个是否也需要与生命周期关联起来呢？然后比如在onDestroy()时自动unsubscribe()掉。感觉最好还是要!
-    //TODO 但是这样的话有个问题，就是使用上不统一，因为subscribe()是放在RemoteManager中，而unsubscribe()和publish()方法却是放在StarBridge中
-    //TODO 其实这个问题在注册远程服务和使用远程服务时也存在，所以是不是要换一种使用方法呢?
     public static void subscribe(String name, EventListener listener) {
         if (TextUtils.isEmpty(name)) {
             return;

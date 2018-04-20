@@ -1,3 +1,27 @@
+/*
+* Copyright (c) 2018-present, iQIYI, Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+*        1. Redistributions of source code must retain the above copyright notice,
+*        this list of conditions and the following disclaimer.
+*
+*        2. Redistributions in binary form must reproduce the above copyright notice,
+*        this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+*
+*        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived
+*        from this software without specific prior written permission.
+*
+*        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+*        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+*        IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+*        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+*        OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+*        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+*        EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*/
 package org.qiyi.video.svg.fragment;
 
 import android.annotation.SuppressLint;
@@ -60,7 +84,6 @@ public class RemoteManagerFragment extends Fragment {
     private void registerFragmentWithRoot(Activity activity) {
         Logger.d(this.toString() + "-->registerFragmentWithRoot()");
         unregisterFragmentWithRoot();
-        //TODO 这里是不是要先判断一下rootRemoteManagerFragment是否为空呢?
         rootRemoteManagerFragment = Andromeda.getInstance().getRemoteManagerRetriever().getRemoteManagerFragment(activity);
         if (!equals(rootRemoteManagerFragment)) {
             rootRemoteManagerFragment.addChildRemoteManagerFragment(this);
@@ -109,7 +132,6 @@ public class RemoteManagerFragment extends Fragment {
         lifecycle.onStop();
     }
 
-    //TODO 可能要放在onDestoryView()中会更好，因为在ViewPager中管理的Fragment,会先调用onDestoryView(),但是可能一直都不会调用onDestory()
     @Override
     public void onDestroy() {
         super.onDestroy();
