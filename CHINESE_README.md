@@ -42,12 +42,23 @@ Andromeda和其他组件间通信方案的对比如下:
 ```groovy
     implementation 'org.qiyi.video.svg:core:1.0.0'
 ```
-在Application Module中使用gradle插件:
+在application Module中使用gradle插件:
 ```groovy
     apply plugin: 'org.qiyi.svg.plugin'
 ```
 
 # 使用方式
+## 为Dispatcher配置进程
+由于Dispatcher负责管理所有进程信息，所以它应该运行在存活时间最长的进程中。
+Dispatcher默认运行在主进程中。但是考虑到在有些App中，主进程不一定是存活时间最长的(比如音乐播放App中往往是播放进程的存活时间最长),
+所以出现这种情况时开发者应该在application module的build.gradle中为Dispatcher配置进程名，如下:
+```groovy
+    dispatcher{
+        process ":downloader"
+    }
+```
+在这里，":downloader"进程是存活时间最长的.
+
 ## 初始化
 最好是在自己进程的Application中进行初始化(每个进程都有自己的Andromeda对象)，代码如下:
 ```java
