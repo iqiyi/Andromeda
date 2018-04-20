@@ -1,7 +1,7 @@
 # Andromeda
 ![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
-![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-0.9.3-brightgreen.svg)
-![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-0.9.3-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.0.0-brightgreen.svg)
+![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.0.0-brightgreen.svg)
 
 Andromeda提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程接口调用。
 
@@ -32,15 +32,15 @@ Andromeda和其他组件间通信方案的对比如下:
 
 
 # 接入方式
-首先在buildscript中添加classpath(以0.9.3为例):
+首先在buildscript中添加classpath(以1.0.0为例):
 ```groovy
-    classpath "org.qiyi.video.svg:core:0.9.3"
-    classpath "org.qiyi.video.svg:plugin:0.9.3"
+    classpath "org.qiyi.video.svg:core:1.0.0"
+    classpath "org.qiyi.video.svg:plugin:1.0.0"
 ```
 这两个分别是核心代码库和gradle插件库的路径。
 在Application或library Module中使用核心库:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:0.9.3'
+    implementation 'org.qiyi.video.svg:core:1.0.0'
 ```
 在Application Module中使用gradle插件:
 ```groovy
@@ -60,7 +60,7 @@ Andromeda和其他组件间通信方案的对比如下:
 ### 本地接口定义与实现
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
 + 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如可以放在一个公共的module中
-+ 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到StarBridge,不过需要注意的是，同一时间StarBridge中只会有一个实现
++ 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到Andromeda,不过需要注意的是，同一时间Andromeda中只会有一个实现
 
 ### 本地服务注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
@@ -73,9 +73,9 @@ Andromeda和其他组件间通信方案的对比如下:
 ```
 其中ICheckApple.class为接口，虽然也可以采用下面这种方式注册:
 ```java
-    StarBridge.registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
+    Andromeda.registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
 ```
-**但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上StarBridge只需要保证有一个唯一的key与该服务对应即可).
+**但是考虑到混淆问题，非常不推荐使用这种方式进行注册**，除非双方能够协商一致使用这个key(因为实际上Andromeda只需要保证有一个唯一的key与该服务对应即可).
 
 ### 本地服务使用
 注册完之后，与服务提供方同进程的任何模块都可以调用该服务,获取服务的方式与注册对应，也有两种方式，一种是通过接口的class获取,如下:
@@ -257,7 +257,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 详情可察看applemodule中的BananaActivity.
 
 ### 生命周期自动管理的问题
-对于IPC,为了提高对方进程的优先极，在使用Andromeda.getRemoteService()时会进行bindService()操作。
+对于IPC,为了提高对方进程的优先极，在使用Andromeda.with().getRemoteService()时会进行bindService()操作。
 既然进行了bind操作，那自然要进行unbind操作以释放连接了，目前有如下两种情形。
 + 对于在Fragment或者Activity中，并且是在主线程中调用的情形，只要在获取远程服务时利用with()传递Fragment或者Activity对象进去，Andromeda就会在onDestroy()时自动释放连接，不需要开发者做任何unbind()操作。
 
