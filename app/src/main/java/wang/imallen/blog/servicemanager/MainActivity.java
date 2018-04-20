@@ -21,8 +21,6 @@ import wang.imallen.blog.applemodule.remote.RemoteServiceDemo;
 import wang.imallen.blog.cherrymodule.CherryActivity;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
-import wang.imallen.blog.servicemanager.annotation.local.RegLocalServiceByAnnoActivity;
-import wang.imallen.blog.servicemanager.annotation.remote.RegRemoteServiceByAnnoActivity;
 import wang.imallen.blog.servicemanager.lifecycle.LifecycleTestActivity;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
@@ -41,13 +39,6 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             }
         });
 
-        findViewById(R.id.showLocalServiceByAnno).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RegLocalServiceByAnnoActivity.class));
-            }
-        });
-
         findViewById(R.id.showRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
 
@@ -56,12 +47,6 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             }
         });
 
-        findViewById(R.id.showRemoteServiceByAnno).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, RegRemoteServiceByAnnoActivity.class));
-            }
-        });
 
         findViewById(R.id.showServiceInOtherModule).setOnClickListener(new View.OnClickListener() {
             @Override

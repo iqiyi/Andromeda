@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import org.qiyi.video.svg.Andromeda;
 
-import wang.imallen.blog.applemodule.service.CheckAppleImpl;
+import wang.imallen.blog.applemodule.service.CheckApple;
 import wang.imallen.blog.applemodule.R;
 import wang.imallen.blog.moduleexportlib.apple.ICheckApple;
 
@@ -22,7 +22,7 @@ public class LocalServiceDemo extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Andromeda.getInstance().registerLocalService(ICheckApple.class, CheckAppleImpl.getInstance());
+                Andromeda.getInstance().registerLocalService(ICheckApple.class, new CheckApple());
                 Toast.makeText(LocalServiceDemo.this, "registered ICheckApple service", Toast.LENGTH_SHORT).show();
             }
         });

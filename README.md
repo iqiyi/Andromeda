@@ -1,20 +1,24 @@
-# 项目简介
+# Andromeda
+![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-0.9.3-brightgreen.svg)
+![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-0.9.3-brightgreen.svg)
 
-Andromeda提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程调用。
-
-![Andromeda_arch](res/Andromeda_Module_arch.png)
+Andromeda提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程接口调用。
 
 **注:之所以分成本地服务和远程服务这两种，是由于本地服务的接口可以传递各种类型的参数和返回值，而远程接口则受AIDL的限制，参数和返回值只能是基本类型或者实现了Parcelable接口的自定义类型。**
 
-Andromeda的主要特色如下:
+# 特色
 
 + 无需开发者进行bindService()操作,也不用定义Service,只需要定义aidl接口和实现
+
 + 同步获取服务。抛弃了bindService()这种异步获取的方式，改造成了同步获取
+
 + 生命周期自动管理。可根据Fragment或Activity的生命周期进行提高或降低服务提供方进程的操作
-    
-+ 采用"接口+数据结构"的方式来实现组件间通信，这种方式相比协议的方式在于实现简单，使用方便，无需定义大量的java bean, 维护也更简单
 
 + 支持IPC的Callback，并且支持跨进程的事件总线
+
++ 采用"接口+数据结构"的方式来实现组件间通信，这种方式相比协议的方式在于实现简单，维护方便
+
 
 **注意这里的服务不是Android中四大组件的Service,而是指提供的接口与实现。为了表示区分，后面的服务均是这个含义，而Service则是指Android中的组件。**
 
@@ -28,20 +32,19 @@ Andromeda和其他组件间通信方案的对比如下:
 
 
 # 接入方式
-## 普通接入方式
-首先在buildscript中添加classpath(以0.9.2为例):
+首先在buildscript中添加classpath(以0.9.3为例):
 ```groovy
-        classpath "org.qiyi.video.svg:core:0.9.2"
-        classpath "org.qiyi.video.svg:plugin:0.9.2"
+    classpath "org.qiyi.video.svg:core:0.9.3"
+    classpath "org.qiyi.video.svg:plugin:0.9.3"
 ```
 这两个分别是核心代码库和gradle插件库的路径。
 在Application或library Module中使用核心库:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:0.9.2'
+    implementation 'org.qiyi.video.svg:core:0.9.3'
 ```
 在Application Module中使用gradle插件:
 ```groovy
-apply plugin: 'org.qiyi.svg.plugin'
+    apply plugin: 'org.qiyi.svg.plugin'
 ```
 
 # 使用方式
@@ -56,17 +59,17 @@ apply plugin: 'org.qiyi.svg.plugin'
 ## 本地服务的注册与使用
 ### 本地接口定义与实现
 本地接口定义与实现这方面，和普通的接口定义、实现没什么太大区别，不一样的地方就两个:
-+ 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如对于爱奇艺基线来说，可放在basecore中
++ 对外接口需要要暴露出去，使其对项目中的所有模块都可见，比如可以放在一个公共的module中
 + 如果对于某个接口有多个实现，那么需要根据业务需求在不同的时候注册不同的实现到StarBridge,不过需要注意的是，同一时间StarBridge中只会有一个实现
 
 ### 本地服务注册
 本地服务的注册有两种方法，一种是直接调用接口的全路径名和接口的实现，如下:
 ```java
-    Andromeda.registerLocalService(ICheckApple.class.getCanonicalName(),CheckAppleImpl.getInstance());
+    Andromeda.registerLocalService(ICheckApple.class.getCanonicalName(),new CheckApple());
 ```
 还有一种是调用接口class和接口的实现，其实在内部也是获取了它的全路径名,如下:
 ```java
-    Andromeda.registerLocalService(ICheckApple.class,CheckAppleImpl.getInstance());
+    Andromeda.registerLocalService(ICheckApple.class,new CheckApple());
 ```
 其中ICheckApple.class为接口，虽然也可以采用下面这种方式注册:
 ```java
@@ -183,9 +186,6 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 考虑到远程服务也可能有耗时操作，所以需要支持远程调用的Callback功能。
 对于有耗时操作的远程服务，定义接口时需要借助lib中的IPCCallback,如下:
 ```aidl
-    package wang.imallen.blog.moduleexportlib.apple;
-    import org.qiyi.video.svg.IPCCallback;
-    
     interface IBuyApple {
         int buyAppleInShop(int userId);
         void buyAppleOnNet(int userId,IPCCallback callback);
@@ -264,8 +264,8 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 + 对于在子线程或者不是Fragment/Activity中的情形，只能传递Application Context去获取远程服务。在使用完毕后，需要手动调用Andromeda的unbind()释放连接:
 
 ```java
-     public static void unbind(Class<?> serviceClass);
-     public static void unbind(Set<Class<?>> serviceClasses);
+    public static void unbind(Class<?> serviceClass);
+    public static void unbind(Set<Class<?>> serviceClasses);
 ```
   如果只获取了一个远程服务，那么就使用前一个unbind()方法;否则使用后一个。
 
@@ -273,14 +273,14 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 ### 事件定义:Event
 Event的定义如下:
 ```java
-public class Event implements Parcelable {
-
-    private String name;
-
-    private Bundle data;
+    public class Event implements Parcelable {
     
-    ...
-}
+        private String name;
+    
+        private Bundle data;
+        
+        ...
+    }
 ```
 即 事件=名称+数据  
 其中**名称要求在整个项目中唯一**，否则可能出错。
@@ -297,21 +297,14 @@ public class Event implements Parcelable {
 ### 事件发布
 事件发布很简单，调用publish方法即可，如下:
 ```java
-       Bundle bundle = new Bundle();
-       bundle.putString("Result", "gave u five apples!");
-       Andromeda.publish(new Event(EventConstants.APPLE_EVENT, bundle));
+    Bundle bundle = new Bundle();
+    bundle.putString("Result", "gave u five apples!");
+    Andromeda.publish(new Event(EventConstants.APPLE_EVENT, bundle));
 ```
+# License
+BSD-3-Clause. See the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) file for details.
 
-# 已知问题
-
-# TODO
-
-1.事件总线需要支持粘性事件  
-
-2.事件总线需要支持三种threadMode回调
-
-# 帮助
-
+# 支持
 1. Sample代码
 2. 阅读Wiki或者FAQ
 3. 联系bettarwang@gmail.com
