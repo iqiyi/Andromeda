@@ -42,12 +42,24 @@ add core lib dependency in Application or library Module:
 ```groovy
     implementation 'org.qiyi.video.svg:core:0.9.3'
 ```
-apply gradle plugin in Application Module:
+apply gradle plugin in application Module:
 ```groovy
     apply plugin: 'org.qiyi.svg.plugin'
 ```
 
 # How to use
+## Dispatcher config
+**Dispatcher should always in the process that live longest cause it manager all process infos!.**
+Default process of Dispatcher is main process if not configed. 
+Considering some process may live longer than main process in some apps(such as music app), developers should
+ config process name for Dispatcher in this case. Just as follows in build.gradle of application module:
+```groovy
+    dispatcher{
+        process ":downloader"
+    }
+``` 
+In this case, ":downloader" process is the one that live longest.
+
 ## init
 add init code in Application.onCreate():
 ```java
@@ -56,7 +68,7 @@ add init code in Application.onCreate():
 Please make sure Andromeda inited before use if you don't init it in Application.onCreate(). 
 
 ## Register and use local service
-### definition and implementation of local service
+### Definition and implementation of local service
 There are only two differences between local service and normal interfaces:
 + interfaces should be put in a common module to make it accessible to all modules
 + Andromeda will only hold one implementation at a time
@@ -138,7 +150,7 @@ public class BuyAppleImpl extends IBuyApple.Stub {
 }
 
 ```
-### Registration
+### Registration of remote service
 Differen from registration of local service, IBinder of remote service is need for registration :
 ```java
     Andromeda.registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance().asBinder());
