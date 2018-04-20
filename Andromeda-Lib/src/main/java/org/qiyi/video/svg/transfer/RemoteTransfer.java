@@ -1,9 +1,28 @@
+/*
+* Copyright (c) 2018-present, iQIYI, Inc. All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+*        1. Redistributions of source code must retain the above copyright notice,
+*        this list of conditions and the following disclaimer.
+*
+*        2. Redistributions in binary form must reproduce the above copyright notice,
+*        this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+*
+*        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived
+*        from this software without specific prior written permission.
+*
+*        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+*        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+*        IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+*        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+*        OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+*        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+*        EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*/
 package org.qiyi.video.svg.transfer;
-
-//import android.arch.lifecycle.Lifecycle;
-//import android.arch.lifecycle.LifecycleObserver;
-//import android.arch.lifecycle.LifecycleOwner;
-//import android.arch.lifecycle.OnLifecycleEvent;
 
 import android.content.Context;
 import android.content.Intent;
@@ -143,7 +162,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         Logger.d("RemoteTransfer-->getIBinderFromProvider()");
         Cursor cursor = null;
         try {
-            //TODO query()方法也是有使用stableProvider()的风险，从而存在导致主进程被杀死的风险，所以只能作为备用方案使用。实际上最好都是把它作为第二个备用方案比较好，第一个备用方案就用线程等待好了。
+
             cursor = context.getContentResolver().query(DispatcherProvider.URI, DispatcherProvider.PROJECTION_MAIN,
                     null, null, null);
             if (cursor == null) {
@@ -155,7 +174,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
     }
 
-    //注意这个和registerRemoteService的区别，这里其实只是register本进程中有IPC能力的接口,它的名字其实叫registerStubService更合适
     @Override
     public synchronized void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
         serviceTransfer.registerStubService(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);

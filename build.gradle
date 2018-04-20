@@ -7,8 +7,8 @@ buildscript {
             'userName':USER_NAME,
             'groupId':GROUP_ID,
             'passWord':PASS_WORD,
-            'version_code':93,
-            'version_name':'0.9.3'
+            'version_code':100,
+            'version_name':'1.0.0'
     ]
 
     repositories {
