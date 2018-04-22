@@ -40,7 +40,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventDispatcher implements IEventDispatcher {
 
-    //private List<IBinder> transferBinders = new ArrayList<>();
     private Map<Integer, IBinder> transferBinders = new ConcurrentHashMap<>();
 
     @Override

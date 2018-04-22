@@ -35,12 +35,12 @@ Comparsion between other communication solutions and Andromeda:
 # Download
 add classpath in buildscript(set version 1.0.0 as example):
 ```groovy
-    classpath "org.qiyi.video.svg:core:0.9.3"
-    classpath "org.qiyi.video.svg:plugin:0.9.3"
+    classpath "org.qiyi.video.svg:core:1.0.0"
+    classpath "org.qiyi.video.svg:plugin:1.0.0"
 ```
 add core lib dependency in Application or library Module:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:0.9.3'
+    implementation 'org.qiyi.video.svg:core:1.0.0'
 ```
 apply gradle plugin in application Module:
 ```groovy
@@ -65,7 +65,6 @@ add init code in Application.onCreate():
 ```java
     Andromeda.init(Context);
 ```
-Please make sure Andromeda inited before use if you don't init it in Application.onCreate(). 
 
 ## Register and use local service
 ### Definition and implementation of local service
@@ -84,7 +83,7 @@ Another is as follows:
 ```
 ICheckApple is interface definition. Considering proguard, registering local service with fixed String is not recommanded, just as follows:
 ```java
-    StarBridge.registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
+    Andromeda.registerLocalService("wang.imallen.blog.moduleexportlib.apple.ICheckApple",CheckAppleImpl.getInstance());
 ```
 
 ### How to use local service

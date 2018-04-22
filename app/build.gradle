@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-//apply plugin: org.qiyi.video.svg.plugin.StarBridgePlugin
-apply plugin: 'org.qiyi.svg.plugin'
+apply plugin: org.qiyi.video.svg.plugin.AndromedaPlugin
+//apply plugin: 'org.qiyi.svg.plugin'
 
 android {
     compileSdkVersion 26
@@ -35,6 +35,7 @@ dependencies {
 
     implementation 'com.android.support:design:26.0.2'
 
+    implementation 'org.qiyi.video.svg:core:1.0.4'
     //implementation 'org.qiyi.video.svg:plugin:0.7.4'
     //implementation project(":Andromeda-Plugin")
 

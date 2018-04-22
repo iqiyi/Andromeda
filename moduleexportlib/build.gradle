@@ -68,7 +68,9 @@ dependencies {
 
     //compile project(":ServiceAnnotation")
 
-    compile project(':Andromeda-Lib')
+    //compile project(':Andromeda-Lib')
+    implementation 'org.qiyi.video.svg:core:1.0.4'
+
 
     compileOnly 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'

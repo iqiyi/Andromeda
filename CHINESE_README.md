@@ -65,8 +65,6 @@ Andromeda和其他组件间通信方案的对比如下:
 ```java
     Andromeda.init(Context);
 ```
-如果不能在Application中进行初始化(比如没有自己的Application),那么至少要保证在使用之前进行初始化。
-**另外，不用担心Andromeda多次初始化的问题，在任一进程中，只有首次初始化有效，后面的初始化会自动忽略**。
 
 ## 本地服务的注册与使用
 ### 本地接口定义与实现
@@ -110,7 +108,7 @@ Andromeda和其他组件间通信方案的对比如下:
 ## 远程服务的注册与使用
 远程服务的注册与使用略微麻烦一点，因为需要像实现AIDL Service那样定义aidl接口。
 ### 远程接口的定义与实现
-定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块, 类似的，也是放在basecore中，以暴露给其他模块使用。比如定义一个购买苹果的服务接口:
+定义aidl接口，并且要将编译生成的Stub和Proxy类暴露给所有模块, 类似的，也是放在公共module中，以暴露给其他模块使用。比如定义一个购买苹果的服务接口:
 ```aidl
     package wang.imallen.blog.moduleexportlib.apple;
     import org.qiyi.video.svg.IPCCallback;

@@ -42,7 +42,7 @@ public class StubServiceGenerator implements IServiceGenerator {
     def static final STUB_SERVICE = 'org.qiyi.video.svg.stub.CommuStubService$CommuStubService'
 
     def static final AUTHORITIES="android:authorities"
-    def static final DISPATCHER_AUTHORITY="org.qiyi.video.svg.dispatcher"
+    def static final DISPATCHER_AUTHORITY="qiyi.svg.dispatcher"
 
     def static final DISPATCHER_SERVICE='org.qiyi.video.svg.dispatcher.DispatcherService'
     def static final DISPTACHER_PROVIDER='org.qiyi.video.svg.dispatcher.DispatcherProvider'
@@ -55,9 +55,11 @@ public class StubServiceGenerator implements IServiceGenerator {
     private String rootDirPath
     //private String dispatcherProcess
     def dispatcher
+    private String pkgName
 
     @Override
     public void injectStubServiceToManifest(Project project) {
+
 
         println "injectStubServiceToManifest"
 
@@ -67,10 +69,17 @@ public class StubServiceGenerator implements IServiceGenerator {
         rootDirPath = project.rootDir.absolutePath
 
         def android = project.extensions.getByType(AppExtension)
+
         this.dispatcher=project.extensions.getByType(DispatcherExtension)
 
         project.afterEvaluate {
             android.applicationVariants.all { variant ->
+
+                if(pkgName==null){
+                    pkgName=getPackageName(variant)
+                    println "pkgName:"+pkgName
+                }
+
                 variant.outputs.each { output ->
 
                     //injectManifestFile(output.processManifest.manifestOutputDirectory)
@@ -131,6 +140,17 @@ public class StubServiceGenerator implements IServiceGenerator {
         }
     }
 
+    def getPackageName(variant) {
+         if(null==variant){
+             return null
+         }
+         [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join()
+    }
+
+    @Override
+    String getPkgName() {
+        return pkgName
+    }
 
     @Override
     Map<String, String> getMatchServices() {
@@ -176,7 +196,7 @@ public class StubServiceGenerator implements IServiceGenerator {
                 )
 
                 provider(
-                        "${AUTHORITIES}":DISPATCHER_AUTHORITY,
+                        "${AUTHORITIES}":getAuthority(),
                         "${EXPORTED}":"${FALSE}",
                         "${NAME}":DISPTACHER_PROVIDER,
                         "${ENABLED}":"${TRUE}",
@@ -190,7 +210,7 @@ public class StubServiceGenerator implements IServiceGenerator {
                 )
 
                 provider(
-                        "${AUTHORITIES}":DISPATCHER_AUTHORITY,
+                        "${AUTHORITIES}":getAuthority(),
                         "${EXPORTED}":"${FALSE}",
                         "${NAME}":DISPTACHER_PROVIDER,
                         "${ENABLED}":"${TRUE}"
@@ -205,6 +225,10 @@ public class StubServiceGenerator implements IServiceGenerator {
         def normalStr = writer.toString().replace("<application>", "").replace("</application>", "")
 
         return normalStr
+    }
+
+    private String getAuthority(){
+        return pkgName+"."+DISPATCHER_AUTHORITY
     }
 
     private void writeStubService2File(String dirPath, String fileName) {

@@ -27,6 +27,7 @@ package org.qiyi.video.svg.transfer;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -36,7 +37,6 @@ import org.qiyi.video.svg.IRemoteTransfer;
 import org.qiyi.video.svg.bean.BinderBean;
 import org.qiyi.video.svg.config.Constants;
 import org.qiyi.video.svg.cursor.DispatcherCursor;
-import org.qiyi.video.svg.dispatcher.Dispatcher;
 import org.qiyi.video.svg.dispatcher.DispatcherProvider;
 import org.qiyi.video.svg.dispatcher.DispatcherService;
 import org.qiyi.video.svg.event.Event;
@@ -47,13 +47,14 @@ import org.qiyi.video.svg.transfer.event.IEventTransfer;
 import org.qiyi.video.svg.transfer.service.IRemoteServiceTransfer;
 import org.qiyi.video.svg.transfer.service.RemoteServiceTransfer;
 import org.qiyi.video.svg.utils.IOUtils;
-import org.qiyi.video.svg.utils.ProcessUtils;
 import org.qiyi.video.svg.utils.ServiceUtils;
 
 /**
  * Created by wangallen on 2018/1/9.
  */
 public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServiceTransfer, IEventTransfer {
+
+    public static final int MAX_WAIT_TIME = 600;
 
     private static RemoteTransfer sInstance;
 
@@ -62,7 +63,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         getInstance().setContext(context);
 
         //如果是主进程就可以直接调用ServiceDispatcher
-        getInstance().sendRegisterInfo();
+        //getInstance().sendRegisterInfo();
     }
 
     public static RemoteTransfer getInstance() {
@@ -79,8 +80,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     private Context context;
 
     private IDispatcher dispatcherProxy;
-
-    private final Object lock = new Object();
 
     private RemoteServiceTransfer serviceTransfer;
     private EventTransfer eventTransfer;
@@ -109,45 +108,32 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     }
 
     @Override
-    public BinderBean getRemoteServiceBean(String serviceCanonicalName) {
+    public synchronized BinderBean getRemoteServiceBean(String serviceCanonicalName) {
         Logger.d("RemoteTransfer-->getRemoteServiceBean,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        return getIBinder(serviceCanonicalName);
-    }
-
-    private BinderBean getIBinder(String serviceName) {
-        Logger.d("RemoteTransfer-->getIBinder()");
-        // 首先检查是否就在本地!这非常重要，否则有可能导致死锁!
-        BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceName);
+        BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceCanonicalName);
         if (cacheBinderBean != null) {
             return cacheBinderBean;
         }
-        Logger.d("RemoteTransfer-->getIBinder(),start to wait");
-
-        synchronized (lock) {
-
-            if (null == dispatcherProxy) {
-                IBinder dispatcherBinder = getIBinderFromProvider();
-                if (null != dispatcherBinder) {
-                    dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
-                    registerCurrentTransfer();
-                }
-            }
-
-            //停靠等待的这种情况是可以不用注册的，因为说明sendRegisterInfo()成功了
-            if (null == dispatcherProxy) {
-                sendRegisterInfo();
-                try {
-                    lock.wait(3000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
+        if (null == dispatcherProxy) {
+            IBinder dispatcherBinder = getIBinderFromProvider();
+            if (null != dispatcherBinder) {
+                Logger.d("the binder from provider is not null");
+                dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
+                registerCurrentTransfer();
             }
         }
-        Logger.d("RemoteTransfer-->getIBinder(),end of wait");
+        if (null == dispatcherProxy) {
+            sendRegisterInfo();
+            try {
+                wait(MAX_WAIT_TIME);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
         if (serviceTransfer == null || dispatcherProxy == null) {
             return null;
         }
-        return serviceTransfer.getAndSaveIBinder(serviceName, dispatcherProxy);
+        return serviceTransfer.getAndSaveIBinder(serviceCanonicalName, dispatcherProxy);
     }
 
     private void registerCurrentTransfer() {
@@ -158,12 +144,16 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
     }
 
+    private Uri getDispatcherProviderUri(){
+        return Uri.parse("content://"+context.getPackageName()+"."+DispatcherProvider.URI_SUFFIX+"/main");
+    }
+
     private IBinder getIBinderFromProvider() {
         Logger.d("RemoteTransfer-->getIBinderFromProvider()");
         Cursor cursor = null;
         try {
 
-            cursor = context.getContentResolver().query(DispatcherProvider.URI, DispatcherProvider.PROJECTION_MAIN,
+            cursor = context.getContentResolver().query(getDispatcherProviderUri(), DispatcherProvider.PROJECTION_MAIN,
                     null, null, null);
             if (cursor == null) {
                 return null;
@@ -210,7 +200,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     ////////////////end of event///////////////////////////
 
     @Override
-    public void registerDispatcher(IBinder dispatcherBinder) throws RemoteException {
+    public synchronized void registerDispatcher(IBinder dispatcherBinder) throws RemoteException {
         Logger.d("RemoteTransfer-->registerDispatcher");
         //一般从发出注册信息到这里回调就6ms左右，所以绝大部分时候走的都是这个逻辑。
         dispatcherBinder.linkToDeath(new IBinder.DeathRecipient() {
@@ -220,28 +210,23 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
                 dispatcherProxy = null;
             }
         }, 0);
-        //这里实现IServiceRegister仅仅是为了给RemoteServiceManager提供注册到当前进程的机会
         dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
-        synchronized (lock) {
-            //由于只有一个地方使用到lock,所以这里使用notify()和notifyAll()的效果是一样的
-            lock.notifyAll();
-        }
+        notifyAll();
     }
 
     /**
      * 接收到来自Dispatcher的通知，如果本地有相应的IBinder,就要清除
-     *
      * @param serviceCanonicalName
      * @throws RemoteException
      */
     @Override
-    public void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
+    public synchronized void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
         Logger.d("RemoteTransfer-->unregisterRemoteService,pid:" + android.os.Process.myPid() + ",serviceName:" + serviceCanonicalName);
         serviceTransfer.clearRemoteBinderCache(serviceCanonicalName);
     }
 
     @Override
-    public void notify(Event event) throws RemoteException {
+    public synchronized void notify(Event event) throws RemoteException {
         eventTransfer.notify(event);
     }
 

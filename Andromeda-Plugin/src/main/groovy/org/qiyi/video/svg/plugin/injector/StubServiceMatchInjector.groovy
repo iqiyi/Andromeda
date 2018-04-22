@@ -114,10 +114,14 @@ public class StubServiceMatchInjector {
     private void prepareInjectMatchCode(String filePath) {
 
         //filePath是类似../ServiceManager/StarBridge-Lib/build/intermediates/intermediate-jars/debug/classes.jar这样的路径
+        //TODO 但是遇到/Users/wangallen/.gradle/caches/transforms-1/files-1.1/core-0.9.3.aar/c57f58254c75aebebc28c22661fd8042/jars/classes.jar这样的，就会出现如下异常:
+        //TODO java.io.FileNotFoundException: /Users/wangallen/.gradle/caches/transforms-1/files-1.1/core-0.9.3.aar/c57f58254c75aebebc28c22661fd8042/jars/classes/org/qiyi (Not a directory)
         println "StubServiceMatchInjector-->prepareInjectMatchCode,filePath:" + filePath
 
         File jarFile = new File(filePath)
         String jarDir = jarFile.getParent() + File.separator + jarFile.getName().replace('.jar', '')
+
+        println "jarDir:"+jarDir
 
         //解压jar包，解压之后就是.class文件
         List<String> classNameList = JarUtils.unzipJar(filePath, jarDir)
@@ -126,7 +130,8 @@ public class StubServiceMatchInjector {
         jarFile.delete()
 
         //注入代码
-        classPool.insertClassPath(jarDir)
+        //classPool.insertClassPath(jarDir)
+        classPool.appendClassPath(jarDir)
 
         for (String className : classNameList) {
             if (className.endsWith(STUB_SERVICE_MATCHER_CLASS)) {
@@ -153,6 +158,9 @@ public class StubServiceMatchInjector {
 
     //这个className含有.class,而实际上要获取CtClass的话只需要前面那部分，即"org.qiyi.video.svg.utils.StubServiceMatcher"而不是"org.qiyi.video.svg.utils.StubServiceMatcher.class"
     private void doInjectMatchCode(String path) {
+
+        println "doInjectMatchCode"
+
         //首先获取服务信息
         fetchServiceInfo()
 

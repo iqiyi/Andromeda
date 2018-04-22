@@ -35,4 +35,7 @@ public interface IServiceGenerator {
      * @return
      */
     Map<String,String>getMatchServices()
+
+    //其实是applicationId
+    String getPkgName()
 }
