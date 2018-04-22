@@ -6,7 +6,6 @@ def lib_version="0.0.5"
 android {
     compileSdkVersion 26
 
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
@@ -51,8 +50,6 @@ android {
 
 }
 
-
-
 uploadArchives{
     repositories.mavenDeployer{
         repository(url:LOCAL_REPO_URL)
@@ -66,10 +63,8 @@ uploadArchives{
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //compile project(":ServiceAnnotation")
-
     //compile project(':Andromeda-Lib')
-    implementation 'org.qiyi.video.svg:core:1.0.4'
+    implementation "org.qiyi.video.svg:core:$maven_config.build_version"
 
 
     compileOnly 'com.android.support:appcompat-v7:26.0.2'

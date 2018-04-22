@@ -24,6 +24,6 @@
 */
 package org.qiyi.video.svg.plugin.manifest
 
-public interface IManifestParser {
+interface IManifestParser {
     Set<String> getCustomProcessNames(String manifestPath)
 }

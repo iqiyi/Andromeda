@@ -31,21 +31,23 @@ import org.qiyi.video.svg.plugin.extension.DispatcherExtension
 import org.qiyi.video.svg.plugin.service.IServiceGenerator
 import org.qiyi.video.svg.plugin.service.StubServiceGenerator
 
-public class AndromedaPlugin implements Plugin<Project> {
+class AndromedaPlugin implements Plugin<Project> {
 
     private IServiceGenerator stubServiceGenerator = new StubServiceGenerator()
+
+    public static final String DISPATCHER_EXTENSION_NAME = "dispatcher"
 
     @Override
     void apply(Project project) {
 
-        project.extensions.create("dispatcher",DispatcherExtension)
+        project.extensions.create(DISPATCHER_EXTENSION_NAME, DispatcherExtension)
 
         def android = project.extensions.getByType(AppExtension)
 
         stubServiceGenerator.injectStubServiceToManifest(project)
 
         //注册一个Transform
-        def classTransform = new AndromedaTransform(project,stubServiceGenerator)
+        def classTransform = new AndromedaTransform(project, stubServiceGenerator)
 
         android.registerTransform(classTransform)
 

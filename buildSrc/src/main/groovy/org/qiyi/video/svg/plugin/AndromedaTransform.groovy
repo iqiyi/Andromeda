@@ -27,29 +27,23 @@ package org.qiyi.video.svg.plugin
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import javassist.ClassPool
-import javassist.CtClass
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
-import org.qiyi.video.svg.plugin.service.ServiceMatchInjector
 import org.qiyi.video.svg.plugin.injector.StubServiceMatchInjector
 import org.qiyi.video.svg.plugin.service.IServiceGenerator
-import org.qiyi.video.svg.plugin.utils.CtUtils
 
-public class AndromedaTransform extends Transform {
+class AndromedaTransform extends Transform {
 
     private Project project
 
     private StubServiceMatchInjector stubServiceMatchInjector
 
-    private ServiceMatchInjector serviceMatchInjector
-
     private IServiceGenerator serviceGenerator
 
-    public AndromedaTransform(Project project, IServiceGenerator serviceGenerator) {
+    AndromedaTransform(Project project, IServiceGenerator serviceGenerator) {
         this.project = project
         this.serviceGenerator = serviceGenerator
-        //this.serviceMatchInjector=new ServiceMatchInjector(serviceGenerator)
     }
 
     @Override
@@ -76,9 +70,6 @@ public class AndromedaTransform extends Transform {
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
 
         println "AndromedaTransform-->transform"
-
-        //newTransform(transformInvocation)
-
 
         //step1:将所有类的路径加入到ClassPool中
         ClassPool classPool = new ClassPool()
@@ -110,7 +101,6 @@ public class AndromedaTransform extends Transform {
             input.jarInputs.each { JarInput jarInput ->
                 //重命名输出文件(同目录copyFile会冲突)
                 def jarName = jarInput.name
-                println("jar=" + jarInput.file.getAbsolutePath())
 
                 stubServiceMatchInjector.injectMatchCode(jarInput)
 
@@ -123,29 +113,6 @@ public class AndromedaTransform extends Transform {
                 FileUtils.copyFile(jarInput.file, dest)
             }
         }
-
-
-
-    }
-
-    private void newTransform(TransformInvocation transformInvocation){
-        TransformOutputProvider outputProvider=transformInvocation.outputProvider
-        outputProvider.deleteAll()
-        File jarFile=outputProvider.getContentLocation("main",getOutputTypes(),getScopes(),Format.JAR)
-        if(!jarFile.getParentFile().exists()){
-            jarFile.getParentFile().mkdirs()
-        }
-        if(jarFile.exists()){
-            jarFile.delete()
-        }
-
-        ClassPool classPool=new ClassPool()
-        project.android.bootClasspath.each{
-            classPool.appendClassPath((String)it.absolutePath)
-        }
-
-        List<CtClass> allClasses=CtUtils.getCtClasses(transformInvocation.inputs,classPool)
-        serviceMatchInjector.injectMatchCode(allClasses,jarFile)
     }
 
 

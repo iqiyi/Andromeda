@@ -36,7 +36,7 @@ import org.qiyi.video.svg.plugin.utils.JarUtils
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
-public class StubServiceMatchInjector {
+class StubServiceMatchInjector {
 
     private static final String STUB_SERVICE_MATCHER = "org.qiyi.video.svg.utils.StubServiceMatcher"
 
@@ -49,13 +49,13 @@ public class StubServiceMatchInjector {
 
     private IServiceGenerator serviceGenerator
 
-    private Map<String,String>matchedServices
+    private Map<String, String> matchedServices
     private boolean found = false
 
-    public StubServiceMatchInjector(ClassPool classPool, IServiceGenerator serviceGenerator, String rootDirPath) {
+    StubServiceMatchInjector(ClassPool classPool, IServiceGenerator serviceGenerator, String rootDirPath) {
         this.classPool = classPool
-        this.serviceGenerator=serviceGenerator
-        this.rootDirPath=rootDirPath
+        this.serviceGenerator = serviceGenerator
+        this.rootDirPath = rootDirPath
     }
 
     private void readMatchedServices(String dirPath, String fileName) {
@@ -74,7 +74,7 @@ public class StubServiceMatchInjector {
         while ((content = reader.readLine()) != null) {
             String[] matchKeyValues = content.split(",")
             if (matchKeyValues != null) {
-                println "read key:"+matchKeyValues[0]+",value:"+matchKeyValues[1]
+                println "read key:" + matchKeyValues[0] + ",value:" + matchKeyValues[1]
                 matchedServices.put(matchKeyValues[0], matchKeyValues[1])
             }
         }
@@ -82,7 +82,7 @@ public class StubServiceMatchInjector {
         ism.close()
     }
 
-    public void injectMatchCode(JarInput jarInput) {
+    void injectMatchCode(JarInput jarInput) {
         if (found) {
             return
         }
@@ -99,8 +99,6 @@ public class StubServiceMatchInjector {
                 JarEntry jarEntry = (JarEntry) enumeration.nextElement()
                 String entryName = jarEntry.getName()
 
-                //println "jarEntryName:"+entryName
-
                 if (entryName.endsWith(STUB_SERVICE_MATCHER_CLASS)) {
                     prepareInjectMatchCode(filePath)
                     found = true
@@ -113,15 +111,10 @@ public class StubServiceMatchInjector {
 
     private void prepareInjectMatchCode(String filePath) {
 
-        //filePath是类似../ServiceManager/StarBridge-Lib/build/intermediates/intermediate-jars/debug/classes.jar这样的路径
-        //TODO 但是遇到/Users/wangallen/.gradle/caches/transforms-1/files-1.1/core-0.9.3.aar/c57f58254c75aebebc28c22661fd8042/jars/classes.jar这样的，就会出现如下异常:
-        //TODO java.io.FileNotFoundException: /Users/wangallen/.gradle/caches/transforms-1/files-1.1/core-0.9.3.aar/c57f58254c75aebebc28c22661fd8042/jars/classes/org/qiyi (Not a directory)
-        println "StubServiceMatchInjector-->prepareInjectMatchCode,filePath:" + filePath
+        println "prepareInjectMatchCode"
 
         File jarFile = new File(filePath)
         String jarDir = jarFile.getParent() + File.separator + jarFile.getName().replace('.jar', '')
-
-        println "jarDir:"+jarDir
 
         //解压jar包，解压之后就是.class文件
         List<String> classNameList = JarUtils.unzipJar(filePath, jarDir)
@@ -148,10 +141,10 @@ public class StubServiceMatchInjector {
 
     }
 
-    private void fetchServiceInfo(){
-        matchedServices=serviceGenerator.getMatchServices()
+    private void fetchServiceInfo() {
+        matchedServices = serviceGenerator.getMatchServices()
         if (matchedServices == null) {
-            this.matchedServices=new HashMap<>()
+            this.matchedServices = new HashMap<>()
             readMatchedServices(rootDirPath + File.separator + StubServiceGenerator.MATCH_DIR, StubServiceGenerator.MATCH_FILE_NAME)
         }
     }
