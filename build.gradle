@@ -7,18 +7,21 @@ buildscript {
             'userName':USER_NAME,
             'groupId':GROUP_ID,
             'passWord':PASS_WORD,
-            'version_code':100,
-            'version_name':'1.0.0'
+            'version_code':105,
+            'version_name':'1.0.5'
     ]
 
     repositories {
         google()
         jcenter()
-        maven { url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'}
+        //maven { url 'http://maven.mbd.qiyi.domain/nexus/content/repositories/mcg-arch'}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'org.qiyi.video.svg:plugin:0.9.0'
+        classpath 'org.qiyi.video.svg:plugin:1.0.4'
+        //classpath "org.qiyi.video.svg:core:1.0.0"
+        //classpath "org.qiyi.video.svg:plugin:1.0.0"
+
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
         classpath 'com.novoda:bintray-release:0.8.1'

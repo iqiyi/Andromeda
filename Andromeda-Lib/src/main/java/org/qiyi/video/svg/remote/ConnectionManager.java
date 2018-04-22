@@ -71,7 +71,7 @@ public class ConnectionManager {
     }
 
     //这里不能按照serviceCanonicalName来区分，而是要按照target service来划分，如果targetService一样，那就没必要再绑定
-    public String bindAction(Context context, String serverProcessName) {
+    public synchronized String bindAction(Context context, String serverProcessName) {
         Logger.d("ConnectionManager-->bindAction,serverProcessName:" + serverProcessName);
         Intent intent = StubServiceMatcher.matchIntent(context, serverProcessName);
         if (null == intent) {

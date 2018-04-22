@@ -28,7 +28,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     api project(":moduleexportlib")
-    api project(':Andromeda-Lib')
+    //api project(':Andromeda-Lib')
+    implementation 'org.qiyi.video.svg:core:1.0.4'
 
     implementation 'com.android.support:appcompat-v7:26.0.2'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'

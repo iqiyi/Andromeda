@@ -41,7 +41,8 @@ public class DispatcherProvider extends ContentProvider {
 
     public static final String PROJECTION_MAIN[] = {"main"};
 
-    public static final Uri URI = Uri.parse("content://org.qiyi.video.svg.dispatcher/main");
+    //public static final Uri URI = Uri.parse("content://org.qiyi.video.svg.dispatcher/main");
+    public static final String URI_SUFFIX="qiyi.svg.dispatcher";
 
     @Override
     public boolean onCreate() {
