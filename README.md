@@ -1,7 +1,7 @@
 # Andromeda
 ![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
-![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.0.0-brightgreen.svg)
-![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.0.0-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.0.6-brightgreen.svg)
+![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.0.6-brightgreen.svg)
 
 Andromeda provides communication among modules for both local and remote service.
 
@@ -33,14 +33,13 @@ Comparsion between other communication solutions and Andromeda:
 
 
 # Download
-add classpath in buildscript(set version 1.0.0 as example):
+add classpath in buildscript(set version 1.0.6 as example):
 ```groovy
-    classpath "org.qiyi.video.svg:core:1.0.0"
-    classpath "org.qiyi.video.svg:plugin:1.0.0"
+    classpath "org.qiyi.video.svg:plugin:1.0.6"
 ```
 add core lib dependency in Application or library Module:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:1.0.0'
+    implementation 'org.qiyi.video.svg:core:1.0.6'
 ```
 apply gradle plugin in application Module:
 ```groovy

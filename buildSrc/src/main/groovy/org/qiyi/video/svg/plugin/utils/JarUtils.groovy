@@ -29,7 +29,7 @@ import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
-public class JarUtils{
+class JarUtils {
 
     /**
      * 将该jar包解压到指定目录
@@ -37,11 +37,7 @@ public class JarUtils{
      * @param destDirPath jar包解压后的保存路径
      * @return 返回该jar包中包含的所有class的完整类名类名集合，其中一条数据如：com.aitski.hotpatch.Xxxx.class
      */
-    public static List<String> unzipJar(String jarPath, String destDirPath) {
-
-        println "unzipJar,jarPath:"+jarPath
-        //destDirPath是类似/Users/wangallen/.gradle/caches/transforms-1/files-1.1/core-1.0.0.aar/aefa77754dcfc8fa3242883af2895cce/jars/classes这样的
-        println "unzipJar,destDirPath:"+destDirPath
+    static List<String> unzipJar(String jarPath, String destDirPath) {
 
         List<String> list = new ArrayList()
         if (jarPath.endsWith('.jar')) {
@@ -53,30 +49,21 @@ public class JarUtils{
                 if (jarEntry.directory) {
                     continue
                 }
-                if(jarEntry.isDirectory()){
+                if (jarEntry.isDirectory()) {
                     continue
                 }
                 String entryName = jarEntry.getName()
                 if (entryName.endsWith('.class')) {
                     String className = entryName.replace('\\', '.').replace('/', '.')
                     list.add(className)
-                }
-                else{
+                } else {
                     continue
                 }
 
                 String outFileName = destDirPath + "/" + entryName
 
-                println "entryName:"+entryName+",outFileName:"+outFileName
-
                 File outFile = new File(outFileName)
-
-                println "start to mkdirs()"
-                //TODO outFile.getParentFile()有可能不存在，对吧？这应该就是导致异常的原因
-                //TODO 比如entryName为"org/qiyi/video/svg/Andromeda.class",此时outFile.getParentFile()仅仅是对应到destDirPath+"/org/qiyi/video/svg/"这一级目录，然后实际上这一级之前的目录也都还没有创建。
-                boolean mkDirFlag=outFile.getParentFile().mkdirs()
-                println "mkDirFlag:"+mkDirFlag
-
+                outFile.getParentFile().mkdirs()
                 InputStream inputStream = jarFile.getInputStream(jarEntry)
                 FileOutputStream fileOutputStream = new FileOutputStream(outFile)
                 fileOutputStream << inputStream
@@ -93,16 +80,14 @@ public class JarUtils{
      * @param packagePath 将这个目录下的所有文件打包成jar
      * @param destPath 打包好的jar包的绝对路径
      */
-    public static void zipJar(String packagePath, String destPath) {
-
-        println "zipJar,packagePath:"+packagePath+",destPath:"+destPath
+    static void zipJar(String packagePath, String destPath) {
 
         File file = new File(packagePath)
         JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(destPath))
         file.eachFileRecurse { File f ->
             String entryName = f.getAbsolutePath().substring(packagePath.length() + 1)
             outputStream.putNextEntry(new ZipEntry(entryName))
-            if(!f.directory) {
+            if (!f.directory) {
                 InputStream inputStream = new FileInputStream(f)
                 outputStream << inputStream
                 inputStream.close()

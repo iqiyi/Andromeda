@@ -24,7 +24,7 @@
 */
 package org.qiyi.video.svg.plugin.manifest
 
-public interface IComponentReader {
+interface IComponentReader {
 
     void readActivities(Set<String> processNames)
 
