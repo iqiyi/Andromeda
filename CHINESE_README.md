@@ -32,14 +32,14 @@ Andromeda和其他组件间通信方案的对比如下:
 
 
 # 接入方式
-首先在buildscript中添加classpath(以1.0.6为例):
+首先在buildscript中添加classpath(请使用最新的版本名称来替换$version):
 ```groovy
-    classpath "org.qiyi.video.svg:plugin:1.0.6"
+    classpath "org.qiyi.video.svg:plugin:$version"
 ```
 这两个分别是核心代码库和gradle插件库的路径。
 在Application或library Module中使用核心库:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:1.0.6'
+    implementation 'org.qiyi.video.svg:core:$version'
 ```
 在application Module中使用gradle插件:
 ```groovy
