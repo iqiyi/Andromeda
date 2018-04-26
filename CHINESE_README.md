@@ -39,7 +39,7 @@ Andromeda和其他组件间通信方案的对比如下:
 这两个分别是核心代码库和gradle插件库的路径。
 在Application或library Module中使用核心库:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:$version'
+    implementation "org.qiyi.video.svg:core:$version"
 ```
 在application Module中使用gradle插件:
 ```groovy
