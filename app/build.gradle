@@ -33,6 +33,8 @@ dependencies {
     implementation 'com.android.support:design:26.0.2'
 
     implementation "org.qiyi.video.svg:core:$maven_config.build_version"
+    //implementation "org.qiyi.video.svg:core:1.0.6"
+
     //implementation project(":Andromeda-Plugin")
 
     implementation 'com.android.support:appcompat-v7:26.0.2'

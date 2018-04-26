@@ -39,6 +39,8 @@ class JarUtils {
      */
     static List<String> unzipJar(String jarPath, String destDirPath) {
 
+        println "unzipJar,jarPath:"+jarPath
+
         List<String> list = new ArrayList()
         if (jarPath.endsWith('.jar')) {
 
@@ -60,7 +62,8 @@ class JarUtils {
                     continue
                 }
 
-                String outFileName = destDirPath + "/" + entryName
+                String outFileName = destDirPath + File.separator + entryName
+                println "outFileName:"+outFileName
 
                 File outFile = new File(outFileName)
                 outFile.getParentFile().mkdirs()
@@ -82,10 +85,23 @@ class JarUtils {
      */
     static void zipJar(String packagePath, String destPath) {
 
+        println "zipJar,packagePath:"+packagePath+",destPath:"+destPath
+
         File file = new File(packagePath)
         JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(destPath))
         file.eachFileRecurse { File f ->
+
+            //println "f.getAbsolutePath():"+f.getAbsolutePath()
+
             String entryName = f.getAbsolutePath().substring(packagePath.length() + 1)
+            //println "before replace,entryName:"+entryName
+
+            entryName=entryName.replaceAll("\\\\","/")
+
+            //println "after replace,entryName:"+entryName
+
+            //println "entryName:"+entryName
+
             outputStream.putNextEntry(new ZipEntry(entryName))
             if (!f.directory) {
                 InputStream inputStream = new FileInputStream(f)
