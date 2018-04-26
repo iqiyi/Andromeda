@@ -33,13 +33,13 @@ Comparsion between other communication solutions and Andromeda:
 
 
 # Download
-add classpath in buildscript(set version 1.0.6 as example):
+add classpath in buildscript(replace $version with latest version name):
 ```groovy
-    classpath "org.qiyi.video.svg:plugin:1.0.6"
+    classpath "org.qiyi.video.svg:plugin:$version"
 ```
 add core lib dependency in Application or library Module:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:1.0.6'
+    implementation 'org.qiyi.video.svg:core:$version'
 ```
 apply gradle plugin in application Module:
 ```groovy
