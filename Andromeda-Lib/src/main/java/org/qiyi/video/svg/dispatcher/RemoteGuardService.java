@@ -32,7 +32,7 @@ import android.util.Log;
 
 public class RemoteGuardService extends Service {
 
-    private static final String TAG = "StarBridge";
+    private static final String TAG = "Andromeda";
 
     public static final String REMOTE_GUARD_SERIVCE_MODULE = "RemoteGuardServiceModule";
 

@@ -88,7 +88,7 @@ class StubServiceMatchInjector {
         }
 
         String filePath = jarInput.file.getAbsolutePath()
-
+        //TODO 不能直接用"/"而是要用File.seperator
         if (filePath.endsWith(".jar") && !filePath.contains("com.android.support")
                 && !filePath.contains("/com/android/support")) {
 
@@ -108,7 +108,7 @@ class StubServiceMatchInjector {
 
         }
     }
-
+    //TODO 这里其实有优化的空间，就是可以直接从内存进行zipJar操作，而不必先写入到文件，然后又从文件读出进行zipJar操作
     private void prepareInjectMatchCode(String filePath) {
 
         println "prepareInjectMatchCode"
