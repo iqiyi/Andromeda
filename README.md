@@ -39,7 +39,7 @@ add classpath in buildscript(replace $version with latest version name):
 ```
 add core lib dependency in Application or library Module:
 ```groovy
-    implementation 'org.qiyi.video.svg:core:$version'
+    implementation "org.qiyi.video.svg:core:$version"
 ```
 apply gradle plugin in application Module:
 ```groovy
