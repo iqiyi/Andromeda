@@ -57,7 +57,7 @@ public class RemoteGuardService extends Service {
                 IServiceRegister serviceRegister = IServiceRegister.Stub.asInterface(binderWrapper.getBinder());
                 if (serviceRegister != null) {
                     try {
-                        serviceRegister.registerRemoteService(REMOTE_GUARD_SERIVCE_MODULE,
+                        serviceRegister.registerRemoteServiceLocked(REMOTE_GUARD_SERIVCE_MODULE,
                                 ServiceDispatcher.getInstance(this).asBinder());
                     } catch (RemoteException ex) {
                         ex.printStackTrace();

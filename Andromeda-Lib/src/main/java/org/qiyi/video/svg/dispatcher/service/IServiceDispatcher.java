@@ -35,12 +35,12 @@ import org.qiyi.video.svg.bean.BinderBean;
 
 public interface IServiceDispatcher {
 
-    //IBinder getTargetBinder(String serviceCanonicalName) throws RemoteException;
-    BinderBean getTargetBinder(String serviceCanonicalName) throws RemoteException;
+    //IBinder getTargetBinderLocked(String serviceCanonicalName) throws RemoteException;
+    BinderBean getTargetBinderLocked(String serviceCanonicalName) throws RemoteException;
 
-    void registerRemoteService(String serviceCanonicalName, String processName, IBinder binder) throws RemoteException;
+    void registerRemoteServiceLocked(String serviceCanonicalName, String processName, IBinder binder) throws RemoteException;
 
-    //void unregisterRemoteService(String serviceCanonicalName) throws RemoteException;
-    void removeBinderCache(String serviceCanonicalName);
+    //void unregisterRemoteServiceLocked(String serviceCanonicalName) throws RemoteException;
+    void removeBinderCacheLocked(String serviceCanonicalName);
 
 }

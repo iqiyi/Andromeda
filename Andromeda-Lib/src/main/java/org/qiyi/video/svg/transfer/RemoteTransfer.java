@@ -1,27 +1,27 @@
 /*
-* Copyright (c) 2018-present, iQIYI, Inc. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*
-*        1. Redistributions of source code must retain the above copyright notice,
-*        this list of conditions and the following disclaimer.
-*
-*        2. Redistributions in binary form must reproduce the above copyright notice,
-*        this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-*        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived
-*        from this software without specific prior written permission.
-*
-*        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
-*        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-*        IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-*        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
-*        OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-*        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-*        EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*/
+ * Copyright (c) 2018-present, iQIYI, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ *        1. Redistributions of source code must retain the above copyright notice,
+ *        this list of conditions and the following disclaimer.
+ *
+ *        2. Redistributions in binary form must reproduce the above copyright notice,
+ *        this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ *        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived
+ *        from this software without specific prior written permission.
+ *
+ *        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ *        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *        IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+ *        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ *        OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *        OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ *        EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
 package org.qiyi.video.svg.transfer;
 
 import android.content.Context;
@@ -63,7 +63,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         getInstance().setContext(context);
 
         //如果是主进程就可以直接调用ServiceDispatcher
-        //getInstance().sendRegisterInfo();
+        getInstance().sendRegisterInfo();
     }
 
     public static RemoteTransfer getInstance() {
@@ -95,7 +95,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     //让ServiceDispatcher注册到当前进程
     public void sendRegisterInfo() {
-
         if (dispatcherProxy == null) {
             //后面考虑还是采用"has-a"的方式会更好
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
@@ -144,8 +143,8 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
     }
 
-    private Uri getDispatcherProviderUri(){
-        return Uri.parse("content://"+context.getPackageName()+"."+DispatcherProvider.URI_SUFFIX+"/main");
+    private Uri getDispatcherProviderUri() {
+        return Uri.parse("content://" + context.getPackageName() + "." + DispatcherProvider.URI_SUFFIX + "/main");
     }
 
     private IBinder getIBinderFromProvider() {
@@ -166,7 +165,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     @Override
     public synchronized void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
-        serviceTransfer.registerStubService(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);
+        serviceTransfer.registerStubServiceLocked(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);
     }
 
     /**
@@ -177,24 +176,24 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
      */
     @Override
     public synchronized void unregisterStubService(String serviceCanonicalName) {
-        serviceTransfer.unregisterStubService(serviceCanonicalName, context, dispatcherProxy);
+        serviceTransfer.unregisterStubServiceLocked(serviceCanonicalName, context, dispatcherProxy);
     }
 
     ///////////////start of event/////////////////////
 
     @Override
     public synchronized void subscribeEvent(String name, EventListener listener) {
-        eventTransfer.subscribeEvent(name, listener);
+        eventTransfer.subscribeEventLocked(name, listener);
     }
 
     @Override
     public synchronized void unsubscribeEvent(EventListener listener) {
-        eventTransfer.unsubscribeEvent(listener);
+        eventTransfer.unsubscribeEventLocked(listener);
     }
 
     @Override
     public synchronized void publish(Event event) {
-        eventTransfer.publish(event, dispatcherProxy, this, context);
+        eventTransfer.publishLocked(event, dispatcherProxy, this, context);
     }
 
     ////////////////end of event///////////////////////////
@@ -207,27 +206,32 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             @Override
             public void binderDied() {
                 Logger.d("RemoteTransfer-->dispatcherBinder binderDied");
-                dispatcherProxy = null;
+                resetDispatcherProxy();
             }
         }, 0);
         dispatcherProxy = IDispatcher.Stub.asInterface(dispatcherBinder);
         notifyAll();
     }
 
+    private synchronized void resetDispatcherProxy() {
+        dispatcherProxy = null;
+    }
+
     /**
      * 接收到来自Dispatcher的通知，如果本地有相应的IBinder,就要清除
+     *
      * @param serviceCanonicalName
      * @throws RemoteException
      */
     @Override
     public synchronized void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
-        Logger.d("RemoteTransfer-->unregisterRemoteService,pid:" + android.os.Process.myPid() + ",serviceName:" + serviceCanonicalName);
-        serviceTransfer.clearRemoteBinderCache(serviceCanonicalName);
+        Logger.d("RemoteTransfer-->unregisterRemoteServiceLocked,pid:" + android.os.Process.myPid() + ",serviceName:" + serviceCanonicalName);
+        serviceTransfer.clearRemoteBinderCacheLocked(serviceCanonicalName);
     }
 
     @Override
     public synchronized void notify(Event event) throws RemoteException {
-        eventTransfer.notify(event);
+        eventTransfer.notifyLocked(event);
     }
 
 }

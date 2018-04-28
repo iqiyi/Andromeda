@@ -53,8 +53,8 @@ public class ServiceDispatcher implements IServiceDispatcher {
     private Map<String, BinderBean> remoteBinderCache = new ConcurrentHashMap<>();
 
     @Override
-    public BinderBean getTargetBinder(String serviceCanonicalName) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->getTargetBinder,serivceName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+    public BinderBean getTargetBinderLocked(String serviceCanonicalName) throws RemoteException {
+        Log.d(TAG, "ServiceDispatcher-->getTargetBinderLocked,serivceName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         BinderBean bean = remoteBinderCache.get(serviceCanonicalName);
         if (null == bean) {
             return null;
@@ -64,29 +64,30 @@ public class ServiceDispatcher implements IServiceDispatcher {
     }
 
     @Override
-    public void registerRemoteService(final String serviceCanonicalName, String processName,
-                                      IBinder binder) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->registerStubService,serviceCanonicalName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+    public void registerRemoteServiceLocked(final String serviceCanonicalName, String processName,
+                                            IBinder binder) throws RemoteException {
+        Log.d(TAG, "ServiceDispatcher-->registerStubServiceLocked,serviceCanonicalName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         if (binder != null) {
             binder.linkToDeath(new IBinder.DeathRecipient() {
                 @Override
                 public void binderDied() {
                     Logger.d("ServiceDispatcher-->binderDied,serviceCanonicalName:" + serviceCanonicalName);
                     BinderBean bean = remoteBinderCache.remove(serviceCanonicalName);
+                    //实际上这里是还没实现线程同步，但是并不会影响执行结果，所以其实下面这句就没有同步的必要。
                     if (bean != null) {
                         emergencyHandler.handleBinderDied(Andromeda.getAppContext(), bean.getProcessName());
                     }
                 }
             }, 0);
             remoteBinderCache.put(serviceCanonicalName, new BinderBean(binder, processName));
-            Logger.d("ServiceDispatcher-->registerRemoteService(),binder is not null");
+            Logger.d("ServiceDispatcher-->registerRemoteServiceLocked(),binder is not null");
         } else {
-            Log.d(TAG, "ServiceDispatcher-->registerRemoteService(),binder is null");
+            Log.d(TAG, "ServiceDispatcher-->registerRemoteServiceLocked(),binder is null");
         }
     }
 
     @Override
-    public void removeBinderCache(String serviceCanonicalName) {
+    public void removeBinderCacheLocked(String serviceCanonicalName) {
         remoteBinderCache.remove(serviceCanonicalName);
     }
 }

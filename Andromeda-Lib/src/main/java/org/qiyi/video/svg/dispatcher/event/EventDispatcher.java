@@ -43,8 +43,8 @@ public class EventDispatcher implements IEventDispatcher {
     private Map<Integer, IBinder> transferBinders = new ConcurrentHashMap<>();
 
     @Override
-    public void registerRemoteTransfer(final int pid, IBinder transferBinder) {
-        Logger.d("EventDispatcher-->registerRemoteTransfer,pid:" + pid);
+    public void registerRemoteTransferLocked(final int pid, IBinder transferBinder) {
+        Logger.d("EventDispatcher-->registerRemoteTransferLocked,pid:" + pid);
         if (transferBinder == null) {
             return;
         }
@@ -64,8 +64,8 @@ public class EventDispatcher implements IEventDispatcher {
     }
 
     @Override
-    public void publish(Event event) throws RemoteException {
-        Logger.d("EventDispatcher-->publish,event.name:" + event.getName());
+    public void publishLocked(Event event) throws RemoteException {
+        Logger.d("EventDispatcher-->publishLocked,event.name:" + event.getName());
         RemoteException ex = null;
         for (Map.Entry<Integer, IBinder> entry : transferBinders.entrySet()) {
             IRemoteTransfer transfer = IRemoteTransfer.Stub.asInterface(entry.getValue());
@@ -79,7 +79,6 @@ public class EventDispatcher implements IEventDispatcher {
                 }
             }
         }
-
         if (null != ex) {
             throw ex;
         }
@@ -87,8 +86,8 @@ public class EventDispatcher implements IEventDispatcher {
     }
 
     @Override
-    public void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
-        Logger.d("EventDispatcher-->unregisterRemoteService,serviceCanonicalName:" + serviceCanonicalName);
+    public void unregisterRemoteServiceLocked(String serviceCanonicalName) throws RemoteException {
+        Logger.d("EventDispatcher-->unregisterRemoteServiceLocked,serviceCanonicalName:" + serviceCanonicalName);
         RemoteException e = null;
         for (Map.Entry<Integer, IBinder> entry : transferBinders.entrySet()) {
             IRemoteTransfer transfer = IRemoteTransfer.Stub.asInterface(entry.getValue());

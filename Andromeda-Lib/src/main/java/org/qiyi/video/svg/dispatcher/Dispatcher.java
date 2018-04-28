@@ -26,7 +26,6 @@ package org.qiyi.video.svg.dispatcher;
 
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.text.TextUtils;
 
 import org.qiyi.video.svg.IDispatcher;
 import org.qiyi.video.svg.bean.BinderBean;
@@ -70,13 +69,13 @@ public class Dispatcher extends IDispatcher.Stub {
         if (pid < 0) {
             return;
         }
-        eventDispatcher.registerRemoteTransfer(pid, transferBinder);
+        eventDispatcher.registerRemoteTransferLocked(pid, transferBinder);
     }
 
 
     @Override
     public synchronized BinderBean getTargetBinder(String serviceCanonicalName) throws RemoteException {
-        return serviceDispatcher.getTargetBinder(serviceCanonicalName);
+        return serviceDispatcher.getTargetBinderLocked(serviceCanonicalName);
     }
 
     @Override
@@ -87,19 +86,19 @@ public class Dispatcher extends IDispatcher.Stub {
 
     @Override
     public synchronized void registerRemoteService(String serviceCanonicalName, String processName, IBinder binder) throws RemoteException {
-        serviceDispatcher.registerRemoteService(serviceCanonicalName, processName, binder);
+        serviceDispatcher.registerRemoteServiceLocked(serviceCanonicalName, processName, binder);
     }
 
     @Override
     public synchronized void unregisterRemoteService(String serviceCanonicalName) throws RemoteException {
-        serviceDispatcher.removeBinderCache(serviceCanonicalName);
+        serviceDispatcher.removeBinderCacheLocked(serviceCanonicalName);
         //然后让EventDispatcher通知各个进程清除缓存
-        eventDispatcher.unregisterRemoteService(serviceCanonicalName);
+        eventDispatcher.unregisterRemoteServiceLocked(serviceCanonicalName);
     }
 
     @Override
     public synchronized void publish(Event event) throws RemoteException {
-        eventDispatcher.publish(event);
+        eventDispatcher.publishLocked(event);
     }
 
 }

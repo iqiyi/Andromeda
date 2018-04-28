@@ -7,7 +7,7 @@ import org.qiyi.video.svg.bean.BinderBean;
 interface IDispatcher {
 
    BinderBean getTargetBinder(String serviceCanonicalName);
-   //IBinder getTargetBinder(String serviceCanonicalName);
+   //IBinder getTargetBinderLocked(String serviceCanonicalName);
    //这个uri其实就是Target Service的action
    IBinder fetchTargetBinder(String uri);
 
