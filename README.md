@@ -1,7 +1,7 @@
 # Andromeda
 ![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
-![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.1.0-brightgreen.svg)
-![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.1.0-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.1.1-brightgreen.svg)
+![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.1.1-brightgreen.svg)
 
 Andromeda provides communication among modules for both local and remote service.
 

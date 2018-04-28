@@ -35,9 +35,9 @@ import org.qiyi.video.svg.event.Event;
 
 public interface IEventDispatcher {
 
-    void registerRemoteTransfer(int pid, IBinder transferBinder);
+    void registerRemoteTransferLocked(int pid, IBinder transferBinder);
 
-    void publish(Event event) throws RemoteException;
+    void publishLocked(Event event) throws RemoteException;
 
-    void unregisterRemoteService(String serviceCanonicalName) throws RemoteException;
+    void unregisterRemoteServiceLocked(String serviceCanonicalName) throws RemoteException;
 }

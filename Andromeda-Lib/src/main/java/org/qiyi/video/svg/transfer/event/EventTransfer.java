@@ -53,7 +53,7 @@ public class EventTransfer {
 
     private Map<String, List<WeakReference<EventListener>>> eventListeners = new HashMap<>();
 
-    public void subscribeEvent(String name, EventListener listener) {
+    public void subscribeEventLocked(String name, EventListener listener) {
         Logger.d("RemoteTransfer-->subscribe,name:" + name);
         if (TextUtils.isEmpty(name) || listener == null) {
             return;
@@ -65,7 +65,7 @@ public class EventTransfer {
         eventListeners.get(name).add(new WeakReference<>(listener));
     }
 
-    public void unsubscribeEvent(EventListener listener) {
+    public void unsubscribeEventLocked(EventListener listener) {
         for (Map.Entry<String, List<WeakReference<EventListener>>> entry : eventListeners.entrySet()) {
             List<WeakReference<EventListener>> listeners = entry.getValue();
             for (WeakReference<EventListener> weakRef : listeners) {
@@ -77,8 +77,8 @@ public class EventTransfer {
         }
     }
 
-    public void publish(Event event, IDispatcher dispatcherProxy, IRemoteTransfer.Stub stub, Context context) {
-        Logger.d("EventTransfer-->publish,event.name:" + event.getName());
+    public void publishLocked(Event event, IDispatcher dispatcherProxy, IRemoteTransfer.Stub stub, Context context) {
+        Logger.d("EventTransfer-->publishLocked,event.name:" + event.getName());
         if (null == dispatcherProxy) {
             BinderWrapper wrapper = new BinderWrapper(stub.asBinder());
             Intent intent = new Intent(context, DispatcherService.class);
@@ -96,8 +96,8 @@ public class EventTransfer {
         }
     }
 
-    public void notify(Event event) {
-        Logger.d("EventTransfer-->notify,pid:" + android.os.Process.myPid() + ",event.name:" + event.getName());
+    public void notifyLocked(Event event) {
+        Logger.d("EventTransfer-->notifyLocked,pid:" + android.os.Process.myPid() + ",event.name:" + event.getName());
         List<WeakReference<EventListener>> listeners = eventListeners.get(event.getName());
         if (listeners == null) {
             return;

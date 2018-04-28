@@ -55,8 +55,8 @@ public class RemoteServiceTransfer {
 
     private Map<String, BinderBean> remoteBinderCache = new ConcurrentHashMap<>();
 
-    public void registerStubService(String serviceCanonicalName, IBinder stubBinder,
-                                    Context context, IDispatcher dispatcherProxy, IRemoteTransfer.Stub stub) {
+    public void registerStubServiceLocked(String serviceCanonicalName, IBinder stubBinder,
+                                          Context context, IDispatcher dispatcherProxy, IRemoteTransfer.Stub stub) {
         stubBinderCache.put(serviceCanonicalName, stubBinder);
         if (dispatcherProxy == null) {
             BinderWrapper wrapper = new BinderWrapper(stub.asBinder());
@@ -90,7 +90,7 @@ public class RemoteServiceTransfer {
      * @param context
      * @param dispatcherProxy
      */
-    public void unregisterStubService(String serviceCanonicalName, Context context, IDispatcher dispatcherProxy) {
+    public void unregisterStubServiceLocked(String serviceCanonicalName, Context context, IDispatcher dispatcherProxy) {
         //第一步，清除本地的缓存
         clearStubBinderCache(serviceCanonicalName);
         //第二步，通知Dispatcher,然后让Dispatcher通知各进程
@@ -144,7 +144,6 @@ public class RemoteServiceTransfer {
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }
-
         return null;
     }
 
@@ -157,7 +156,7 @@ public class RemoteServiceTransfer {
         stubBinderCache.remove(serviceName);
     }
 
-    public void clearRemoteBinderCache(String serviceName) {
+    public void clearRemoteBinderCacheLocked(String serviceName) {
         remoteBinderCache.remove(serviceName);
     }
 
