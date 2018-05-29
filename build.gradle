@@ -7,9 +7,10 @@ buildscript {
             'userName':USER_NAME,
             'groupId':GROUP_ID,
             'passWord':PASS_WORD,
-            'version_code':111,
-            'version_name':'1.1.1',
-            'build_version':'1.1.0'
+            'version_code':112,
+            'version_name':'1.1.2',
+            'core_build_version':'1.1.2',
+            'plugin_build_version':'1.1.1'
     ]
 
     repositories {
@@ -18,7 +19,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath "org.qiyi.video.svg:plugin:$maven_config.build_version"
+        classpath "org.qiyi.video.svg:plugin:$maven_config.plugin_build_version"
 
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'

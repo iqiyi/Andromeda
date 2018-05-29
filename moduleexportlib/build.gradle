@@ -64,7 +64,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //compile project(':Andromeda-Lib')
-    implementation "org.qiyi.video.svg:core:$maven_config.build_version"
+    implementation "org.qiyi.video.svg:core:$maven_config.core_build_version"
 
 
     compileOnly 'com.android.support:appcompat-v7:26.0.2'
