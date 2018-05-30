@@ -1,6 +1,6 @@
 # Andromeda
 ![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
-![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.1.1-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20Core-1.1.2-brightgreen.svg)
 ![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.1.1-brightgreen.svg)
 
 Andromeda提供了接口式的组件间通信管理，包括同进程的本地接口调用和跨进程接口调用。
@@ -24,11 +24,11 @@ Andromeda提供了接口式的组件间通信管理，包括同进程的本地�
 
 Andromeda和其他组件间通信方案的对比如下:
 
-|       |    使用方便性     | 代码侵入性  |   互操作性    |  是否支持IPC   |  是否支持跨进程事件总线  |  是否支持页面跳转  |
-| :---: | :-------: | :----------: |:----------: |:----------: |:----------: |:----------: |
-| Andromeda |  好     |   较小     |    好    |    Yes    |   Yes    |   No     |
-| DDComponentForAndroid |  较差      |   较大     |    差    |   No     |   No    |   Yes     |
-| ARouter |  较好      |   较大     |    差    |   No     |   No    |    Yes    |
+|                            | 易用性  | IPC性能 | 支持IPC | 支持跨进程事件总线 | 支持IPC Callback |
+| :------------------------: | :--: | :---: | :---: | :-------: | :------------: |
+|         Andromeda          |  好   |   高   |  Yes  |    Yes    |      Yes       |
+|   DDComponentForAndroid    |  较差  |  --   |  No   |    No     |       No       |
+| ModularizationArchitecture |  较差  |   低   |  Yes  |    No     |       No       |
 
 
 # 接入方式
@@ -312,6 +312,11 @@ Andromeda中Event的定义如下:
 ```
 # License
 BSD-3-Clause. See the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) file for details.
+
+# 交流
+Andromeda交流QQ群号是640539737, 二维码如下:
+
+![QQ_group](https://github.com/iqiyi/Andromeda/blob/master/res/qq_group.png)
 
 # 支持
 1. Sample代码
