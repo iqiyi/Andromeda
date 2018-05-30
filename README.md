@@ -1,6 +1,6 @@
 # Andromeda
 ![Andromeda_license](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)
-![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20core-1.1.1-brightgreen.svg)
+![Andromeda_core_tag](https://img.shields.io/badge/Andromeda%20Core-1.1.2-brightgreen.svg)
 ![Andromeda_plugin_tag](https://img.shields.io/badge/Andromeda%20plugin-1.1.1-brightgreen.svg)
 
 Andromeda provides communication among modules for both local and remote service.
@@ -25,12 +25,11 @@ Andromeda provides communication among modules for both local and remote service
 
 Comparsion between other communication solutions and Andromeda:
 
-|       |    convenience     | code invasion  |   interoperability    |  IPC   |  event bus  |  page router  |
-| :---: | :-------: | :----------: |:----------: |:----------: |:----------: |:----------: |
-| Andromeda |  good     |   none     |    good    |    Yes    |   Yes    |   No     |
-| DDComponentForAndroid |  bad      |   some     |    bad    |   No     |   No    |   Yes     |
-| ARouter |  good      |   some     |    bad    |   No     |   No    |    Yes    |
-
+|                            | Convenience  | IPC efficiency | IPC | IPC EventBus | IPC Callback |
+| :------------------------: | :--: | :---: | :---: | :-------: | :------------: |
+|         Andromeda          |  good   |   high   |  Yes  |    Yes    |      Yes       |
+|   DDComponentForAndroid    |  normal  |  --   |  No   |    No     |       No       |
+| ModularizationArchitecture |  normal  |   low   |  Yes  |    No     |       No       |
 
 # Download
 add classpath in buildscript(replace $version with latest version name):
@@ -308,7 +307,14 @@ MainActivity shows details of how to subscribe and publish event.
 # License
 BSD-3-Clause. See the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) file for details.
 
+
+# Contact
+QQ group number is 640539737, and its qr code is as follows:
+
+![QQ_group](https://github.com/iqiyi/Andromeda/blob/master/res/qq_group.png)
+
 # Support
 1. Sample codes
 2. Wiki and FAQs
 3. contact bettarwang@gmail.com
+
