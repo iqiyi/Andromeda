@@ -2,6 +2,7 @@ package wang.imallen.blog.servicemanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,6 +23,7 @@ import wang.imallen.blog.cherrymodule.CherryActivity;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
 import wang.imallen.blog.servicemanager.lifecycle.LifecycleTestActivity;
+import wang.imallen.blog.servicemanager.utils.ToastUtils;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
 
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Logger.d("main process pid:"+android.os.Process.myPid());
 
         findViewById(R.id.showLocalServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 //订阅事件
-                Andromeda.getInstance().subscribe(EventConstants.APPLE_EVENT, MainActivity.this);
+                Andromeda.subscribe(EventConstants.APPLE_EVENT, MainActivity.this);
             }
         });
 
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("Result", "gave u five apples!");
-                Andromeda.getInstance().publish(new Event(EventConstants.APPLE_EVENT, bundle));
+                Andromeda.publish(new Event(EventConstants.APPLE_EVENT, bundle));
             }
         });
 
@@ -83,18 +87,27 @@ public class MainActivity extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 //取消订阅
-                Andromeda.getInstance().unsubscribe(MainActivity.this);
+                Andromeda.unsubscribe(MainActivity.this);
             }
         });
 
-
+        //TODO 这个测试需要改进，就是如果服务还没注册，需要提醒用户!
         findViewById(R.id.lifecycleTestBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!checkRegister()) {
+                    ToastUtils.showShortToast("Please make sure you have register remote service before do lifecycle test!");
+                    return;
+                }
                 startActivity(new Intent(MainActivity.this, LifecycleTestActivity.class));
             }
         });
 
+    }
+
+    private boolean checkRegister() {
+        IBinder binder = Andromeda.with(this).getRemoteService(IBuyApple.class);
+        return binder != null;
     }
 
     @Override
@@ -102,10 +115,10 @@ public class MainActivity extends AppCompatActivity implements EventListener {
         super.onStart();
     }
 
+    //TODO 注意:这个回调是在binder线程中!后续版本引入指定的threadMode!
     @Override
     public void onNotify(Event event) {
         String name = event.getName();
-        Toast.makeText(this, "get event whose name is " + name, Toast.LENGTH_SHORT).show();
         Logger.d("MainActivity-->event name:" + name);
         if (event.getData() == null) {
             return;
