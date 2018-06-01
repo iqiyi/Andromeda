@@ -7,6 +7,8 @@ import android.content.Context;
 import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.log.Logger;
 
+import wang.imallen.blog.servicemanager.utils.ToastUtils;
+
 /**
  * Created by wangallen on 2018/1/8.
  */
@@ -17,6 +19,9 @@ public class CustomApp extends Application {
     public void onCreate() {
         Logger.d("CustomApp-->onCreate(),pid:" + android.os.Process.myPid() + ",processName:" + getCurrentProcessName());
         super.onCreate();
+
+        ToastUtils.init(this);
+
         Andromeda.init(this);
     }
 

@@ -25,7 +25,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.registerRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Andromeda.getInstance().registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance());
+                Andromeda.registerRemoteService(IBuyApple.class, BuyAppleImpl.getInstance());
                 Toast.makeText(RemoteServiceDemo.this, "just registered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });
@@ -40,7 +40,7 @@ public class RemoteServiceDemo extends AppCompatActivity {
         findViewById(R.id.unregisterRemoteServiceBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Andromeda.getInstance().unregisterRemoteService(IBuyApple.class);
+                Andromeda.unregisterRemoteService(IBuyApple.class);
                 Toast.makeText(RemoteServiceDemo.this, "just unregistered remote service for IBuyApple interface", Toast.LENGTH_SHORT).show();
             }
         });

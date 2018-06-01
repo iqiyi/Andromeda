@@ -113,8 +113,7 @@ public class RemoteManagerRetriever implements IRemoteManagerRetriever, Handler.
         SupportRemoteManagerFragment current = getSupportRemoteManagerFragment(fm, parentHint, isParentVisible);
         IRemoteManager remoteManager = current.getRemoteManager();
         if (remoteManager == null) {
-            remoteManager = new RemoteManager(context.getApplicationContext(), current.getLifecycle(),
-                    current.getRemoteManagerTreeNode());
+            remoteManager = new RemoteManager(context.getApplicationContext(), current.getLifecycle());
             current.setRemoteManager(remoteManager);
         }
         return remoteManager;
@@ -125,8 +124,7 @@ public class RemoteManagerRetriever implements IRemoteManagerRetriever, Handler.
         RemoteManagerFragment current = getRemoteManagerFragment(fm, parentHint, isParentVisible);
         IRemoteManager remoteManager = current.getRemoteManager();
         if (remoteManager == null) {
-            remoteManager = new RemoteManager(context.getApplicationContext(), current.getLifecycle(),
-                    current.getRemoteManagerTreeNode());
+            remoteManager = new RemoteManager(context.getApplicationContext(), current.getLifecycle());
             current.setRemoteManager(remoteManager);
         }
         return remoteManager;
@@ -234,7 +232,7 @@ public class RemoteManagerRetriever implements IRemoteManagerRetriever, Handler.
             synchronized (this) {
                 if (applicationManager == null) {
                     applicationManager = new RemoteManager(context.getApplicationContext(),
-                            new ApplicationLifecycle(), new EmptyRemoteManagerTreeNode());
+                            new ApplicationLifecycle());
                 }
             }
         }

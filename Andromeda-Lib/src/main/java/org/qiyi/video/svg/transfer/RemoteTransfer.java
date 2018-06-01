@@ -94,7 +94,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     }
 
     //让ServiceDispatcher注册到当前进程
-    public void sendRegisterInfo() {
+    private synchronized void sendRegisterInfo() {
         if (dispatcherProxy == null) {
             //后面考虑还是采用"has-a"的方式会更好
             BinderWrapper wrapper = new BinderWrapper(this.asBinder());
