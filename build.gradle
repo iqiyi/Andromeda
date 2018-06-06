@@ -7,9 +7,9 @@ buildscript {
             'userName':USER_NAME,
             'groupId':GROUP_ID,
             'passWord':PASS_WORD,
-            'version_code':115,
-            'version_name':'1.1.5',
-            'core_build_version':'1.1.5',
+            'version_code':116,
+            'version_name':'1.1.6',
+            'core_build_version':'1.1.6',
             'plugin_build_version':'1.1.1'
     ]
 
