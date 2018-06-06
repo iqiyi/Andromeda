@@ -12,7 +12,7 @@ import android.widget.Toast;
 public class ToastUtil {
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public static void toast(final Context context, final String str) {
+    public static void postToast(final Context context, final String str) {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {

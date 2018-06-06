@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     @Override
     public void onNotify(Event event) {
         String name = event.getName();
-        ToastUtil.toast(this, "get event whose name is " + name);
+        ToastUtil.postToast(this, "get event whose name is " + name);
         Logger.d("MainActivity-->event name:" + name);
         if (event.getData() == null) {
             return;
