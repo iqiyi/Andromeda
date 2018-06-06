@@ -69,7 +69,7 @@ public class EventTransfer {
         for (Map.Entry<String, List<WeakReference<EventListener>>> entry : eventListeners.entrySet()) {
             List<WeakReference<EventListener>> listeners = entry.getValue();
             for (WeakReference<EventListener> weakRef : listeners) {
-                if (listener == weakRef) {
+                if (listener == weakRef.get()) {
                     listeners.remove(weakRef);
                     break;
                 }

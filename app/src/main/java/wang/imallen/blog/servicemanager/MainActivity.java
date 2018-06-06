@@ -7,7 +7,6 @@ import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import org.qiyi.video.svg.Andromeda;
 import org.qiyi.video.svg.IPCCallback;
@@ -23,6 +22,7 @@ import wang.imallen.blog.cherrymodule.CherryActivity;
 import wang.imallen.blog.moduleexportlib.apple.IBuyApple;
 import wang.imallen.blog.moduleexportlib.event.EventConstants;
 import wang.imallen.blog.servicemanager.lifecycle.LifecycleTestActivity;
+import wang.imallen.blog.servicemanager.utils.ToastUtil;
 import wang.imallen.blog.servicemanager.utils.ToastUtils;
 
 public class MainActivity extends AppCompatActivity implements EventListener {
@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements EventListener {
     @Override
     public void onNotify(Event event) {
         String name = event.getName();
+        ToastUtil.toast(this, "get event whose name is " + name);
         Logger.d("MainActivity-->event name:" + name);
         if (event.getData() == null) {
             return;
