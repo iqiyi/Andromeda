@@ -63,9 +63,8 @@ uploadArchives{
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //compile project(':Andromeda-Lib')
+    //api project(':Andromeda-Lib')
     api "org.qiyi.video.svg:core:$maven_config.core_build_version"
-
 
     compileOnly 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'

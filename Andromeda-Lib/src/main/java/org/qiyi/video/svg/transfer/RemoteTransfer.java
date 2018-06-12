@@ -62,7 +62,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
     public static void init(Context context) {
         getInstance().setContext(context);
 
-        //如果是主进程就可以直接调用ServiceDispatcher
         getInstance().sendRegisterInfo();
     }
 
@@ -93,7 +92,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         this.context = context;
     }
 
-    //让ServiceDispatcher注册到当前进程
+    //让ServiceDispatcher反向注册到当前进程
     private synchronized void sendRegisterInfo() {
         if (dispatcherProxy == null) {
             //后面考虑还是采用"has-a"的方式会更好
@@ -106,13 +105,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         }
     }
 
-    @Override
-    public synchronized BinderBean getRemoteServiceBean(String serviceCanonicalName) {
-        Logger.d("RemoteTransfer-->getRemoteServiceBean,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
-        BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceCanonicalName);
-        if (cacheBinderBean != null) {
-            return cacheBinderBean;
-        }
+    private void initDispatchProxyLocked() {
         if (null == dispatcherProxy) {
             IBinder dispatcherBinder = getIBinderFromProvider();
             if (null != dispatcherBinder) {
@@ -126,9 +119,20 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
             try {
                 wait(MAX_WAIT_TIME);
             } catch (InterruptedException ex) {
+                Logger.e("Attention! Wait out of time!");
                 ex.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public synchronized BinderBean getRemoteServiceBean(String serviceCanonicalName) {
+        Logger.d("RemoteTransfer-->getRemoteServiceBean,pid=" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+        BinderBean cacheBinderBean = serviceTransfer.getIBinderFromCache(context, serviceCanonicalName);
+        if (cacheBinderBean != null) {
+            return cacheBinderBean;
+        }
+        initDispatchProxyLocked();
         if (serviceTransfer == null || dispatcherProxy == null) {
             return null;
         }
@@ -151,7 +155,6 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
         Logger.d("RemoteTransfer-->getIBinderFromProvider()");
         Cursor cursor = null;
         try {
-
             cursor = context.getContentResolver().query(getDispatcherProviderUri(), DispatcherProvider.PROJECTION_MAIN,
                     null, null, null);
             if (cursor == null) {
@@ -165,6 +168,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     @Override
     public synchronized void registerStubService(String serviceCanonicalName, IBinder stubBinder) {
+        initDispatchProxyLocked();
         serviceTransfer.registerStubServiceLocked(serviceCanonicalName, stubBinder, context, dispatcherProxy, this);
     }
 
@@ -176,6 +180,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
      */
     @Override
     public synchronized void unregisterStubService(String serviceCanonicalName) {
+        initDispatchProxyLocked();
         serviceTransfer.unregisterStubServiceLocked(serviceCanonicalName, context, dispatcherProxy);
     }
 
@@ -193,6 +198,7 @@ public class RemoteTransfer extends IRemoteTransfer.Stub implements IRemoteServi
 
     @Override
     public synchronized void publish(Event event) {
+        initDispatchProxyLocked();
         eventTransfer.publishLocked(event, dispatcherProxy, this, context);
     }
 

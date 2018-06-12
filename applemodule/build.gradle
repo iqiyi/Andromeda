@@ -28,8 +28,6 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
     api project(":moduleexportlib")
-    //api project(':Andromeda-Lib')
-    //implementation "org.qiyi.video.svg:core:$maven_config.core_build_version"
 
     implementation 'com.android.support:appcompat-v7:26.0.2'
     testImplementation 'junit:junit:4.12'
