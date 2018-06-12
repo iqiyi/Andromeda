@@ -101,7 +101,7 @@ public class EventTransfer {
         Logger.d("EventTransfer-->notifyLocked,pid:" + android.os.Process.myPid() + ",event.name:" + event.getName());
         List<WeakReference<EventListener>> listeners = eventListeners.get(event.getName());
         if (listeners == null) {
-            Logger.d("There is no listeners for " + event.getName()+ " in pid "+android.os.Process.myPid());
+            Logger.d("There is no listeners for " + event.getName() + " in pid " + android.os.Process.myPid());
             return;
         }
         for (int i = listeners.size() - 1; i >= 0; --i) {

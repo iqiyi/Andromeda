@@ -66,7 +66,7 @@ public class ServiceDispatcher implements IServiceDispatcher {
     @Override
     public void registerRemoteServiceLocked(final String serviceCanonicalName, String processName,
                                             IBinder binder) throws RemoteException {
-        Log.d(TAG, "ServiceDispatcher-->registerStubServiceLocked,serviceCanonicalName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
+        Log.d(TAG, "ServiceDispatcher-->registerRemoteServiceLocked,serviceCanonicalName:" + serviceCanonicalName + ",pid:" + android.os.Process.myPid() + ",thread:" + Thread.currentThread().getName());
         if (binder != null) {
             binder.linkToDeath(new IBinder.DeathRecipient() {
                 @Override
