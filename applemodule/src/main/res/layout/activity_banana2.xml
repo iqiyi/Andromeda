@@ -19,11 +19,5 @@
         android:textAllCaps="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/gotoBanana2Btn"
-        android:text="跳转到:banana进程的另一个Activity使用同一个服务"
-        android:textAllCaps="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>

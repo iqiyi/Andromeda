@@ -40,7 +40,9 @@ import org.qiyi.video.svg.remote.IRemoteManager;
 import org.qiyi.video.svg.remote.RemoteManagerRetriever;
 import org.qiyi.video.svg.transfer.RemoteTransfer;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -212,7 +214,7 @@ public class Andromeda {
         if (TextUtils.isEmpty(serviceCanonicalName)) {
             return;
         }
-        Set<String> serviceNames = new HashSet<>();
+        List<String> serviceNames = new ArrayList<>();
         serviceNames.add(serviceCanonicalName);
         ConnectionManager.getInstance().unbindAction(appContext, serviceNames);
     }
@@ -221,7 +223,7 @@ public class Andromeda {
         if (null == serviceClasses || serviceClasses.size() < 1) {
             return;
         }
-        Set<String> serviceNames = new HashSet<>();
+        List<String> serviceNames = new ArrayList<>();
         for (Class<?> clazz : serviceClasses) {
             serviceNames.add(clazz.getCanonicalName());
         }
