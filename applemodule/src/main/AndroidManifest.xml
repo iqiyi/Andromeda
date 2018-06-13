@@ -6,15 +6,16 @@
         <activity
             android:name=".remote.RemoteServiceDemo"
             android:process="com.android.apple" />
-        <activity
-            android:name=".local.LocalServiceDemo"
-             />
+        <activity android:name=".local.LocalServiceDemo" />
         <activity
             android:name=".remote.BananaActivity"
             android:process=":banana" />
         <activity
             android:name=".event.EventActivity"
             android:process=":apple" />
+        <activity android:name=".remote.Banana2Activity"
+            android:process=":banana"
+            />
     </application>
 
 </manifest>

@@ -37,7 +37,9 @@ import org.qiyi.video.svg.log.Logger;
 import org.qiyi.video.svg.transfer.RemoteTransfer;
 import org.qiyi.video.svg.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -52,7 +54,7 @@ public class RemoteManager implements IRemoteManager, LifecycleListener {
 
     private Context appContext;
 
-    private Set<String> commuStubServiceNames = new HashSet<>();
+    private List<String> commuStubServiceNames = new ArrayList<>();
 
     public RemoteManager(Context context, final Lifecycle lifecycle) {
         this.appContext = context;
