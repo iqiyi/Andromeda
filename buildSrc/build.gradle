@@ -4,22 +4,22 @@ apply plugin: 'maven'
 dependencies {
 
     //build tools
-    compile 'com.android.tools.build:gradle:3.0.1'
+    implementation 'com.android.tools.build:gradle:3.5.0'
 
     //gradle sdk
-    compile gradleApi()
+    implementation gradleApi()
     //groovy sdk
-    compile localGroovy()
+    implementation localGroovy()
 
     //transform
-    compile 'com.android.tools.build:transform-api:1.9.0'
+    implementation 'com.android.tools.build:transform-api:1.9.0'
     //javassist,可以对字节码进行编辑
-    compile 'javassist:javassist:3.12.1.GA'
+    implementation 'javassist:javassist:3.12.1.GA'
 
     //开源框架,io操作
-    compile 'commons-io:commons-io:2.5'
+    implementation 'commons-io:commons-io:2.5'
 
-    compile 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.code.gson:gson:2.8.2'
 }
 
 repositories{

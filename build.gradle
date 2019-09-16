@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.5.0'
         classpath "org.qiyi.video.svg:plugin:$maven_config.plugin_build_version"
 
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'

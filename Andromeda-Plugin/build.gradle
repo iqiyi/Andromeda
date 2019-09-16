@@ -16,7 +16,7 @@ uploadArchives{
 dependencies {
 
     //build tools
-    compile 'com.android.tools.build:gradle:3.0.1'
+    compile 'com.android.tools.build:gradle:3.5.0'
 
     //gradle sdk
     compile gradleApi()

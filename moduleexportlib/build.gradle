@@ -30,6 +30,7 @@ android {
         ORIGINAL_JAR_PATH='build/intermediates/bundles/release/classes.jar'
     }
 
+    /*
     project.afterEvaluate {
         Task cleanSdk=tasks.getByPath('clean')
         Task bundleSdk=tasks.getByPath('bundleRelease')
@@ -38,6 +39,7 @@ android {
         makeJar.dependsOn cleanSdk,bundleSdk
 
     }
+    */
 
     task makeJar(type:Jar){
         from zipTree(file(ORIGINAL_JAR_PATH))

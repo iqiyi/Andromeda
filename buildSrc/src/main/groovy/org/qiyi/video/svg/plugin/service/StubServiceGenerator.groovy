@@ -79,7 +79,7 @@ class StubServiceGenerator implements IServiceGenerator {
 
                     output.processManifest.doLast {
 
-                        println "manifestOutputDirectory:" + output.processManifest.manifestOutputDirectory.absolutePath
+                        //println "manifestOutputDirectory:" + output.processManifest.manifestOutputDirectory.absolutePath
 
                         //output.getProcessManifest().manifestOutputDirectory
                         output.processManifest.outputs.files.each { File file ->
